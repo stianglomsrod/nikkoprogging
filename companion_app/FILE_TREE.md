@@ -33,6 +33,11 @@ companion_app/
 |        |- home_page.dart
 |- test/
 |  |- widget_test.dart
+|  |- core/
+|  |  |- scheduler/
+|  |  |  |- scheduler_engine_test.dart
+|  |  |- adaptive_engine/
+|  |     |- task_selector_test.dart
 |- android/
 |  |- app/
 |  |  |- build.gradle.kts
