@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
         _currentMood = null;
         _currentTask = null;
         _statusMessage =
-            'Ingen fokusomrader er klare akkurat na. Juster Aktivt tidsrom eller Modus.';
+            'Ingen Fokusomrader er klare akkurat na. Du kan justere rammene i Innstillinger.';
         return;
       }
 
@@ -73,8 +73,7 @@ class _HomePageState extends State<HomePage> {
       _currentMood = null;
       _currentTask = null;
       _stage = PromptStage.mood;
-      _statusMessage =
-          'Prompt for ${area.name} ved kl ${_hourLabel(_simulatedHour)}.';
+      _statusMessage = null;
     });
   }
 
@@ -161,213 +160,193 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _updateArea(String areaId, FocusArea Function(FocusArea area) updater) {
+  Future<void> _openSettings() async {
+    final result = await Navigator.of(context).push<_SettingsResult>(
+      MaterialPageRoute(
+        builder: (_) => _SettingsPage(
+          focusAreas: _focusAreas,
+          simulatedHour: _simulatedHour,
+        ),
+      ),
+    );
+
+    if (result == null) {
+      return;
+    }
+
     setState(() {
-      _focusAreas = _focusAreas
-          .map((area) => area.id == areaId ? updater(area) : area)
-          .toList(growable: false);
+      _focusAreas = result.focusAreas;
+      _simulatedHour = result.simulatedHour;
     });
   }
 
-  double get _successRate {
-    if (_attemptHistory.isEmpty) {
-      return 0;
+  String _moodLabel(Sinnsstemning mood) {
+    switch (mood) {
+      case Sinnsstemning.negativ:
+        return 'tung';
+      case Sinnsstemning.ok:
+        return 'ok';
+      case Sinnsstemning.energisk:
+        return 'energisk';
     }
-    final doneCount = _attemptHistory.where((entry) => entry.done).length;
-    return doneCount / _attemptHistory.length;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rolig Companion Prototype')),
+      appBar: AppBar(
+        title: const Text('.....'),
+        actions: [
+          IconButton(
+            onPressed: _openSettings,
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Innstillinger',
+          ),
+        ],
+      ),
       body: SafeArea(
-        child: ListView(
+        child: Padding(
           padding: const EdgeInsets.all(16),
-          children: [
-            Text(
-              'En rolig hjelp gjennom dagen. En Oppgave av gangen.',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            _buildOverviewCard(context),
-            const SizedBox(height: 16),
-            _buildFocusAreaCard(),
-            const SizedBox(height: 16),
-            _buildSchedulerCard(),
-            const SizedBox(height: 16),
-            _buildPromptFlowCard(context),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOverviewCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Status', style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Text('Forsok: ${_attemptHistory.length}'),
-            Text('Suksessrate: ${(_successRate * 100).toStringAsFixed(0)} %'),
-            if (_statusMessage != null) ...[
-              const SizedBox(height: 8),
-              Text(_statusMessage!),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFocusAreaCard() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Fokusomrader'),
-            const SizedBox(height: 8),
-            for (final area in _focusAreas) ...[
-              _FocusAreaTile(
-                area: area,
-                promptsUsed: _promptsUsedPerArea[area.id] ?? 0,
-                onEnabledChanged: (value) {
-                  _updateArea(area.id, (a) => a.copyWith(enabled: value));
-                },
-                onStartChanged: (value) {
-                  _updateArea(area.id, (a) => a.copyWith(startHour: value));
-                },
-                onEndChanged: (value) {
-                  _updateArea(area.id, (a) => a.copyWith(endHour: value));
-                },
-                onModusChanged: (value) {
-                  _updateArea(area.id, (a) => a.copyWith(modus: value));
-                },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const _CompanionFigure(),
+              const SizedBox(height: 12),
+              Text(
+                'Jeg gir deg bare en liten ting av gangen.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              const Divider(height: 24),
+              const SizedBox(height: 6),
+              Text(
+                'Nar det passer innenfor rammene dine, kan jeg foresla et lite steg.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 20),
+              Expanded(child: _buildMainCard(context)),
             ],
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSchedulerCard() {
+  Widget _buildMainCard(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Simulert scheduler'),
-            const SizedBox(height: 8),
-            Text('Simulert klokkeslett: ${_hourLabel(_simulatedHour)}'),
-            Slider(
-              value: _simulatedHour.toDouble(),
-              min: 0,
-              max: 23,
-              divisions: 23,
-              label: _hourLabel(_simulatedHour),
-              onChanged: (value) {
-                setState(() {
-                  _simulatedHour = value.round();
-                });
-              },
-            ),
-            ElevatedButton(
-              onPressed: _simulateNextPrompt,
-              child: const Text('Simuler neste prompt'),
-            ),
-          ],
+        padding: const EdgeInsets.all(16),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: _buildStageContent(context),
         ),
       ),
     );
   }
 
-  Widget _buildPromptFlowCard(BuildContext context) {
+  Widget _buildStageContent(BuildContext context) {
     final activeArea = _activeFocusArea;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Promptflyt', style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 8),
-            if (activeArea != null)
-              Text('Aktivt Fokusomrade: ${activeArea.name}'),
-            if (_stage == PromptStage.idle)
-              const Text(
-                'Trykk "Simuler neste prompt" nar appen skal foresla en Oppgave.',
-              ),
-            if (_stage == PromptStage.mood) _buildMoodStep(),
-            if (_stage == PromptStage.task) _buildTaskStep(),
-            if (_stage == PromptStage.result) _buildResultStep(),
-          ],
-        ),
-      ),
-    );
-  }
+    if (_stage == PromptStage.idle) {
+      return Column(
+        key: const ValueKey('idle'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Spacer(),
+          const Text('Klar nar du er.', textAlign: TextAlign.center),
+          const SizedBox(height: 8),
+          if (_statusMessage != null)
+            Text(_statusMessage!, textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: _simulateNextPrompt,
+            child: const Text('Simuler neste prompt'),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Dette erstatter varsling i prototypen.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const Spacer(),
+        ],
+      );
+    }
 
-  Widget _buildMoodStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Hvordan er stemningen akkurat na?'),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          children: [
-            for (final mood in Sinnsstemning.values)
-              OutlinedButton(
-                onPressed: () => _selectMood(mood),
-                child: Text(mood.label),
-              ),
+    if (_stage == PromptStage.mood) {
+      return Column(
+        key: const ValueKey('mood'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (activeArea != null)
+            Text(
+              activeArea.name,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          const SizedBox(height: 12),
+          const Text(
+            'Hvordan er stemningen akkurat na?',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          for (final mood in Sinnsstemning.values) ...[
+            FilledButton.tonal(
+              onPressed: () => _selectMood(mood),
+              child: Text(_moodLabel(mood)),
+            ),
+            const SizedBox(height: 8),
           ],
-        ),
-      ],
-    );
+        ],
+      );
+    }
+
+    if (_stage == PromptStage.task) {
+      return _buildTaskStep();
+    }
+
+    return _buildResultStep();
   }
 
   Widget _buildTaskStep() {
     final task = _currentTask;
     if (task == null) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        key: const ValueKey('task-empty'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Ingen Oppgave funnet akkurat na.'),
-          const SizedBox(height: 8),
+          const Text(
+            'Fant ingen Oppgave akkurat na.',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
           TextButton(onPressed: _resetToIdle, child: const Text('Tilbake')),
         ],
       );
     }
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      key: const ValueKey('task'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Oppgave: ${task.title}'),
+        const Text('Et lite steg', textAlign: TextAlign.center),
         const SizedBox(height: 8),
-        const Text('Fikk du gjort oppgaven?'),
+        Text(
+          task.title,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 16),
+        const Text('Fikk du gjort oppgaven?', textAlign: TextAlign.center),
+        const SizedBox(height: 12),
+        FilledButton(
+          onPressed: () => _submitResult(true),
+          child: const Text('Ja'),
+        ),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          children: [
-            FilledButton(
-              onPressed: () => _submitResult(true),
-              child: const Text('Ja'),
-            ),
-            OutlinedButton(
-              onPressed: () => _submitResult(false),
-              child: const Text('Nei'),
-            ),
-          ],
+        OutlinedButton(
+          onPressed: () => _submitResult(false),
+          child: const Text('Nei'),
         ),
       ],
     );
@@ -375,28 +354,194 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildResultStep() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      key: const ValueKey('result'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(_resultMessage ?? ''),
-        const SizedBox(height: 8),
-        TextButton(
+        const Spacer(),
+        Text(_resultMessage ?? '', textAlign: TextAlign.center),
+        const SizedBox(height: 12),
+        FilledButton.tonal(
           onPressed: _resetToIdle,
-          child: const Text('Klar for neste prompt'),
+          child: const Text('Tilbake til rolig visning'),
         ),
+        const Spacer(),
       ],
     );
   }
+}
 
-  String _hourLabel(int hour) {
-    final text = hour.toString().padLeft(2, '0');
-    return '$text:00';
+class _CompanionFigure extends StatelessWidget {
+  const _CompanionFigure();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Center(
+      child: Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: colors.primaryContainer,
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              top: 35,
+              left: 40,
+              child: CircleAvatar(
+                radius: 4,
+                backgroundColor: colors.onPrimaryContainer,
+              ),
+            ),
+            Positioned(
+              top: 35,
+              right: 40,
+              child: CircleAvatar(
+                radius: 4,
+                backgroundColor: colors.onPrimaryContainer,
+              ),
+            ),
+            Positioned(
+              bottom: 36,
+              child: Container(
+                width: 34,
+                height: 14,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: colors.onPrimaryContainer,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
+}
+
+class _SettingsResult {
+  const _SettingsResult({
+    required this.focusAreas,
+    required this.simulatedHour,
+  });
+
+  final List<FocusArea> focusAreas;
+  final int simulatedHour;
+}
+
+class _SettingsPage extends StatefulWidget {
+  const _SettingsPage({required this.focusAreas, required this.simulatedHour});
+
+  final List<FocusArea> focusAreas;
+  final int simulatedHour;
+
+  @override
+  State<_SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<_SettingsPage> {
+  late List<FocusArea> _localFocusAreas;
+  late int _localHour;
+
+  @override
+  void initState() {
+    super.initState();
+    _localFocusAreas = widget.focusAreas
+        .map(
+          (area) => area.copyWith(
+            enabled: area.enabled,
+            startHour: area.startHour,
+            endHour: area.endHour,
+            modus: area.modus,
+          ),
+        )
+        .toList(growable: true);
+    _localHour = widget.simulatedHour;
+  }
+
+  void _saveAndClose() {
+    Navigator.of(context).pop(
+      _SettingsResult(focusAreas: _localFocusAreas, simulatedHour: _localHour),
+    );
+  }
+
+  void _updateArea(String areaId, FocusArea Function(FocusArea area) updater) {
+    setState(() {
+      _localFocusAreas = _localFocusAreas
+          .map((area) => area.id == areaId ? updater(area) : area)
+          .toList(growable: true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Innstillinger'),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back),
+        ),
+        actions: [
+          TextButton(onPressed: _saveAndClose, child: const Text('Lagre')),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Text('Fokusomrader'),
+          const SizedBox(height: 8),
+          for (final area in _localFocusAreas) ...[
+            _FocusAreaTile(
+              area: area,
+              onEnabledChanged: (value) {
+                _updateArea(area.id, (a) => a.copyWith(enabled: value));
+              },
+              onStartChanged: (value) {
+                _updateArea(area.id, (a) => a.copyWith(startHour: value));
+              },
+              onEndChanged: (value) {
+                _updateArea(area.id, (a) => a.copyWith(endHour: value));
+              },
+              onModusChanged: (value) {
+                _updateArea(area.id, (a) => a.copyWith(modus: value));
+              },
+            ),
+            const Divider(height: 24),
+          ],
+          const SizedBox(height: 8),
+          const Text('Simulert tid for prototype'),
+          const SizedBox(height: 8),
+          Text(_hourLabel(_localHour)),
+          Slider(
+            value: _localHour.toDouble(),
+            min: 0,
+            max: 23,
+            divisions: 23,
+            label: _hourLabel(_localHour),
+            onChanged: (value) {
+              setState(() {
+                _localHour = value.round();
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _hourLabel(int hour) => '${hour.toString().padLeft(2, '0')}:00';
 }
 
 class _FocusAreaTile extends StatelessWidget {
   const _FocusAreaTile({
     required this.area,
-    required this.promptsUsed,
     required this.onEnabledChanged,
     required this.onStartChanged,
     required this.onEndChanged,
@@ -404,7 +549,6 @@ class _FocusAreaTile extends StatelessWidget {
   });
 
   final FocusArea area;
-  final int promptsUsed;
   final ValueChanged<bool> onEnabledChanged;
   final ValueChanged<int> onStartChanged;
   final ValueChanged<int> onEndChanged;
@@ -489,8 +633,6 @@ class _FocusAreaTile extends StatelessWidget {
             }
           },
         ),
-        const SizedBox(height: 8),
-        Text('Brukt i vindu: $promptsUsed / ${area.modus.maxPrompts}'),
       ],
     );
   }

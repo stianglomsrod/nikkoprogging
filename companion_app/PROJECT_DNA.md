@@ -22,6 +22,9 @@ Current implementation status:
 - Basic structured modules are present for models, scheduler logic, adaptive task selection, and seed data.
 - Data is intentionally local/hardcoded for first prototype iterations.
 - Scheduler behavior is currently simulated manually in prototype UI via "Simuler neste prompt".
+- Main user view is intentionally calm and minimal, with settings moved behind a gear icon.
+- Companion placeholder name is currently shown as `.....` in the app bar.
+- A small in-app companion figure is visible before any future naming event.
 
 ## Current Stack
 
@@ -90,6 +93,7 @@ Important distinctions:
 - Mood is not a day-start setting.
 - `Modus` is not mood.
 - `Modus` is a per-focus-area quota/frequency setting.
+- User-facing mood labels in UI are `tung`, `ok`, `energisk` (internal model may still use `negativ`).
 
 ### Task selection behavior
 
@@ -112,6 +116,7 @@ Important distinctions:
 - Avoid backend and database setup during early flow validation.
 - No notifications yet; scheduler behavior may be simulated in-app during prototype.
 - Keep dependencies minimal and stay close to default Flutter tooling.
+- Hide raw internal metrics (success rate, attempt counters, prompt counters) from normal user-facing UI.
 
 ## Planned Later (Not Now)
 

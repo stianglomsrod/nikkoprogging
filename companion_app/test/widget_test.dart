@@ -6,8 +6,8 @@ void main() {
   testWidgets('viser prototype-startskjerm', (WidgetTester tester) async {
     await tester.pumpWidget(const CompanionApp());
 
-    expect(find.text('Rolig Companion Prototype'), findsOneWidget);
-    expect(find.text('Status'), findsOneWidget);
-    expect(find.text('Fokusomrader'), findsOneWidget);
+    expect(find.text('.....'), findsOneWidget);
+    expect(find.text('Simuler neste prompt'), findsOneWidget);
+    expect(find.byTooltip('Innstillinger'), findsOneWidget);
   });
 }

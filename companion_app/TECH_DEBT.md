@@ -77,6 +77,36 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Legg til tydelig vindu/dogn-rotasjon i scheduler-komponenten.
   - Knytt tellere til tidsvinduer i persistert modell senere.
 
+### 7) Companion-figur er forelopig en UI-placeholder
+
+- Status: Active (intentional)
+- Decision: Companion vises som en enkel Flutter-widget (former/ikon-stil) uten egendefinert grafikk-asset.
+- Reason: Holder prototypen lett og rask uten nye avhengigheter.
+- Risk:
+  - Visuell identitet kan oppleves midlertidig.
+- Future resolution:
+  - Erstatt med endelig figur/design nar visuell retning og navneevent er avklart.
+
+### 8) Navneevent er ikke implementert enn
+
+- Status: Active (intentional)
+- Decision: Appen viser forelopig navn-plassholderen `.....`.
+- Reason: Navn skal introduseres i en senere egen opplevelse/event.
+- Risk:
+  - Oppleves midlertidig for noen brukere.
+- Future resolution:
+  - Implementer navneevent som lar bruker gi companion/figur et navn.
+
+### 9) Innstillinger er fortsatt kun in-memory
+
+- Status: Active (intentional)
+- Decision: Endringer i Fokusomrader, Aktivt tidsrom og Modus lagres kun i runtime-minne.
+- Reason: Ingen persistering i tidlig prototyping.
+- Risk:
+  - Innstillinger resettes ved app-restart.
+- Future resolution:
+  - Persist innstillinger via repository + valgt lagringslag nar dette prioriteres.
+
 ## Deferred Integrations (By Decision)
 
 - Riverpod
