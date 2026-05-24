@@ -11,6 +11,9 @@ companion_app/
 |- PROJECT_DNA.md
 |- FILE_TREE.md
 |- TECH_DEBT.md
+|- assets/
+|  |- figures/
+|  |  |- companion_figur.png
 |- lib/
 |  |- main.dart
 |  |- app/

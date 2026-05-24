@@ -20,7 +20,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Innstillinger'), findsOneWidget);
-    expect(find.text('Velg et Fokusomrade'), findsOneWidget);
+    expect(find.text('Velg et Fokusområde'), findsOneWidget);
     expect(find.text('Huslige oppgaver'), findsWidgets);
   });
 }

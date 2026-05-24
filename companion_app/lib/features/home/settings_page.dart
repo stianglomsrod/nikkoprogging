@@ -78,7 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: const EdgeInsets.all(20),
         children: [
           Text(
-            'Velg et Fokusomrade',
+            'Velg et Fokusområde',
             style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),

@@ -77,15 +77,15 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Legg til tydelig vindu/dogn-rotasjon i scheduler-komponenten.
   - Knytt tellere til tidsvinduer i persistert modell senere.
 
-### 7) Companion-figur er forelopig en UI-placeholder
+### 7) Companion-figur bruker forelopig et statisk prototype-asset
 
 - Status: Active (intentional)
-- Decision: Companion vises som en enkel Flutter-widget (former/ikon-stil) uten egendefinert grafikk-asset.
-- Reason: Holder prototypen lett og rask uten nye avhengigheter.
+- Decision: Companion vises na med et lokalt bilde-asset i appen, uten dynamiske varianter eller temaspesifikke asset-sett.
+- Reason: Gir bedre visuell identitet i prototypen med lav teknisk kompleksitet.
 - Risk:
-  - Visuell identitet kan oppleves midlertidig.
+  - Assetet kan fortsatt oppleves som midlertidig inntil endelig visuell profil er avklart.
 - Future resolution:
-  - Erstatt med endelig figur/design nar visuell retning og navneevent er avklart.
+  - Erstatt/utvid med endelig figurpakke nar visuell retning og navneevent er avklart.
 
 ### 8) Navneevent er ikke implementert enn
 

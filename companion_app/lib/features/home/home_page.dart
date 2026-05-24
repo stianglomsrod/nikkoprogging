@@ -41,18 +41,12 @@ class _HomePageState extends State<HomePage> {
   TaskItem? _currentTask;
   String? _statusMessage;
   String? _resultMessage;
-  late String _greetingText;
-  late String _introMemoryText;
-  String? _taskLeadIn;
-  String? _moodSupportText;
 
   @override
   void initState() {
     super.initState();
     _focusAreas = SeedData.focusAreas();
     _allTasks = SeedData.tasks();
-    _greetingText = CompanionTextLibrary.greetings[0];
-    _introMemoryText = CompanionTextLibrary.memoryMessages[3];
   }
 
   void _simulateNextPrompt() {
@@ -72,7 +66,7 @@ class _HomePageState extends State<HomePage> {
         _currentMood = null;
         _currentTask = null;
         _statusMessage =
-            'Ingen Fokusomrader er klare akkurat na. Du kan justere rammene i Innstillinger.';
+            'Ingen fokusområder er klare akkurat nå. Du kan justere rammene i Innstillinger.';
         return;
       }
 
@@ -80,8 +74,6 @@ class _HomePageState extends State<HomePage> {
       _promptsUsedPerArea[area.id] = (_promptsUsedPerArea[area.id] ?? 0) + 1;
       _currentMood = null;
       _currentTask = null;
-      _taskLeadIn = null;
-      _moodSupportText = null;
       _stage = PromptStage.mood;
       _statusMessage = null;
     });
@@ -105,12 +97,8 @@ class _HomePageState extends State<HomePage> {
       _currentMood = mood;
       _currentTask = task;
       _stage = PromptStage.task;
-      _moodSupportText = _pickFrom(
-        CompanionTextLibrary.moodFeedback[CompanionTextLibrary.moodKey(mood)]!,
-      );
-      _taskLeadIn = _pickFrom(CompanionTextLibrary.taskRequestPhrases);
       if (task == null) {
-        _statusMessage = 'Fant ingen Oppgave for ${area.name} akkurat na.';
+        _statusMessage = 'Fant ingen oppgave for ${area.name} akkurat nå.';
       }
     });
   }
@@ -165,8 +153,6 @@ class _HomePageState extends State<HomePage> {
       _activeFocusArea = null;
       _currentMood = null;
       _currentTask = null;
-      _taskLeadIn = null;
-      _moodSupportText = null;
     });
   }
 
@@ -193,11 +179,11 @@ class _HomePageState extends State<HomePage> {
   String _moodLabel(Sinnsstemning mood) {
     switch (mood) {
       case Sinnsstemning.negativ:
-        return 'tung';
+        return 'Tung';
       case Sinnsstemning.ok:
-        return 'ok';
+        return 'Ok';
       case Sinnsstemning.energisk:
-        return 'energisk';
+        return 'Energisk';
     }
   }
 
@@ -230,9 +216,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   _buildDialogueField(context),
                   const SizedBox(height: 16),
-                  const CompanionFigure(),
+                  const Expanded(child: Center(child: CompanionFigure())),
                   const SizedBox(height: 16),
-                  Expanded(child: _buildMainCard(context)),
+                  _buildBottomActionArea(),
                 ],
               ),
             ),
@@ -244,213 +230,142 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildDialogueField(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final lines = _dialogueLines();
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest.withValues(alpha: 0.35),
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.28),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: 0.45),
+          color: colors.outlineVariant.withValues(alpha: 0.55),
           width: 1,
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            _greetingText,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            _introMemoryText,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMainCard(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerLow.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(26),
-        border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: 0.25),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 220),
-          child: _buildStageContent(context),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Text(
+        lines.join(' '),
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontSize: 19,
+          height: 1.28,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
 
-  Widget _buildStageContent(BuildContext context) {
-    final activeArea = _activeFocusArea;
-
+  List<String> _dialogueLines() {
     if (_stage == PromptStage.idle) {
-      return Column(
-        key: const ValueKey('idle'),
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      return [
+        if (_statusMessage != null)
+          _statusMessage!
+        else
+          'Hei. Hvordan er formen din akkurat nå?',
+      ];
+    }
+
+    if (_stage == PromptStage.mood) {
+      return ['Hei. Hvordan kjennes det akkurat nå?'];
+    }
+
+    if (_stage == PromptStage.task) {
+      final task = _currentTask;
+      if (task == null) {
+        return ['Jeg finner ingen oppgave akkurat nå. Vi kan prøve igjen snart.'];
+      }
+
+      return <String?>[
+        'Hva passer best for deg akkurat nå?',
+        task.title,
+        'Fikk du gjort oppgaven?',
+      ].whereType<String>().toList(growable: false);
+    }
+
+    return [_resultMessage ?? 'Helt greit.'];
+  }
+
+  Widget _buildBottomActionArea() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      child: _buildBottomActionState(),
+    );
+  }
+
+  Widget _buildBottomActionState() {
+    if (_stage == PromptStage.idle) {
+      return _buildBottomActions(
+        key: const ValueKey('actions-idle'),
         children: [
-          const Text(
-            'Jeg gir deg bare en liten ting av gangen.',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          if (_statusMessage != null)
-            Text(_statusMessage!, textAlign: TextAlign.center),
-          const Spacer(),
           FilledButton(
             onPressed: _simulateNextPrompt,
             child: const Text('Simuler neste prompt'),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Dette erstatter varsling i prototypen.',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       );
     }
 
     if (_stage == PromptStage.mood) {
-      return Column(
-        key: const ValueKey('mood'),
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      return _buildBottomActions(
+        key: const ValueKey('actions-mood'),
         children: [
-          if (activeArea != null)
-            Text(
-              activeArea.name,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
+          for (final mood in Sinnsstemning.values) ...[
+            FilledButton.tonal(
+              onPressed: () => _selectMood(mood),
+              child: Text(_moodLabel(mood)),
             ),
-          const SizedBox(height: 12),
-          const Text(
-            'Hvordan er stemningen akkurat na?',
-            textAlign: TextAlign.center,
-          ),
-          const Spacer(),
-          _buildBottomActions(
-            children: [
-              for (final mood in Sinnsstemning.values) ...[
-                FilledButton.tonal(
-                  onPressed: () => _selectMood(mood),
-                  child: Text(_moodLabel(mood)),
-                ),
-                const SizedBox(height: 8),
-              ],
-            ],
-          ),
+            const SizedBox(height: 8),
+          ],
         ],
       );
     }
 
     if (_stage == PromptStage.task) {
-      return _buildTaskStep();
-    }
-
-    return _buildResultStep();
-  }
-
-  Widget _buildTaskStep() {
-    final task = _currentTask;
-    if (task == null) {
-      return Column(
-        key: const ValueKey('task-empty'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text(
-            'Fant ingen Oppgave akkurat na.',
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          TextButton(onPressed: _resetToIdle, child: const Text('Tilbake')),
-        ],
-      );
-    }
-
-    return Column(
-      key: const ValueKey('task'),
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Text('Et lite steg', textAlign: TextAlign.center),
-        const SizedBox(height: 8),
-        if (_moodSupportText != null) ...[
-          Text(_moodSupportText!, textAlign: TextAlign.center),
-          const SizedBox(height: 12),
-        ],
-        if (_taskLeadIn != null) ...[
-          Text(
-            _taskLeadIn!,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 8),
-        ],
-        Text(
-          task.title,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const Spacer(),
-        const Text('Fikk du gjort oppgaven?', textAlign: TextAlign.center),
-        const SizedBox(height: 12),
-        _buildBottomActions(
-          children: [
-            FilledButton(
-              onPressed: () => _submitResult(true),
-              child: const Text('Ja'),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton(
-              onPressed: () => _submitResult(false),
-              child: const Text('Nei'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildResultStep() {
-    return Column(
-      key: const ValueKey('result'),
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const Spacer(),
-        Text(_resultMessage ?? '', textAlign: TextAlign.center),
-        const Spacer(),
-        _buildBottomActions(
+      final task = _currentTask;
+      if (task == null) {
+        return _buildBottomActions(
+          key: const ValueKey('actions-task-empty'),
           children: [
             FilledButton.tonal(
               onPressed: _resetToIdle,
               child: const Text('Tilbake'),
             ),
           ],
+        );
+      }
+
+      return _buildBottomActions(
+        key: const ValueKey('actions-task'),
+        children: [
+          FilledButton(
+            onPressed: () => _submitResult(true),
+            child: const Text('Ja'),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton(
+            onPressed: () => _submitResult(false),
+            child: const Text('Nei'),
+          ),
+        ],
+      );
+    }
+
+    return _buildBottomActions(
+      key: const ValueKey('actions-result'),
+      children: [
+        FilledButton.tonal(
+          onPressed: _resetToIdle,
+          child: const Text('Tilbake'),
         ),
       ],
     );
   }
 
-  Widget _buildBottomActions({required List<Widget> children}) {
+  Widget _buildBottomActions({
+    required Key key,
+    required List<Widget> children,
+  }) {
     return Column(
+      key: key,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,

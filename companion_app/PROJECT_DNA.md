@@ -29,9 +29,16 @@ Current implementation status:
 - Companion figure placement is below intro/dialogue text and above user inputs in the main flow.
 - Settings now show focus areas as circles first; controls appear for the selected area only.
 - A local Dart content/task library now stores prototype messages and task text adapted from the uploaded `texts.py` source.
-- App-wide visual direction is dark, calm, and low-stimuli.
+- App-wide visual direction is dark, calm, and low-stimuli, tuned toward deep navy/blue-black surfaces and muted blue accents.
 - Dialogue field is intentionally top-oriented and shown in a subtle bordered message-like area.
+- Companion dialogue text belongs in the top dialogue field (not below the figure).
+- Dialogue text should stay simple/clean, avoid awkward forced line breaks, and avoid focus-area labels in the dialogue field.
+- Companion figure should sit visually centered in the flexible middle area.
+- Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Primary input/action buttons in active flow states are anchored near the bottom action area.
+- Bottom actions do not require a large visible card/container.
+- Button labels should use readable larger text with leading capitals (`Tung`, `Ok`, `Energisk`, `Ja`, `Nei`).
+- Norwegian user-facing text must render correctly in UTF-8, including `å`, `ø`, and `æ`.
 
 ## Current Stack
 

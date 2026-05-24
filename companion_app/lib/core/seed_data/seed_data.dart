@@ -16,7 +16,7 @@ class SeedData {
       ),
       FocusArea(
         id: 'study',
-        name: 'Studier og laering',
+        name: 'Studier og læring',
         enabled: true,
         startHour: 18,
         endHour: 20,
@@ -32,7 +32,7 @@ class SeedData {
       ),
       FocusArea(
         id: 'reminders',
-        name: 'Paaminnelser',
+        name: 'Påminnelser',
         enabled: true,
         startHour: 8,
         endHour: 22,
@@ -59,7 +59,7 @@ class SeedData {
       TaskItem(
         id: 's3',
         focusAreaId: 'study',
-        title: 'Los to oppgaver fra et tema.',
+        title: 'Løs to oppgaver fra et tema.',
         difficulty: 2,
       ),
       TaskItem(
@@ -77,19 +77,19 @@ class SeedData {
       TaskItem(
         id: 'e2',
         focusAreaId: 'exercise',
-        title: 'Ga en kort tur i fem minutter.',
+        title: 'Gå en kort tur i fem minutter.',
         difficulty: 1,
       ),
       TaskItem(
         id: 'e3',
         focusAreaId: 'exercise',
-        title: 'Gjor en enkel ovelse i ti minutter.',
+        title: 'Gjør en enkel øvelse i ti minutter.',
         difficulty: 2,
       ),
       TaskItem(
         id: 'e4',
         focusAreaId: 'exercise',
-        title: 'Kjor en sporty oekt med intervaller.',
+        title: 'Kjør en sporty økt med intervaller.',
         difficulty: 3,
       ),
       TaskItem(
