@@ -254,10 +254,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (_stage == PromptStage.mood) {
-      return MoodStateView(
-        onSelectMood: _selectMood,
-        labelBuilder: _moodLabel,
-      );
+      return MoodStateView(onSelectMood: _selectMood, labelBuilder: _moodLabel);
     }
 
     if (_stage == PromptStage.task) {
