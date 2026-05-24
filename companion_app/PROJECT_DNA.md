@@ -29,6 +29,9 @@ Current implementation status:
 - Companion figure placement is below intro/dialogue text and above user inputs in the main flow.
 - Settings now show focus areas as circles first; controls appear for the selected area only.
 - A local Dart content/task library now stores prototype messages and task text adapted from the uploaded `texts.py` source.
+- App-wide visual direction is dark, calm, and low-stimuli.
+- Dialogue field is intentionally top-oriented and shown in a subtle bordered message-like area.
+- Primary input/action buttons in active flow states are anchored near the bottom action area.
 
 ## Current Stack
 
@@ -149,6 +152,7 @@ These are deferred by design and should only be introduced when explicitly reque
 - Document shortcuts, compromises, and deferred work in `TECH_DEBT.md`.
 - Surface blockers and uncertainties in your report.
 - Do not invent hidden requirements.
+- When creating, changing, moving, or deleting files, always report the full relative path from the project root. Do not report only filenames. Examples: `lib/features/home/home_page.dart`, `lib/core/content/companion_text_library.dart`, `test/core/scheduler/scheduler_engine_test.dart`.
 
 ## Data and Infrastructure Direction
 

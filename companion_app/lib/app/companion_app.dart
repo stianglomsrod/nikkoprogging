@@ -6,9 +6,9 @@ class CompanionApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const background = Color(0xFFF4F1EC);
-    const surface = Color(0xFFF9F7F2);
-    const seed = Color(0xFF8A9A96);
+    const background = Color(0xFF131617);
+    const surface = Color(0xFF1A1E20);
+    const seed = Color(0xFF78827F);
 
     return MaterialApp(
       title: 'Companion',
@@ -17,7 +17,7 @@ class CompanionApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: seed,
-          brightness: Brightness.light,
+          brightness: Brightness.dark,
         ),
         scaffoldBackgroundColor: background,
         cardTheme: const CardThemeData(

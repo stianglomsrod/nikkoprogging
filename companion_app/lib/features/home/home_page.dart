@@ -220,42 +220,56 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 430),
+            child: Padding(
               padding: const EdgeInsets.all(16),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 430),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          _greetingText,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          _introMemoryText,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 22),
-                        const CompanionFigure(),
-                        const SizedBox(height: 24),
-                        _buildMainCard(context),
-                      ],
-                    ),
-                  ),
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildDialogueField(context),
+                  const SizedBox(height: 16),
+                  const CompanionFigure(),
+                  const SizedBox(height: 16),
+                  Expanded(child: _buildMainCard(context)),
+                ],
               ),
-            );
-          },
+            ),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDialogueField(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: 0.45),
+          width: 1,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _greetingText,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _introMemoryText,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
       ),
     );
   }
@@ -265,8 +279,12 @@ class _HomePageState extends State<HomePage> {
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surfaceContainerLow.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(26),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: 0.25),
+          width: 1,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(18),
@@ -284,7 +302,7 @@ class _HomePageState extends State<HomePage> {
     if (_stage == PromptStage.idle) {
       return Column(
         key: const ValueKey('idle'),
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
@@ -294,7 +312,7 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 8),
           if (_statusMessage != null)
             Text(_statusMessage!, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
+          const Spacer(),
           FilledButton(
             onPressed: _simulateNextPrompt,
             child: const Text('Simuler neste prompt'),
@@ -312,7 +330,7 @@ class _HomePageState extends State<HomePage> {
     if (_stage == PromptStage.mood) {
       return Column(
         key: const ValueKey('mood'),
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (activeArea != null)
@@ -326,14 +344,18 @@ class _HomePageState extends State<HomePage> {
             'Hvordan er stemningen akkurat na?',
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
-          for (final mood in Sinnsstemning.values) ...[
-            FilledButton.tonal(
-              onPressed: () => _selectMood(mood),
-              child: Text(_moodLabel(mood)),
-            ),
-            const SizedBox(height: 8),
-          ],
+          const Spacer(),
+          _buildBottomActions(
+            children: [
+              for (final mood in Sinnsstemning.values) ...[
+                FilledButton.tonal(
+                  onPressed: () => _selectMood(mood),
+                  child: Text(_moodLabel(mood)),
+                ),
+                const SizedBox(height: 8),
+              ],
+            ],
+          ),
         ],
       );
     }
@@ -364,7 +386,7 @@ class _HomePageState extends State<HomePage> {
 
     return Column(
       key: const ValueKey('task'),
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text('Et lite steg', textAlign: TextAlign.center),
@@ -386,17 +408,21 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        const SizedBox(height: 16),
+        const Spacer(),
         const Text('Fikk du gjort oppgaven?', textAlign: TextAlign.center),
         const SizedBox(height: 12),
-        FilledButton(
-          onPressed: () => _submitResult(true),
-          child: const Text('Ja'),
-        ),
-        const SizedBox(height: 8),
-        OutlinedButton(
-          onPressed: () => _submitResult(false),
-          child: const Text('Nei'),
+        _buildBottomActions(
+          children: [
+            FilledButton(
+              onPressed: () => _submitResult(true),
+              child: const Text('Ja'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: () => _submitResult(false),
+              child: const Text('Nei'),
+            ),
+          ],
         ),
       ],
     );
@@ -405,16 +431,29 @@ class _HomePageState extends State<HomePage> {
   Widget _buildResultStep() {
     return Column(
       key: const ValueKey('result'),
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const Spacer(),
         Text(_resultMessage ?? '', textAlign: TextAlign.center),
-        const SizedBox(height: 12),
-        FilledButton.tonal(
-          onPressed: _resetToIdle,
-          child: const Text('Tilbake'),
+        const Spacer(),
+        _buildBottomActions(
+          children: [
+            FilledButton.tonal(
+              onPressed: _resetToIdle,
+              child: const Text('Tilbake'),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _buildBottomActions({required List<Widget> children}) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: children,
     );
   }
 }

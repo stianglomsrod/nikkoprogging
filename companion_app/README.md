@@ -16,6 +16,11 @@ Early prototype / flow-validation.
 - Hardcoded/local seed data is intentional for now.
 - No database/backend/auth/notifications/TTS yet.
 
+## Agent Reporting Rule
+
+When creating, changing, moving, or deleting files, always report full relative paths from project root (not bare filenames).
+Examples: `lib/features/home/home_page.dart`, `lib/features/home/settings_page.dart`, `test/core/scheduler/scheduler_engine_test.dart`.
+
 ## Flutter Starter Resources
 
 A few resources to get you started if this is your first Flutter project:
