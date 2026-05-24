@@ -1,0 +1,63 @@
+# FILE_TREE
+
+Current high-signal project structure (generated build/cache outputs omitted):
+
+```text
+companion_app/
+|- analysis_options.yaml
+|- pubspec.yaml
+|- pubspec.lock
+|- README.md
+|- PROJECT_DNA.md
+|- FILE_TREE.md
+|- TECH_DEBT.md
+|- lib/
+|  |- main.dart
+|- test/
+|  |- widget_test.dart
+|- android/
+|  |- app/
+|  |  |- build.gradle.kts
+|  |  |- src/
+|  |     |- main/
+|  |     |  |- AndroidManifest.xml
+|  |     |  |- kotlin/com/example/companion_app/MainActivity.kt
+|  |     |- debug/AndroidManifest.xml
+|  |     |- profile/AndroidManifest.xml
+|  |- build.gradle.kts
+|  |- settings.gradle.kts
+|  |- gradle.properties
+|  |- gradlew
+|  |- gradlew.bat
+|  |- gradle/wrapper/gradle-wrapper.properties
+|- ios/
+|  |- Runner/
+|  |  |- AppDelegate.swift
+|  |  |- SceneDelegate.swift
+|  |  |- Info.plist
+|  |  |- Base.lproj/
+|  |- Runner.xcodeproj/
+|  |- Runner.xcworkspace/
+|  |- Flutter/
+|- web/
+|  |- index.html
+|  |- manifest.json
+|  |- icons/
+|- linux/
+|  |- CMakeLists.txt
+|  |- runner/
+|  |- flutter/
+|- macos/
+|  |- Runner/
+|  |- Runner.xcodeproj/
+|  |- Runner.xcworkspace/
+|  |- Flutter/
+|- windows/
+|  |- CMakeLists.txt
+|  |- runner/
+|  |- flutter/
+```
+
+Notes:
+- `build/`, `.dart_tool/`, IDE cache folders, and other generated outputs are intentionally excluded.
+- This file should be updated whenever the meaningful source structure changes.
