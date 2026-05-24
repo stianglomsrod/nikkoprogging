@@ -117,7 +117,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: const Text('Aktivert'),
                     value: area.enabled,
                     onChanged: (value) {
-                      _updateArea(area.id, (current) => current.copyWith(enabled: value));
+                      _updateArea(
+                        area.id,
+                        (current) => current.copyWith(enabled: value),
+                      );
                     },
                   ),
                   const SizedBox(height: 8),
@@ -131,7 +134,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           label: Text(mode.label),
                           selected: area.modus == mode,
                           onSelected: (_) {
-                            _updateArea(area.id, (current) => current.copyWith(modus: mode));
+                            _updateArea(
+                              area.id,
+                              (current) => current.copyWith(modus: mode),
+                            );
                           },
                         ),
                     ],
@@ -158,7 +164,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       final end = rawEnd <= start ? start + 1 : rawEnd;
                       _updateArea(
                         area.id,
-                        (current) => current.copyWith(startHour: start, endHour: end),
+                        (current) =>
+                            current.copyWith(startHour: start, endHour: end),
                       );
                     },
                   ),
@@ -218,9 +225,13 @@ class _FocusAreaCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final fillColor = area.enabled ? colors.secondaryContainer : colors.surfaceContainerHighest;
+    final fillColor = area.enabled
+        ? colors.secondaryContainer
+        : colors.surfaceContainerHighest;
     final borderColor = selected ? colors.primary : colors.outlineVariant;
-    final textColor = area.enabled ? colors.onSecondaryContainer : colors.onSurfaceVariant;
+    final textColor = area.enabled
+        ? colors.onSecondaryContainer
+        : colors.onSurfaceVariant;
 
     return InkWell(
       borderRadius: BorderRadius.circular(999),
@@ -243,7 +254,9 @@ class _FocusAreaCircle extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: textColor),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: textColor),
             ),
           ),
         ],
