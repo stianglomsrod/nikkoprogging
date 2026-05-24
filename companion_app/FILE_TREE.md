@@ -16,6 +16,8 @@ companion_app/
 |  |- app/
 |  |  |- companion_app.dart
 |  |- core/
+|  |  |- content/
+|  |  |  |- companion_text_library.dart
 |  |  |- models/
 |  |  |  |- attempt_entry.dart
 |  |  |  |- focus_area.dart
@@ -27,10 +29,14 @@ companion_app/
 |  |  |- adaptive_engine/
 |  |  |  |- task_selector.dart
 |  |  |- seed_data/
-|  |     |- seed_data.dart
+|  |  |  |- seed_data.dart
+|  |  |  |- task_library.dart
 |  |- features/
 |     |- home/
 |        |- home_page.dart
+|        |- settings_page.dart
+|        |- widgets/
+|           |- companion_figure.dart
 |- test/
 |  |- widget_test.dart
 |  |- core/

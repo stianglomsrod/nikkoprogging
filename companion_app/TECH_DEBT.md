@@ -107,6 +107,27 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 - Future resolution:
   - Persist innstillinger via repository + valgt lagringslag nar dette prioriteres.
 
+### 10) Innholdsbibliotek er fortsatt lokalt og hardkodet
+
+- Status: Active (intentional)
+- Decision: Tekster og oppgaver fra `texts.py` er konvertert til et lokalt Dart-bibliotek i appen.
+- Reason: Holder innhold enkelt tilgjengelig i prototypefasen uten backend eller database.
+- Risk:
+  - Innholdet er ikke redigerbart uten kodeendring.
+  - Tone og variasjon er ikke validert fullt ut i appen enn.
+- Future resolution:
+  - Flytt innhold bak en tydelig repository/content-kilde nar persistering eller ekstern admin blir relevant.
+
+### 11) Oppgavebiblioteket er forelopig mest husarbeidstungt
+
+- Status: Active (intentional)
+- Decision: Oppgaver fra `texts.py` er i denne passeringen primart koblet til `Huslige oppgaver`.
+- Reason: Kildematerialet er hovedsakelig husholdningsorientert.
+- Risk:
+  - Andre Fokusomrader har mindre rikt innholdsgrunnlag enn husholdning forelopig.
+- Future resolution:
+  - Utvid innholdsbiblioteket med tilsvarende oppgavebanker for studier, trening og paminnelser.
+
 ## Deferred Integrations (By Decision)
 
 - Riverpod

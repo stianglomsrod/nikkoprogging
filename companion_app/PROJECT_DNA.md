@@ -25,6 +25,10 @@ Current implementation status:
 - Main user view is intentionally calm and minimal, with settings moved behind a gear icon.
 - Companion placeholder name is currently shown as `.....` in the app bar.
 - A small in-app companion figure is visible before any future naming event.
+- The visible `.....` placeholder is centered in the top app bar.
+- Companion figure placement is below intro/dialogue text and above user inputs in the main flow.
+- Settings now show focus areas as circles first; controls appear for the selected area only.
+- A local Dart content/task library now stores prototype messages and task text adapted from the uploaded `texts.py` source.
 
 ## Current Stack
 
@@ -117,6 +121,7 @@ Important distinctions:
 - No notifications yet; scheduler behavior may be simulated in-app during prototype.
 - Keep dependencies minimal and stay close to default Flutter tooling.
 - Hide raw internal metrics (success rate, attempt counters, prompt counters) from normal user-facing UI.
+- Keep the visual theme soft, muted, and low-stimuli.
 
 ## Planned Later (Not Now)
 

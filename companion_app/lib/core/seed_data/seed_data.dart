@@ -1,3 +1,4 @@
+import 'package:companion_app/core/seed_data/task_library.dart';
 import 'package:companion_app/core/models/focus_area.dart';
 import 'package:companion_app/core/models/modus.dart';
 import 'package:companion_app/core/models/task_item.dart';
@@ -41,32 +42,9 @@ class SeedData {
   }
 
   static List<TaskItem> tasks() {
-    return const [
-      TaskItem(
-        id: 'h1',
-        focusAreaId: 'household',
-        title: 'Legg tre ting pa plass.',
-        difficulty: 1,
-      ),
-      TaskItem(
-        id: 'h2',
-        focusAreaId: 'household',
-        title: 'Tork over kjokkenbenken i to minutter.',
-        difficulty: 1,
-      ),
-      TaskItem(
-        id: 'h3',
-        focusAreaId: 'household',
-        title: 'Rydd kjokkenet i ti minutter.',
-        difficulty: 2,
-      ),
-      TaskItem(
-        id: 'h4',
-        focusAreaId: 'household',
-        title: 'Sorter en liten hylle eller skuff.',
-        difficulty: 3,
-      ),
-      TaskItem(
+    return [
+      ...TaskLibrary.householdTasks(),
+      const TaskItem(
         id: 's1',
         focusAreaId: 'study',
         title: 'Les en kort side med notater.',
