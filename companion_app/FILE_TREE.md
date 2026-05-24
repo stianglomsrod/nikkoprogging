@@ -59,5 +59,6 @@ companion_app/
 ```
 
 Notes:
+
 - `build/`, `.dart_tool/`, IDE cache folders, and other generated outputs are intentionally excluded.
 - This file should be updated whenever the meaningful source structure changes.

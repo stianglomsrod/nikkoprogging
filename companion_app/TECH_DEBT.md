@@ -5,6 +5,7 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 ## Active Debt Items
 
 ### 1) Prototype data is hardcoded/local seed data
+
 - Status: Active (intentional)
 - Decision: Use hardcoded/local seed data for the first prototype instead of a database/backend.
 - Reason: Faster MVP flow validation with minimal architecture overhead.
@@ -18,6 +19,7 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - When core user flow is stable and we need persistent history, personalization accuracy, or multi-session continuity.
 
 ## Deferred Integrations (By Decision)
+
 - Riverpod
 - Drift + SQLite
 - `flutter_local_notifications`
