@@ -74,6 +74,7 @@ These are deferred by design and should only be introduced when explicitly reque
 - Document shortcuts, compromises, and deferred work in `TECH_DEBT.md`.
 - Surface blockers and uncertainties in your report.
 - Do not invent hidden requirements.
+- Use md-syntax in your report for easy copt-pasting to tech-lead AI
 
 ## Database direction
 
