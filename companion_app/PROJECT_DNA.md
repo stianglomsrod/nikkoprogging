@@ -44,6 +44,7 @@ Current implementation status:
 - Bottom actions do not require a large visible card/container.
 - Button labels should use readable larger text with leading capitals (`Tung`, `Ok`, `Energisk`, `Ja`, `Nei`).
 - Norwegian user-facing text must render correctly in UTF-8, including `å`, `ø`, and `æ`.
+- Home UI is split into smaller widgets (layout shell, dialogue box, and state-specific bottom action views), while `home_page.dart` remains the state/flow coordinator.
 
 ## Current Stack
 

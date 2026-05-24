@@ -39,7 +39,14 @@ companion_app/
 |        |- home_page.dart
 |        |- settings_page.dart
 |        |- widgets/
+|           |- bottom_action_area.dart
 |           |- companion_figure.dart
+|           |- dialogue_box.dart
+|           |- home_layout_shell.dart
+|           |- idle_state_view.dart
+|           |- mood_state_view.dart
+|           |- result_state_view.dart
+|           |- task_state_view.dart
 |- test/
 |  |- widget_test.dart
 |  |- core/

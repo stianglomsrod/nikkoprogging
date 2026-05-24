@@ -9,7 +9,14 @@ import 'package:companion_app/core/models/task_item.dart';
 import 'package:companion_app/core/scheduler/scheduler_engine.dart';
 import 'package:companion_app/core/seed_data/seed_data.dart';
 import 'package:companion_app/features/home/settings_page.dart';
+import 'package:companion_app/features/home/widgets/bottom_action_area.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
+import 'package:companion_app/features/home/widgets/dialogue_box.dart';
+import 'package:companion_app/features/home/widgets/home_layout_shell.dart';
+import 'package:companion_app/features/home/widgets/idle_state_view.dart';
+import 'package:companion_app/features/home/widgets/mood_state_view.dart';
+import 'package:companion_app/features/home/widgets/result_state_view.dart';
+import 'package:companion_app/features/home/widgets/task_state_view.dart';
 import 'package:flutter/material.dart';
 
 enum PromptStage { idle, mood, task, result }
@@ -205,67 +212,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 430),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  const Align(
-                    alignment: Alignment(0, -0.02),
-                    child: CompanionFigure(),
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: _buildDialogueField(context),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: _buildBottomActionArea(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDialogueField(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final lines = _dialogueLines();
-
-    return Container(
-      constraints: const BoxConstraints(minHeight: 96, maxHeight: 128),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest.withValues(alpha: 0.28),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: 0.55),
-          width: 1,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Text(
-        lines.join(' '),
-        textAlign: TextAlign.center,
-        maxLines: 4,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontSize: 19,
-          height: 1.28,
-          fontWeight: FontWeight.w500,
-        ),
+      body: HomeLayoutShell(
+        dialogue: DialogueBox(text: _dialogueLines().join(' ')),
+        figure: const CompanionFigure(),
+        bottomActions: BottomActionArea(child: _buildBottomActionState()),
       ),
     );
   }
@@ -298,99 +248,27 @@ class _HomePageState extends State<HomePage> {
     return [_resultMessage ?? 'Helt greit.'];
   }
 
-  Widget _buildBottomActionArea() {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 220),
-      child: _buildBottomActionState(),
-    );
-  }
-
   Widget _buildBottomActionState() {
     if (_stage == PromptStage.idle) {
-      return _buildBottomActions(
-        key: const ValueKey('actions-idle'),
-        children: [
-          FilledButton(
-            onPressed: _simulateNextPrompt,
-            child: const Text('Simuler neste prompt'),
-          ),
-        ],
-      );
+      return IdleStateView(onSimulate: _simulateNextPrompt);
     }
 
     if (_stage == PromptStage.mood) {
-      return _buildBottomActions(
-        key: const ValueKey('actions-mood'),
-        children: [
-          for (final mood in Sinnsstemning.values) ...[
-            FilledButton.tonal(
-              onPressed: () => _selectMood(mood),
-              child: Text(_moodLabel(mood)),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ],
+      return MoodStateView(
+        onSelectMood: _selectMood,
+        labelBuilder: _moodLabel,
       );
     }
 
     if (_stage == PromptStage.task) {
-      final task = _currentTask;
-      if (task == null) {
-        return _buildBottomActions(
-          key: const ValueKey('actions-task-empty'),
-          children: [
-            FilledButton.tonal(
-              onPressed: _resetToIdle,
-              child: const Text('Tilbake'),
-            ),
-          ],
-        );
-      }
-
-      return _buildBottomActions(
-        key: const ValueKey('actions-task'),
-        children: [
-          Text(
-            'Fikk du gjort oppgaven?',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 10),
-          FilledButton(
-            onPressed: () => _submitResult(true),
-            child: const Text('Ja'),
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton(
-            onPressed: () => _submitResult(false),
-            child: const Text('Nei'),
-          ),
-        ],
+      return TaskStateView(
+        hasTask: _currentTask != null,
+        onDone: () => _submitResult(true),
+        onSkipped: () => _submitResult(false),
+        onBack: _resetToIdle,
       );
     }
 
-    return _buildBottomActions(
-      key: const ValueKey('actions-result'),
-      children: [
-        FilledButton.tonal(
-          onPressed: _resetToIdle,
-          child: const Text('Tilbake'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomActions({
-    required Key key,
-    required List<Widget> children,
-  }) {
-    return Column(
-      key: key,
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: children,
-    );
+    return ResultStateView(onBack: _resetToIdle);
   }
 }

@@ -24,7 +24,7 @@ void main() {
     expect(find.text('Huslige oppgaver'), findsWidgets);
   });
 
-  testWidgets('viser oppgavetilstand med handlinger nederst', (
+  testWidgets('flyt gar fra stemning til oppgave og resultat', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const CompanionApp());
@@ -43,5 +43,10 @@ void main() {
     expect(find.text('Ja'), findsOneWidget);
     expect(find.text('Nei'), findsOneWidget);
     expect(find.text('Hva passer best for deg akkurat nå?'), findsNothing);
+
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tilbake'), findsOneWidget);
   });
 }
