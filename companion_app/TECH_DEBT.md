@@ -54,6 +54,29 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Persist recent outcomes/history so avoidance logic remains stable across sessions.
   - Keep non-punitive behavior as a fixed product rule.
 
+### 5) Enkel adaptiv logikk er heuristisk
+
+- Status: Active (intentional)
+- Decision: Prototypen bruker en enkel in-memory heuristikk for Oppgave-valg (mood-basert malvanskelighet + enkel suksessrate-justering).
+- Reason: Rask validering av flyt og produktforstaelse uten full adaptiv motor.
+- Risk:
+  - Forslag kan bli for enkle eller for krevende i kanttilfeller.
+  - Modellen representerer ikke langsiktig personalisering.
+- Future resolution:
+  - Innfor en mer robust adaptiv motor med tydelige regler per Fokusomrade.
+  - Bruk persistert historikk nar lagringslag er pa plass.
+
+### 6) Promptteller resettes ikke automatisk per nytt tidsvindu
+
+- Status: Active (intentional)
+- Decision: `Modus`-teller per Fokusomrade spores i minne, men nullstilles ikke automatisk ved nytt tidsvindu/dogn i denne prototypen.
+- Reason: Holder scheduler-simuleringen enkel i tidlig fase.
+- Risk:
+  - Tellelogikk avviker fra fremtidig produksjonsatferd over lengre bruk.
+- Future resolution:
+  - Legg til tydelig vindu/dogn-rotasjon i scheduler-komponenten.
+  - Knytt tellere til tidsvinduer i persistert modell senere.
+
 ## Deferred Integrations (By Decision)
 
 - Riverpod

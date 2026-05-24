@@ -13,6 +13,24 @@ companion_app/
 |- TECH_DEBT.md
 |- lib/
 |  |- main.dart
+|  |- app/
+|  |  |- companion_app.dart
+|  |- core/
+|  |  |- models/
+|  |  |  |- attempt_entry.dart
+|  |  |  |- focus_area.dart
+|  |  |  |- modus.dart
+|  |  |  |- sinnsstemning.dart
+|  |  |  |- task_item.dart
+|  |  |- scheduler/
+|  |  |  |- scheduler_engine.dart
+|  |  |- adaptive_engine/
+|  |  |  |- task_selector.dart
+|  |  |- seed_data/
+|  |     |- seed_data.dart
+|  |- features/
+|     |- home/
+|        |- home_page.dart
 |- test/
 |  |- widget_test.dart
 |- android/

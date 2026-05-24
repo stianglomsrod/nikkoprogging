@@ -18,10 +18,10 @@ Early prototype / flow-validation phase.
 
 Current implementation status:
 
-- Starter Flutter app scaffold is present.
-- Product-specific domain, adaptive logic, and structured feature modules are not implemented yet.
+- In-memory prototype UI and logic are implemented for setup, scheduler simulation, mood check, task selection, and Ja/Nei result flow.
+- Basic structured modules are present for models, scheduler logic, adaptive task selection, and seed data.
 - Data is intentionally local/hardcoded for first prototype iterations.
-- Scheduler behavior may be simulated manually in prototype UI (for example, a simulate-next-prompt action).
+- Scheduler behavior is currently simulated manually in prototype UI via "Simuler neste prompt".
 
 ## Current Stack
 
@@ -41,16 +41,19 @@ Current implementation status:
 ## Clarified Product Model
 
 ### Initial setup and settings
+
 - On first use, the user selects which focus/task areas they want help with.
 - Example focus areas: household tasks, study/learning, exercise, reminders.
 - Focus areas can be changed later in Settings.
 
 ### Per-focus-area configuration
+
 - Each focus area has its own active time window.
 - Each focus area has its own `Modus`.
 - There is no single global day tempo.
 
 `Modus` controls how many prompts/tasks that focus area can generate inside its own active time window:
+
 - `avslappet` = 1 task/prompt
 - `stabil` = 2 tasks/prompts
 - `sporty` = 3 tasks/prompts
@@ -58,6 +61,7 @@ Current implementation status:
 Multiple focus areas may be active at the same time and their windows may overlap.
 
 Example:
+
 - Household: 16:00-21:00, `stabil`
 - Study: 18:00-20:00, `avslappet`
 - Exercise: 15:00-19:00, `sporty`
@@ -65,10 +69,12 @@ Example:
 The scheduler must eventually respect each focus area independently.
 
 ### Ongoing UX flow (scheduler-oriented)
+
 - The product model is scheduler-oriented, not round/loop-oriented.
 - The app should not use a user-driven new-round lifecycle.
 
 Target flow:
+
 1. A prompt appears at a random time inside a configured active time window.
 2. The user opens the app.
 3. The app asks for current mood/sinnsstemning.
@@ -79,12 +85,14 @@ Target flow:
 8. The app updates history/success rate and future task selection.
 
 Important distinctions:
+
 - Mood/sinnsstemning is entered before each task.
 - Mood is not a day-start setting.
 - `Modus` is not mood.
 - `Modus` is a per-focus-area quota/frequency setting.
 
 ### Task selection behavior
+
 - Failed/skipped tasks must influence future selection.
 - The app should avoid immediate repetition of recently failed/skipped tasks.
 - Success rate should regulate suggested difficulty over time.
@@ -135,11 +143,13 @@ These are deferred by design and should only be introduced when explicitly reque
 ## Data and Infrastructure Direction
 
 Current state:
+
 - No database yet.
 - No backend yet.
 - No auth yet.
 - Hardcoded/local seed data is intentional technical debt for prototype speed.
 
 Later decision point:
+
 - The database/backend direction will be decided after core flow validation.
 - Any persistence/backend adoption should happen behind a repository boundary.
