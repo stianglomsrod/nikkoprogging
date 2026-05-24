@@ -1,10 +1,22 @@
 # companion_app
 
-A new Flutter project.
+A calm, low-stress companion/reminder app prototype built with Flutter.
 
-## Getting Started
+## Project Docs (Read First)
 
-This project is a starting point for a Flutter application.
+- `PROJECT_DNA.md`: product model, architecture direction, and persistent agent rules.
+- `FILE_TREE.md`: high-signal project structure snapshot.
+- `TECH_DEBT.md`: intentional shortcuts, deferred work, and future resolution notes.
+
+## Current Phase
+
+Early prototype / flow-validation.
+
+- Focus is on validating scheduler-oriented product flow and adaptive task behavior.
+- Hardcoded/local seed data is intentional for now.
+- No database/backend/auth/notifications/TTS yet.
+
+## Flutter Starter Resources
 
 A few resources to get you started if this is your first Flutter project:
 
