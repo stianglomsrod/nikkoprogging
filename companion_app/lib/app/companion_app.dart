@@ -37,7 +37,10 @@ class CompanionApp extends StatelessWidget {
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
             backgroundColor: scheme.primary.withValues(alpha: 0.9),
             foregroundColor: scheme.onPrimary,
             shape: RoundedRectangleBorder(
@@ -48,8 +51,13 @@ class CompanionApp extends StatelessWidget {
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.85)),
+            textStyle: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+            side: BorderSide(
+              color: scheme.outlineVariant.withValues(alpha: 0.85),
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
             ),

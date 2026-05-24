@@ -271,7 +271,9 @@ class _HomePageState extends State<HomePage> {
     if (_stage == PromptStage.task) {
       final task = _currentTask;
       if (task == null) {
-        return ['Jeg finner ingen oppgave akkurat nå. Vi kan prøve igjen snart.'];
+        return [
+          'Jeg finner ingen oppgave akkurat nå. Vi kan prøve igjen snart.',
+        ];
       }
 
       return <String?>[
