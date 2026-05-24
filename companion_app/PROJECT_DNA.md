@@ -33,9 +33,14 @@ Current implementation status:
 - Dialogue field is intentionally top-oriented and shown in a subtle bordered message-like area.
 - Companion dialogue text belongs in the top dialogue field (not below the figure).
 - Dialogue text should stay simple/clean, avoid awkward forced line breaks, and avoid focus-area labels in the dialogue field.
+- In task state, the top dialogue should primarily contain the task text itself (not combined with generic lead-ins and action questions).
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
+- Main screen should behave as stable top/middle/bottom zones so the figure keeps a consistent visual center across idle/mood/task/result states.
+- Top dialogue content should not push the figure downward.
 - Primary input/action buttons in active flow states are anchored near the bottom action area.
+- Action questions such as `Fikk du gjort oppgaven?` belong in the bottom action area directly above the relevant buttons.
+- Bottom action content should not push the figure upward.
 - Bottom actions do not require a large visible card/container.
 - Button labels should use readable larger text with leading capitals (`Tung`, `Ok`, `Energisk`, `Ja`, `Nei`).
 - Norwegian user-facing text must render correctly in UTF-8, including `å`, `ø`, and `æ`.

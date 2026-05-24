@@ -210,15 +210,28 @@ class _HomePageState extends State<HomePage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 430),
             child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  _buildDialogueField(context),
-                  const SizedBox(height: 16),
-                  const Expanded(child: Center(child: CompanionFigure())),
-                  const SizedBox(height: 16),
-                  _buildBottomActionArea(),
+                  const Align(
+                    alignment: Alignment(0, -0.02),
+                    child: CompanionFigure(),
+                  ),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: _buildDialogueField(context),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: _buildBottomActionArea(),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -233,6 +246,7 @@ class _HomePageState extends State<HomePage> {
     final lines = _dialogueLines();
 
     return Container(
+      constraints: const BoxConstraints(minHeight: 96, maxHeight: 128),
       decoration: BoxDecoration(
         color: colors.surfaceContainerHighest.withValues(alpha: 0.28),
         borderRadius: BorderRadius.circular(18),
@@ -245,6 +259,8 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         lines.join(' '),
         textAlign: TextAlign.center,
+        maxLines: 4,
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
           fontSize: 19,
           height: 1.28,
@@ -276,11 +292,7 @@ class _HomePageState extends State<HomePage> {
         ];
       }
 
-      return <String?>[
-        'Hva passer best for deg akkurat nå?',
-        task.title,
-        'Fikk du gjort oppgaven?',
-      ].whereType<String>().toList(growable: false);
+      return [task.title];
     }
 
     return [_resultMessage ?? 'Helt greit.'];
@@ -338,6 +350,14 @@ class _HomePageState extends State<HomePage> {
       return _buildBottomActions(
         key: const ValueKey('actions-task'),
         children: [
+          Text(
+            'Fikk du gjort oppgaven?',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 10),
           FilledButton(
             onPressed: () => _submitResult(true),
             child: const Text('Ja'),

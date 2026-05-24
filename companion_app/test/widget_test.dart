@@ -23,4 +23,25 @@ void main() {
     expect(find.text('Velg et Fokusområde'), findsOneWidget);
     expect(find.text('Huslige oppgaver'), findsWidgets);
   });
+
+  testWidgets('viser oppgavetilstand med handlinger nederst', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await tester.tap(find.text('Simuler neste prompt'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tung'), findsOneWidget);
+    expect(find.text('Ok'), findsOneWidget);
+    expect(find.text('Energisk'), findsOneWidget);
+
+    await tester.tap(find.text('Ok'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fikk du gjort oppgaven?'), findsOneWidget);
+    expect(find.text('Ja'), findsOneWidget);
+    expect(find.text('Nei'), findsOneWidget);
+    expect(find.text('Hva passer best for deg akkurat nå?'), findsNothing);
+  });
 }
