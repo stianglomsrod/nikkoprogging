@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
         _currentMood = null;
         _currentTask = null;
         _statusMessage =
-            'Ingen fokusområder er klare akkurat nå. Du kan justere rammene i Innstillinger.';
+            'Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.';
         return;
       }
 
@@ -105,6 +105,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       if (shouldStartChain && task != null) {
         _energiskChain.activateChainWithFirstTask(task.id);
+      } else if (shouldStartChain && task == null) {
+        _energiskChain.completeChainCycle();
       } else {
         _energiskChain.deactivateChain();
       }
@@ -211,6 +213,7 @@ class _HomePageState extends State<HomePage> {
       _currentMood = null;
       _currentTask = null;
       _statusMessage = null;
+      _resultMessage = null;
     });
   }
 
@@ -265,7 +268,13 @@ class _HomePageState extends State<HomePage> {
       ),
       body: HomeLayoutShell(
         dialogue: DialogueBox(text: _dialogueLines().join(' ')),
-        figure: const CompanionFigure(),
+        figure: _stage == PromptStage.result
+            ? GestureDetector(
+                onTap: _resetToIdle,
+                behavior: HitTestBehavior.translucent,
+                child: const CompanionFigure(),
+              )
+            : const CompanionFigure(),
         bottomActions: BottomActionArea(child: _buildBottomActionState()),
       ),
     );

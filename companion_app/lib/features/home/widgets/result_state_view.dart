@@ -11,7 +11,7 @@ class ResultStateView extends StatelessWidget {
     return BottomActionGroup(
       groupKey: const ValueKey('actions-result'),
       children: [
-        FilledButton.tonal(onPressed: onBack, child: const Text('Tilbake')),
+        FilledButton.tonal(onPressed: onBack, child: const Text('Fortsett')),
       ],
     );
   }

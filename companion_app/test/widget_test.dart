@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 
 import 'package:companion_app/app/companion_app.dart';
+import 'package:companion_app/features/home/widgets/companion_figure.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
 
 void main() {
@@ -33,9 +35,9 @@ void main() {
     await tester.tap(find.text('Simuler neste prompt'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tung'), findsOneWidget);
-    expect(find.text('Ok'), findsOneWidget);
     expect(find.text('Energisk'), findsOneWidget);
+    expect(find.text('Ok'), findsOneWidget);
+    expect(find.text('Tung'), findsOneWidget);
 
     await tester.tap(find.text('Ok'));
     await tester.pumpAndSettle();
@@ -48,7 +50,53 @@ void main() {
     await tester.tap(find.text('Ja'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tilbake'), findsOneWidget);
+    expect(find.text('Fortsett'), findsOneWidget);
+  });
+
+  testWidgets('stemningsknapper vises i rekkefolge Energisk, Ok, Tung', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await tester.tap(find.text('Simuler neste prompt'));
+    await tester.pumpAndSettle();
+
+    final moodButtons = tester.widgetList<FilledButton>(
+      find.descendant(
+        of: find.byKey(const ValueKey('actions-mood')),
+        matching: find.byType(FilledButton),
+      ),
+    );
+
+    final labels = moodButtons
+        .map((button) {
+          final child = button.child;
+          if (child is Text) {
+            return child.data;
+          }
+          return null;
+        })
+        .whereType<String>()
+        .toList(growable: false);
+
+    expect(labels, ['Energisk', 'Ok', 'Tung']);
+  });
+
+  testWidgets('idle viser vennlig ingen-oppgaver-kopi nar kvoter er brukt opp', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    for (int i = 0; i < 7; i++) {
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+    }
+
+    await tester.tap(find.text('Simuler neste prompt'));
+    await tester.pumpAndSettle();
+
+    final dialogue = _currentDialogueText(tester).toLowerCase();
+    expect(dialogue, contains('fint å se deg'));
+    expect(dialogue, contains('ingen oppgaver til deg akkurat nå'));
   });
 
   testWidgets('forste energisk utloser ikke kjede alene', (
@@ -62,7 +110,7 @@ void main() {
     await tester.tap(find.text('Ja'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tilbake'), findsOneWidget);
+    expect(find.text('Fortsett'), findsOneWidget);
   });
 
   testWidgets('andre energisk pa rad utloser tokjedeutgave uten ny mood', (
@@ -86,7 +134,7 @@ void main() {
     await tester.tap(find.text('Ja'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tilbake'), findsOneWidget);
+    expect(find.text('Fortsett'), findsOneWidget);
   });
 
   testWidgets('etter andre kjedeutgave resettes kjeden', (
@@ -101,14 +149,14 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Ja'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Tilbake'));
+    await tester.tap(find.text('Fortsett'));
     await tester.pumpAndSettle();
 
     await _startPromptAndPickMood(tester, 'Energisk');
     await tester.tap(find.text('Ja'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tilbake'), findsOneWidget);
+    expect(find.text('Fortsett'), findsOneWidget);
   });
 
   testWidgets('ikke-energisk bryter energisk-sekvensen', (
@@ -123,7 +171,7 @@ void main() {
     await tester.tap(find.text('Nei'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Tilbake'), findsOneWidget);
+    expect(find.text('Fortsett'), findsOneWidget);
   });
 
   testWidgets('andre kjedeutgave unngar a repetere forste oppgave nar mulig', (
@@ -141,6 +189,53 @@ void main() {
 
     final secondTaskText = _currentDialogueText(tester);
     expect(secondTaskText, isNot(equals(firstTaskText)));
+  });
+
+  testWidgets('tapping figur i resultattilstand fortsetter til idle', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _startPromptAndPickMood(tester, 'Ok');
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fortsett'), findsOneWidget);
+
+    await tester.tap(find.byType(CompanionFigure));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Simuler neste prompt'), findsOneWidget);
+  });
+
+  testWidgets('energisk-kjede fullforer og flyten forblir brukbar etterpa', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _runSinglePromptAndFinish(tester, moodLabel: 'Energisk', done: true);
+
+    await _startPromptAndPickMood(tester, 'Energisk');
+    expect(find.text('Fikk du gjort oppgaven?'), findsOneWidget);
+
+    await tester.tap(find.text('Nei'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fikk du gjort oppgaven?'), findsOneWidget);
+    expect(find.byKey(const ValueKey('actions-mood')), findsNothing);
+
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fortsett'), findsOneWidget);
+    await tester.tap(find.text('Fortsett'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Simuler neste prompt'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('actions-mood')), findsOneWidget);
+    expect(find.text('Energisk'), findsOneWidget);
   });
 }
 
@@ -163,7 +258,7 @@ Future<void> _runSinglePromptAndFinish(
   await _startPromptAndPickMood(tester, moodLabel);
   await tester.tap(find.text(done ? 'Ja' : 'Nei'));
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Tilbake'));
+  await tester.tap(find.text('Fortsett'));
   await tester.pumpAndSettle();
 }
 

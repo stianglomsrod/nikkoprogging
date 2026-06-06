@@ -14,10 +14,16 @@ class MoodStateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const orderedMoods = [
+      Sinnsstemning.energisk,
+      Sinnsstemning.ok,
+      Sinnsstemning.negativ,
+    ];
+
     return BottomActionGroup(
       groupKey: const ValueKey('actions-mood'),
       children: [
-        for (final mood in Sinnsstemning.values) ...[
+        for (final mood in orderedMoods) ...[
           FilledButton.tonal(
             onPressed: () => onSelectMood(mood),
             child: Text(labelBuilder(mood)),

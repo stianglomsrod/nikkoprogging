@@ -34,6 +34,7 @@ Current implementation status:
 - Companion dialogue text belongs in the top dialogue field (not below the figure).
 - Dialogue text should stay simple/clean, avoid awkward forced line breaks, and avoid focus-area labels in the dialogue field.
 - In task state, the top dialogue should primarily contain the task text itself (not combined with generic lead-ins and action questions).
+- When no prompt/task is available right now, idle dialogue should use friendly pre-name-event copy (for example: `Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.`).
 - Energisk chain rule is now part of prototype behavior: two consecutive `Energisk` mood selections trigger a temporary two-task chain.
 - In an active energisk chain, the second task appears directly after the first task result (no additional mood prompt between those two tasks).
 - Energisk chain is exactly two tasks and resets after the second task result.
@@ -45,6 +46,8 @@ Current implementation status:
 - Top dialogue content should not push the figure downward.
 - Primary input/action buttons in active flow states are anchored near the bottom action area.
 - Action questions such as `Fikk du gjort oppgaven?` belong in the bottom action area directly above the relevant buttons.
+- Result-state primary action label is `Fortsett`.
+- In result state, tapping the companion figure should perform the same continue action as `Fortsett`.
 - Bottom action content should not push the figure upward.
 - Bottom actions do not require a large visible card/container.
 - Button labels should use readable larger text with leading capitals (`Tung`, `Ok`, `Energisk`, `Ja`, `Nei`).
