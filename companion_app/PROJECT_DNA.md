@@ -34,6 +34,11 @@ Current implementation status:
 - Companion dialogue text belongs in the top dialogue field (not below the figure).
 - Dialogue text should stay simple/clean, avoid awkward forced line breaks, and avoid focus-area labels in the dialogue field.
 - In task state, the top dialogue should primarily contain the task text itself (not combined with generic lead-ins and action questions).
+- Energisk chain rule is now part of prototype behavior: two consecutive `Energisk` mood selections trigger a temporary two-task chain.
+- In an active energisk chain, the second task appears directly after the first task result (no additional mood prompt between those two tasks).
+- Energisk chain is exactly two tasks and resets after the second task result.
+- Completion (`Ja`/`Nei`) on the first task does not decide whether the second chain task appears.
+- Energisk chain transitions are extracted into a dedicated helper (`lib/core/flow/energisk_chain_controller.dart`) so `home_page.dart` can stay focused on UI coordination.
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Main screen should behave as stable top/middle/bottom zones so the figure keeps a consistent visual center across idle/mood/task/result states.
@@ -110,10 +115,21 @@ Target flow:
 Important distinctions:
 
 - Mood/sinnsstemning is entered before each task.
+- Exception: in an active energisk chain, task number two skips the mood prompt and goes directly to task presentation.
 - Mood is not a day-start setting.
 - `Modus` is not mood.
 - `Modus` is a per-focus-area quota/frequency setting.
 - User-facing mood labels in UI are `tung`, `ok`, `energisk` (internal model may still use `negativ`).
+
+### Energisk two-task chain rule (prototype)
+
+- Chain trigger: the user selects `Energisk` two mood prompts in a row.
+- Chain length: exactly two tasks total in that trigger cycle.
+- Task 1: shown after the second consecutive `Energisk` mood input.
+- Task 2: shown directly after Task 1 receives `Ja` or `Nei`, without a new mood question.
+- Chain completion: after Task 2 receives `Ja` or `Nei`, chain state resets.
+- Re-triggering: user must later provide two new consecutive `Energisk` mood inputs to trigger a new two-task chain.
+- Non-punitive rule remains unchanged: `Nei` must not trigger punitive language or behavior.
 
 ### Task selection behavior
 
@@ -160,12 +176,14 @@ These are deferred by design and should only be introduced when explicitly reque
 - Keep adaptive logic separate from UI code.
 - Do not add backend, database, authentication, notifications, or TTS unless explicitly requested.
 - Prefer small, understandable architecture over premature abstraction.
+- Follow Flutter/mobile best practice by extracting distinct UI/flow/product-rule behaviors into small, focused widgets/helpers/controllers instead of allowing monolithic files to grow.
+- When product logic becomes a distinct rule (for example chain behaviors), place it in an appropriately named core/helper module and add tests when practical.
 - Document file-structure changes in `FILE_TREE.md`.
 - Document project decisions and onboarding context in `PROJECT_DNA.md`.
 - Document shortcuts, compromises, and deferred work in `TECH_DEBT.md`.
 - Surface blockers and uncertainties in your report.
 - Do not invent hidden requirements.
-- When creating, changing, moving, or deleting files, always report the full relative path from the project root. Do not report only filenames. Examples: `lib/features/home/home_page.dart`, `lib/core/content/companion_text_library.dart`, `test/core/scheduler/scheduler_engine_test.dart`.
+- When creating, changing, moving, deleting, or reading files, always report the full relative path from the project root. Do not report only filenames. Examples: `lib/features/home/home_page.dart`, `lib/core/content/companion_text_library.dart`, `test/core/scheduler/scheduler_engine_test.dart`.
 
 ## Data and Infrastructure Direction
 

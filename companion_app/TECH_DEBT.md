@@ -128,6 +128,18 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 - Future resolution:
   - Utvid innholdsbiblioteket med tilsvarende oppgavebanker for studier, trening og paminnelser.
 
+### 12) Energisk-kjede er forelopig kun runtime-basert
+
+- Status: Active (intentional)
+- Decision: To-oppgavekjede etter to pa rad `Energisk` spores kun i minne via egen helper (`lib/core/flow/energisk_chain_controller.dart`).
+- Reason: Holder prototypelogikken liten og enkel i valideringsfasen.
+- Risk:
+  - Hvis appen lukkes midt i en aktiv kjede, gjenopptas ikke kjedetilstand ved restart.
+  - Samspill mellom kjedeoppgave nummer to og fremtidig `Modus`/kvotelogikk er valgt minimalt i denne passeringen.
+- Future resolution:
+  - Persist kjedetilstand nar persisteringslag prioriteres.
+  - Avklar og implementer endelig kvotepolicy mellom scheduler-prompt og intern kjedeoppgave i senere modell.
+
 ## Deferred Integrations (By Decision)
 
 - Riverpod

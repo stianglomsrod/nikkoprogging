@@ -21,6 +21,8 @@ companion_app/
 |  |- core/
 |  |  |- content/
 |  |  |  |- companion_text_library.dart
+|  |  |- flow/
+|  |  |  |- energisk_chain_controller.dart
 |  |  |- models/
 |  |  |  |- attempt_entry.dart
 |  |  |  |- focus_area.dart
@@ -50,6 +52,8 @@ companion_app/
 |- test/
 |  |- widget_test.dart
 |  |- core/
+|  |  |- flow/
+|  |  |  |- energisk_chain_controller_test.dart
 |  |  |- scheduler/
 |  |  |  |- scheduler_engine_test.dart
 |  |  |- adaptive_engine/

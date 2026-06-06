@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:companion_app/core/content/companion_text_library.dart';
 import 'package:companion_app/core/adaptive_engine/task_selector.dart';
+import 'package:companion_app/core/flow/energisk_chain_controller.dart';
 import 'package:companion_app/core/models/attempt_entry.dart';
 import 'package:companion_app/core/models/focus_area.dart';
 import 'package:companion_app/core/models/sinnsstemning.dart';
@@ -31,6 +32,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final SchedulerEngine _scheduler = SchedulerEngine();
   final TaskSelector _selector = TaskSelector();
+  final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
 
   late List<FocusArea> _focusAreas;
@@ -92,15 +94,21 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    final task = _selector.selectTask(
+    _energiskChain.onMoodSelected(mood);
+    final shouldStartChain = _energiskChain.shouldStartChain;
+    final task = _selectTask(
       focusAreaId: area.id,
       mood: mood,
-      allTasks: _allTasks,
-      history: _attemptHistory,
-      recentFailedTaskIds: _recentFailedTaskIds,
+      blockedTaskIds: const <String>[],
     );
 
     setState(() {
+      if (shouldStartChain && task != null) {
+        _energiskChain.activateChainWithFirstTask(task.id);
+      } else {
+        _energiskChain.deactivateChain();
+      }
+
       _currentMood = mood;
       _currentTask = task;
       _stage = PromptStage.task;
@@ -139,9 +147,51 @@ class _HomePageState extends State<HomePage> {
         }
       }
 
+      if (_energiskChain.shouldSkipMoodPrompt) {
+        final nextTask = _selectTask(
+          focusAreaId: area.id,
+          mood: Sinnsstemning.energisk,
+          blockedTaskIds: _energiskChain.usedTaskIds,
+        );
+
+        if (nextTask != null) {
+          _currentTask = nextTask;
+          _currentMood = Sinnsstemning.energisk;
+          _energiskChain.markFollowUpTaskStarted(nextTask.id);
+          _stage = PromptStage.task;
+          return;
+        }
+
+        _energiskChain.completeChainCycle();
+      }
+
+      if (_energiskChain.isChainActive &&
+          !_energiskChain.hasPendingFollowUpTask) {
+        _energiskChain.completeChainCycle();
+      }
+
       _resultMessage = _pickResultMessage(done);
       _stage = PromptStage.result;
     });
+  }
+
+  TaskItem? _selectTask({
+    required String focusAreaId,
+    required Sinnsstemning mood,
+    required List<String> blockedTaskIds,
+  }) {
+    final excluded = <String>{
+      ..._recentFailedTaskIds,
+      ...blockedTaskIds,
+    }.toList(growable: false);
+
+    return _selector.selectTask(
+      focusAreaId: focusAreaId,
+      mood: mood,
+      allTasks: _allTasks,
+      history: _attemptHistory,
+      recentFailedTaskIds: excluded,
+    );
   }
 
   String _pickResultMessage(bool done) {
@@ -160,6 +210,7 @@ class _HomePageState extends State<HomePage> {
       _activeFocusArea = null;
       _currentMood = null;
       _currentTask = null;
+      _statusMessage = null;
     });
   }
 
