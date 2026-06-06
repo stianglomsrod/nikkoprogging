@@ -171,9 +171,9 @@ Important distinctions:
 - Persistence/history layer
 - Database/backend decision (local DB, backend, or both)
 - Product roadmap epics are documented under `docs/epics/`:
-	- `docs/epics/EPIC_COMPANION_EVENTS.md`
-	- `docs/epics/EPIC_HISTORY_AND_STATS.md`
-	- `docs/epics/EPIC_GLOBAL_FEEDBACK.md`
+  - `docs/epics/EPIC_COMPANION_EVENTS.md`
+  - `docs/epics/EPIC_HISTORY_AND_STATS.md`
+  - `docs/epics/EPIC_GLOBAL_FEEDBACK.md`
 - Riverpod (only if explicitly requested later)
 - `flutter_local_notifications`
 - `flutter_tts`

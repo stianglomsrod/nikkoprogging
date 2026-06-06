@@ -1,20 +1,24 @@
 # EPIC: Companion Events and Unlocks
 
 ## Purpose
+
 Define a calm, non-punitive progression system where small companion identity moments unlock over time based on completed tasks.
 
 ## User Value
+
 - Gives a soft sense of development and companionship without pressure.
 - Makes the companion feel more personal over time.
 - Keeps motivation gentle and identity-based rather than performance-based.
 
 ## Scope
+
 - Event unlock sequence tied to completed task count (`Ja` only).
 - One-time automatic event triggers at specific thresholds.
 - Post-unlock settings management for unlocked identity/personalization items.
 - Event copy and flow guidelines aligned with calm tone.
 
 ## Out of Scope for Now
+
 - UI implementation of event modals/screens.
 - Any audio playback or audio-engine implementation.
 - New packages/dependencies.
@@ -24,6 +28,7 @@ Define a calm, non-punitive progression system where small companion identity mo
 ## Trigger and Entry Points
 
 ### Global counting rule
+
 - Counter uses completed tasks only (`Ja`).
 - `Nei` / skipped / not completed does not increment unlock progress.
 - Energisk chain tasks count individually if completed:
@@ -32,6 +37,7 @@ Define a calm, non-punitive progression system where small companion identity mo
 ### Event thresholds and behavior
 
 #### 3 completed tasks: Companion name event
+
 - Event id: `event_companion_name`
 - Trigger: after 3 completed tasks.
 - Prompt: `Vil du gi meg et navn?`
@@ -43,6 +49,7 @@ Define a calm, non-punitive progression system where small companion identity mo
   - User can set/change companion name later in Settings.
 
 #### 6 completed tasks: User name event
+
 - Event id: `event_user_name`
 - Trigger: after 6 completed tasks.
 - Prompt: `Hva heter du?`
@@ -54,6 +61,7 @@ Define a calm, non-punitive progression system where small companion identity mo
   - User can set/change later in Settings.
 
 #### 9 completed tasks: Sleep sound event
+
 - Event id: `event_sleep_sound`
 - Trigger: after 9 completed tasks.
 - Prompt: `Vil du ha rolig lyd når du skal sove?`
@@ -75,6 +83,7 @@ Define a calm, non-punitive progression system where small companion identity mo
   - If disabled, no automatic behavior.
 
 #### 12 completed tasks: Background music event
+
 - Event id: `event_background_music`
 - Trigger: after 12 completed tasks.
 - Prompt: `Hva slags lyd vil du ha i bakgrunnen når du bruker meg?`
@@ -91,6 +100,7 @@ Define a calm, non-punitive progression system where small companion identity mo
   - Applies immediately and for later sessions once persistence exists.
 
 #### 15 completed tasks: Symbol event
+
 - Event id: `event_symbol`
 - Trigger: after 15 completed tasks.
 - Prompt: `Vil du velge et lite symbol som kan være en del av meg?`
@@ -110,6 +120,7 @@ Define a calm, non-punitive progression system where small companion identity mo
   - Can be changed later in Settings.
 
 #### 18 completed tasks: Background color event
+
 - Event id: `event_background_color`
 - Trigger: after 18 completed tasks.
 - Prompt: `Hvilken farge føles best for deg i appen?`
@@ -127,6 +138,7 @@ Define a calm, non-punitive progression system where small companion identity mo
   - Can be changed later in Settings.
 
 ## UX Flow
+
 - Unlock checks happen after result handling, not during active task interaction.
 - Suggested presentation timing:
   1. User completes threshold task with `Ja`.
@@ -138,7 +150,9 @@ Define a calm, non-punitive progression system where small companion identity mo
   - Skip is always available.
 
 ## Data Implications
+
 Likely future data concepts:
+
 - Completed-task counter (`Ja` outcomes only).
 - Event unlock state by event id (locked/unlocked/completed/skipped).
 - One-time trigger flags for automatic event presentation.
@@ -152,6 +166,7 @@ Likely future data concepts:
   - background sound choice and enabled flag
 
 ## Persistence/Backend Implications
+
 - Requires local persistence to avoid retriggering events and to keep identity choices.
 - Fits planned local-first approach (Drift + SQLite likely later).
 - Backend sync is optional future work; not required for initial MVP.
@@ -161,6 +176,7 @@ Likely future data concepts:
   - background behavior
 
 ## Risks and Open Questions
+
 - Exact threshold boundary behavior if multiple completions are processed close together.
 - Whether multiple pending unlocks should queue or show one per session.
 - Name validation constraints (length, allowed characters, profanity handling) for future implementation.
@@ -168,6 +184,7 @@ Likely future data concepts:
 - How much event copy variation is needed to avoid repetition.
 
 ## Suggested Implementation Phases
+
 1. Persisted unlock engine foundation:
    - completed-task counting rule (`Ja` only)
    - event state machine
@@ -178,6 +195,7 @@ Likely future data concepts:
 5. Audio playback implementation and lifecycle decisions.
 
 ## Acceptance Criteria for a Future MVP
+
 - Event thresholds 3/6/9/12/15/18 are tracked from completed tasks (`Ja`) only.
 - Energisk chain completions count per completed task.
 - Automatic trigger for each event happens at most once.

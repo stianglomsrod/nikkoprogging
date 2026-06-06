@@ -43,13 +43,13 @@ Likely future data areas:
 - completed-task counter based on `Ja` outcomes
 - unlock state per event id and one-time auto-trigger flags
 - companion identity preferences:
-	- companion name
-	- user name
-	- symbol
-	- background color
+  - companion name
+  - user name
+  - symbol
+  - background color
 - sound preference placeholders:
-	- sleep sound choice + enabled/disabled
-	- background sound choice + enabled/disabled
+  - sleep sound choice + enabled/disabled
+  - background sound choice + enabled/disabled
 
 ### History and statistics
 
