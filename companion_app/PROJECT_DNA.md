@@ -174,6 +174,8 @@ Important distinctions:
   - `docs/epics/EPIC_COMPANION_EVENTS.md`
   - `docs/epics/EPIC_HISTORY_AND_STATS.md`
   - `docs/epics/EPIC_GLOBAL_FEEDBACK.md`
+- Companion events implementation slicing is documented in:
+  - `docs/plans/PLAN_COMPANION_EVENTS.md`
 - Riverpod (only if explicitly requested later)
 - `flutter_local_notifications`
 - `flutter_tts`

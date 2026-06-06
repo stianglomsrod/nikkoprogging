@@ -42,6 +42,8 @@ Likely future data areas:
 
 - completed-task counter based on `Ja` outcomes
 - unlock state per event id and one-time auto-trigger flags
+- event seen/triggered timestamps
+- skipped-event flags
 - companion identity preferences:
   - companion name
   - user name
@@ -50,6 +52,7 @@ Likely future data areas:
 - sound preference placeholders:
   - sleep sound choice + enabled/disabled
   - background sound choice + enabled/disabled
+- attempt-to-threshold linkage metadata (whether a task attempt contributed to unlock progress)
 
 ### History and statistics
 
