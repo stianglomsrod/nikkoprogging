@@ -138,7 +138,7 @@ class CompanionTextLibrary {
     ],
     'energisk': [
       'Sterkt levert!',
-      'Du far ting gjort.',
+      'Du får ting gjort.',
       'Skikkelig bra tempo!',
       'Dette flyter bra!',
       'God driv i dag!',

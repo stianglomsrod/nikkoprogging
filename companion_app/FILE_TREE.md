@@ -63,12 +63,18 @@ companion_app/
 |        |- home_page.dart
 |        |- settings_page.dart
 |        |- widgets/
+|           |- active_time_range_control.dart
 |           |- bottom_action_area.dart
 |           |- companion_figure.dart
 |           |- dialogue_box.dart
+|           |- focus_area_circle_button.dart
+|           |- focus_area_circle_selector.dart
+|           |- focus_area_settings_panel.dart
 |           |- home_layout_shell.dart
 |           |- idle_state_view.dart
 |           |- mood_state_view.dart
+|           |- modus_selector.dart
+|           |- prototype_time_panel.dart
 |           |- result_state_view.dart
 |           |- task_state_view.dart
 |- test/

@@ -28,6 +28,7 @@ Current implementation status:
 - The visible `.....` placeholder is centered in the top app bar.
 - Companion figure placement is below intro/dialogue text and above user inputs in the main flow.
 - Settings now show focus areas as circles first; controls appear for the selected area only.
+- Settings UI is split into smaller focused widgets (circle selector, selected-area settings panel, and focused controls), while `settings_page.dart` remains the coordinator.
 - A local Dart content/task library now stores prototype messages and task text adapted from the uploaded `texts.py` source.
 - App-wide visual direction is dark, calm, and low-stimuli, tuned toward deep navy/blue-black surfaces and muted blue accents.
 - Dialogue field is intentionally top-oriented and shown in a subtle bordered message-like area.

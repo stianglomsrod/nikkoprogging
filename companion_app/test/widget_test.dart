@@ -49,6 +49,15 @@ void main() {
     expect(find.text('Innstillinger'), findsOneWidget);
     expect(find.text('Velg et Fokusområde'), findsOneWidget);
     expect(find.text('Huslige oppgaver'), findsWidgets);
+    expect(find.text('Modus'), findsOneWidget);
+    expect(find.text('Aktivt tidsrom'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('focus-area-circle-study')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Studier og læring'), findsWidgets);
+    expect(find.byType(ChoiceChip), findsNWidgets(3));
+    expect(find.byType(RangeSlider), findsOneWidget);
   });
 
   testWidgets('flyt gar fra stemning til oppgave og resultat', (
