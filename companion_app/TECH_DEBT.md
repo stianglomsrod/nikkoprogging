@@ -153,6 +153,40 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Erstatt med endelige produksjonsassets nar visuell retning er ferdig.
   - Behold eller forenkle verktoyflyten avhengig av endelig art pipeline.
 
+### 14) Companion-events/unlocks er dokumentert, men ikke implementert
+
+- Status: Active (intentional)
+- Decision: Event-sekvens for unlocks (3/6/9/12/15/18 fullforte oppgaver) er dokumentert i roadmap-epic, men ikke implementert i appflyten enn.
+- Reason: Krever persistert tilstand for teller, engangs-trigger og innstillingsstyrte valg.
+- Risk:
+  - Placeholder-navn `.....` blir staende inntil navneevent/innstillinger for navn er implementert.
+  - Produktforventninger rundt unlocks kan oppsta for testere for funksjonen finnes.
+- Future resolution:
+  - Implementer unlock-state-maskin bak repository/persisteringslag.
+  - Legg til rolige event-flyter etter resultat-state uten a avbryte oppgaveflyt.
+
+### 15) Historikk/statistikk er roadmap-only og avhenger av persistering
+
+- Status: Active (intentional)
+- Decision: Historikk/statistikk med dag-/uke-/maned-/arsvisning er dokumentert, men ikke implementert i prototypen.
+- Reason: Krever vedvarende data over tid for oppgaver, stemning og hendelser.
+- Risk:
+  - Bruker far ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.
+- Future resolution:
+  - Etabler persistering for attempts/mood/events.
+  - Bygg deretter rolige visualiseringer og oppsummeringer uten press-språk.
+
+### 16) Global feedback-system er roadmap-only og avhenger av lagring/sync
+
+- Status: Active (intentional)
+- Decision: Global feedbackknapp med automatisk skjermbilde, historikk og offline-kø er dokumentert, men ikke implementert.
+- Reason: Krever skjermbildehåndtering, lokal lagring, metadata, offline-kø og senere sync-strategi.
+- Risk:
+  - Testere mangler innebygd tilbakemeldingskanal direkte i appen.
+- Future resolution:
+  - Start med lokal feedback-flyt + historikk.
+  - Legg til offline retry/sync etter at persistering er etablert.
+
 ## Deferred Integrations (By Decision)
 
 - Riverpod

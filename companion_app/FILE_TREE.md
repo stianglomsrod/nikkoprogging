@@ -10,7 +10,13 @@ companion_app/
 |- README.md
 |- PROJECT_DNA.md
 |- FILE_TREE.md
+|- DB_NOTES.md
 |- TECH_DEBT.md
+|- docs/
+|  |- epics/
+|  |  |- EPIC_COMPANION_EVENTS.md
+|  |  |- EPIC_HISTORY_AND_STATS.md
+|  |  |- EPIC_GLOBAL_FEEDBACK.md
 |- assets/
 |  |- animations/
 |  |  |- companion/

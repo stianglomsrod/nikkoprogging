@@ -6,7 +6,9 @@ A calm, low-stress companion/reminder app prototype built with Flutter.
 
 - `PROJECT_DNA.md`: product model, architecture direction, and persistent agent rules.
 - `FILE_TREE.md`: high-signal project structure snapshot.
+- `DB_NOTES.md`: persistence direction and database planning notes.
 - `TECH_DEBT.md`: intentional shortcuts, deferred work, and future resolution notes.
+- `docs/epics/`: roadmap epics for planned features not yet implemented.
 
 ## Current Phase
 

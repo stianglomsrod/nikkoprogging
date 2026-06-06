@@ -30,3 +30,47 @@ Future backend options:
 
 - Supabase/Postgres for account, backup, sync and remote task catalog
 - Firebase only if realtime/cloud-first features become central
+
+## Future Data Implications from Planned Epics
+
+No new database implementation is introduced now.
+These are planning notes only for future local-first persistence work.
+
+### Companion events and unlocks
+
+Likely future data areas:
+
+- completed-task counter based on `Ja` outcomes
+- unlock state per event id and one-time auto-trigger flags
+- companion identity preferences:
+	- companion name
+	- user name
+	- symbol
+	- background color
+- sound preference placeholders:
+	- sleep sound choice + enabled/disabled
+	- background sound choice + enabled/disabled
+
+### History and statistics
+
+Likely future data areas:
+
+- persisted task attempt history with timestamps
+- persisted mood history with timestamps
+- event/unlock timeline history
+- derived daily/weekly/monthly aggregates or summary snapshots
+
+### Global feedback
+
+Likely future data areas:
+
+- feedback reports (text, type, timestamp, context)
+- screenshot/attachment references and storage linkage
+- offline sync status fields (queued/sent/failed, retry metadata)
+- optional draft/canceled feedback preservation metadata
+
+### Direction reminder
+
+- Database status remains unchanged: no database implemented yet.
+- Local-first persistence remains the planned path.
+- Drift + SQLite remains likely/preferred for local metadata when persistence work starts.
