@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:companion_app/core/content/companion_text_library.dart';
@@ -30,6 +31,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const Duration _happyAnimationDuration = Duration(milliseconds: 2200);
+
   final SchedulerEngine _scheduler = SchedulerEngine();
   final TaskSelector _selector = TaskSelector();
   final EnergiskChainController _energiskChain = EnergiskChainController();
@@ -50,12 +53,21 @@ class _HomePageState extends State<HomePage> {
   TaskItem? _currentTask;
   String? _statusMessage;
   String? _resultMessage;
+  CompanionAnimationState _companionAnimationState =
+      CompanionAnimationState.idle;
+  Timer? _happyResetTimer;
 
   @override
   void initState() {
     super.initState();
     _focusAreas = SeedData.focusAreas();
     _allTasks = SeedData.tasks();
+  }
+
+  @override
+  void dispose() {
+    _happyResetTimer?.cancel();
+    super.dispose();
   }
 
   void _simulateNextPrompt() {
@@ -76,6 +88,7 @@ class _HomePageState extends State<HomePage> {
         _currentTask = null;
         _statusMessage =
             'Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.';
+        _setCompanionToDefaultAnimation();
         return;
       }
 
@@ -85,6 +98,7 @@ class _HomePageState extends State<HomePage> {
       _currentTask = null;
       _stage = PromptStage.mood;
       _statusMessage = null;
+      _setCompanionToDefaultAnimation();
     });
   }
 
@@ -114,6 +128,7 @@ class _HomePageState extends State<HomePage> {
       _currentMood = mood;
       _currentTask = task;
       _stage = PromptStage.task;
+      _setCompanionToDefaultAnimation();
       if (task == null) {
         _statusMessage = 'Fant ingen oppgave for ${area.name} akkurat nå.';
       }
@@ -161,6 +176,7 @@ class _HomePageState extends State<HomePage> {
           _currentMood = Sinnsstemning.energisk;
           _energiskChain.markFollowUpTaskStarted(nextTask.id);
           _stage = PromptStage.task;
+          _setCompanionToDefaultAnimation();
           return;
         }
 
@@ -174,6 +190,41 @@ class _HomePageState extends State<HomePage> {
 
       _resultMessage = _pickResultMessage(done);
       _stage = PromptStage.result;
+      if (done) {
+        _triggerHappyAnimation();
+      } else {
+        _setCompanionToDefaultAnimation();
+      }
+    });
+  }
+
+  bool _shouldShowSleepAnimation() {
+    return _stage == PromptStage.idle && _statusMessage != null;
+  }
+
+  CompanionAnimationState _defaultAnimationForState() {
+    return _shouldShowSleepAnimation()
+        ? CompanionAnimationState.sleep
+        : CompanionAnimationState.idle;
+  }
+
+  void _setCompanionToDefaultAnimation() {
+    _happyResetTimer?.cancel();
+    _companionAnimationState = _defaultAnimationForState();
+  }
+
+  void _triggerHappyAnimation() {
+    _happyResetTimer?.cancel();
+    _companionAnimationState = CompanionAnimationState.happy;
+    _happyResetTimer = Timer(_happyAnimationDuration, () {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        if (_companionAnimationState == CompanionAnimationState.happy) {
+          _companionAnimationState = _defaultAnimationForState();
+        }
+      });
     });
   }
 
@@ -214,6 +265,7 @@ class _HomePageState extends State<HomePage> {
       _currentTask = null;
       _statusMessage = null;
       _resultMessage = null;
+      _setCompanionToDefaultAnimation();
     });
   }
 
@@ -272,9 +324,11 @@ class _HomePageState extends State<HomePage> {
             ? GestureDetector(
                 onTap: _resetToIdle,
                 behavior: HitTestBehavior.translucent,
-                child: const CompanionFigure(),
+                child: CompanionFigure(
+                  animationState: _companionAnimationState,
+                ),
               )
-            : const CompanionFigure(),
+            : CompanionFigure(animationState: _companionAnimationState),
         bottomActions: BottomActionArea(child: _buildBottomActionState()),
       ),
     );

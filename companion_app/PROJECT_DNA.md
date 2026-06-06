@@ -45,6 +45,8 @@ Current implementation status:
 - Companion figure now uses frame-based asset animation.
 - Default companion animation is a calm `idle/breathing` loop.
 - Companion animation assets are stored under `assets/animations/companion/`.
+- `happy` animation is used briefly after a positive task result (`Ja`) before returning to `idle`.
+- `sleep` animation is used in the prototype state where no tasks/prompts are available right now.
 - Animation style should remain subtle and low-stimuli (avoid noisy or game-like motion).
 - Main screen should behave as stable top/middle/bottom zones so the figure keeps a consistent visual center across idle/mood/task/result states.
 - Top dialogue content should not push the figure downward.

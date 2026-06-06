@@ -148,6 +148,7 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 - Risk:
   - Frame-sett og timinger er forelopige og kan trenge justering nar endelig visuell profil er klar.
   - Ved oppdatert spritesheet ma generering kjores pa nytt.
+  - Runtime-koblingen mellom `idle`/`happy`/`sleep` er bevisst enkel i prototypen og kan trenge finjustering i senere UX-pass.
 - Future resolution:
   - Erstatt med endelige produksjonsassets nar visuell retning er ferdig.
   - Behold eller forenkle verktoyflyten avhengig av endelig art pipeline.

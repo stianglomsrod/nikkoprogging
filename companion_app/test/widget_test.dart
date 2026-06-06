@@ -32,6 +32,10 @@ void main() {
       (provider as AssetImage).assetName,
       startsWith('assets/animations/companion/idle/frame_'),
     );
+    expect(
+      _currentCompanionAnimationState(tester),
+      CompanionAnimationState.idle,
+    );
   });
 
   testWidgets('apner roligere innstillinger med fokusomradevalg', (
@@ -117,8 +121,35 @@ void main() {
       final dialogue = _currentDialogueText(tester).toLowerCase();
       expect(dialogue, contains('fint å se deg'));
       expect(dialogue, contains('ingen oppgaver til deg akkurat nå'));
+      expect(
+        _currentCompanionAnimationState(tester),
+        CompanionAnimationState.sleep,
+      );
     },
   );
+
+  testWidgets('ja viser happy kortvarig og gar tilbake til idle', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _startPromptAndPickMood(tester, 'Ok');
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fortsett'), findsOneWidget);
+    expect(
+      _currentCompanionAnimationState(tester),
+      CompanionAnimationState.happy,
+    );
+
+    await tester.pump(const Duration(milliseconds: 2400));
+
+    expect(
+      _currentCompanionAnimationState(tester),
+      CompanionAnimationState.idle,
+    );
+  });
 
   testWidgets('forste energisk utloser ikke kjede alene', (
     WidgetTester tester,
@@ -286,4 +317,8 @@ Future<void> _runSinglePromptAndFinish(
 String _currentDialogueText(WidgetTester tester) {
   final dialogue = tester.widget<DialogueBox>(find.byType(DialogueBox));
   return dialogue.text;
+}
+
+CompanionAnimationState _currentCompanionAnimationState(WidgetTester tester) {
+  return tester.widget<CompanionFigure>(find.byType(CompanionFigure)).animationState;
 }
