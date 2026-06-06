@@ -98,10 +98,7 @@ class _CompanionFigureState extends State<CompanionFigure> {
     if (frames.length <= 2) {
       return List<String>.from(frames);
     }
-    return [
-      ...frames,
-      ...frames.reversed.skip(1).skip(1),
-    ];
+    return [...frames, ...frames.reversed.skip(1).skip(1)];
   }
 
   @override
