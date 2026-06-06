@@ -82,22 +82,23 @@ void main() {
     expect(labels, ['Energisk', 'Ok', 'Tung']);
   });
 
-  testWidgets('idle viser vennlig ingen-oppgaver-kopi nar kvoter er brukt opp', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(const CompanionApp());
+  testWidgets(
+    'idle viser vennlig ingen-oppgaver-kopi nar kvoter er brukt opp',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const CompanionApp());
 
-    for (int i = 0; i < 7; i++) {
-      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
-    }
+      for (int i = 0; i < 7; i++) {
+        await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+      }
 
-    await tester.tap(find.text('Simuler neste prompt'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Simuler neste prompt'));
+      await tester.pumpAndSettle();
 
-    final dialogue = _currentDialogueText(tester).toLowerCase();
-    expect(dialogue, contains('fint å se deg'));
-    expect(dialogue, contains('ingen oppgaver til deg akkurat nå'));
-  });
+      final dialogue = _currentDialogueText(tester).toLowerCase();
+      expect(dialogue, contains('fint å se deg'));
+      expect(dialogue, contains('ingen oppgaver til deg akkurat nå'));
+    },
+  );
 
   testWidgets('forste energisk utloser ikke kjede alene', (
     WidgetTester tester,
