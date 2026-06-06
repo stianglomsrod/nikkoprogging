@@ -333,10 +333,23 @@ Document implementation path for deferred audio unlocks:
 - 9 completed -> sleep sound
 - 12 completed -> background music
 
+### Current prototype status
+
+- Audio playback/features remain deferred (no audio engine, no new packages).
+- Deferred-audio unlocks are now handled centrally in event logic and auto-skipped
+  when pending so they never block later non-audio identity events.
+- Home flow now depends on controller-level deferred-audio consumption instead of
+  duplicating event-id checks in UI coordination code.
+
 ### Files likely to change
 
-- No immediate code changes in current scope.
-- Later likely in audio service/controller + settings + event views.
+- Implemented in current scope:
+  - `lib/core/events/companion_event_definitions.dart`
+  - `lib/core/events/companion_event_controller.dart`
+  - `lib/features/home/home_page.dart`
+  - `test/core/events/companion_event_controller_test.dart`
+- Later for real audio playback:
+  - audio service/controller + settings + event views.
 
 ### New files likely to be created
 
@@ -358,6 +371,8 @@ Document implementation path for deferred audio unlocks:
 
 - Event trigger thresholds 9 and 12.
 - Preference persistence behavior once storage exists.
+- Deferred-audio events are marked skipped when consumed.
+- Deferred-audio consumption does not block progression to later events (for example symbol at 15).
 - Playback lifecycle and stop behavior (future integration tests).
 
 ### Documentation updates

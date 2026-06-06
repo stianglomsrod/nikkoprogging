@@ -53,6 +53,11 @@ companion_app/
 |  |  |  |- companion_text_library.dart
 |  |  |- flow/
 |  |  |  |- energisk_chain_controller.dart
+|  |  |- events/
+|  |  |  |- companion_event.dart
+|  |  |  |- companion_event_controller.dart
+|  |  |  |- companion_event_definitions.dart
+|  |  |  |- companion_identity.dart
 |  |  |- models/
 |  |  |  |- attempt_entry.dart
 |  |  |  |- focus_area.dart
@@ -72,8 +77,12 @@ companion_app/
 |        |- settings_page.dart
 |        |- widgets/
 |           |- active_time_range_control.dart
+|           |- background_color_event_view.dart
+|           |- background_tone_settings_panel.dart
 |           |- bottom_action_area.dart
 |           |- companion_figure.dart
+|           |- companion_name_event_view.dart
+|           |- companion_name_settings_panel.dart
 |           |- dialogue_box.dart
 |           |- focus_area_circle_button.dart
 |           |- focus_area_circle_selector.dart
@@ -85,11 +94,17 @@ companion_app/
 |           |- prototype_time_panel.dart
 |           |- result_state_view.dart
 |           |- task_state_view.dart
+|           |- symbol_event_view.dart
+|           |- symbol_settings_panel.dart
+|           |- user_name_event_view.dart
+|           |- user_name_settings_panel.dart
 |- test/
 |  |- widget_test.dart
 |  |- core/
 |  |  |- flow/
 |  |  |  |- energisk_chain_controller_test.dart
+|  |  |- events/
+|  |  |  |- companion_event_controller_test.dart
 |  |  |- scheduler/
 |  |  |  |- scheduler_engine_test.dart
 |  |  |- adaptive_engine/

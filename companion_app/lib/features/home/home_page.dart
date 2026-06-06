@@ -3,6 +3,9 @@ import 'dart:math';
 
 import 'package:companion_app/core/content/companion_text_library.dart';
 import 'package:companion_app/core/adaptive_engine/task_selector.dart';
+import 'package:companion_app/core/events/companion_event_controller.dart';
+import 'package:companion_app/core/events/companion_event_definitions.dart';
+import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/flow/energisk_chain_controller.dart';
 import 'package:companion_app/core/models/attempt_entry.dart';
 import 'package:companion_app/core/models/focus_area.dart';
@@ -11,17 +14,30 @@ import 'package:companion_app/core/models/task_item.dart';
 import 'package:companion_app/core/scheduler/scheduler_engine.dart';
 import 'package:companion_app/core/seed_data/seed_data.dart';
 import 'package:companion_app/features/home/settings_page.dart';
+import 'package:companion_app/features/home/widgets/background_color_event_view.dart';
 import 'package:companion_app/features/home/widgets/bottom_action_area.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
+import 'package:companion_app/features/home/widgets/companion_name_event_view.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
 import 'package:companion_app/features/home/widgets/home_layout_shell.dart';
 import 'package:companion_app/features/home/widgets/idle_state_view.dart';
 import 'package:companion_app/features/home/widgets/mood_state_view.dart';
 import 'package:companion_app/features/home/widgets/result_state_view.dart';
+import 'package:companion_app/features/home/widgets/symbol_event_view.dart';
 import 'package:companion_app/features/home/widgets/task_state_view.dart';
+import 'package:companion_app/features/home/widgets/user_name_event_view.dart';
 import 'package:flutter/material.dart';
 
-enum PromptStage { idle, mood, task, result }
+enum PromptStage {
+  idle,
+  mood,
+  task,
+  result,
+  companionNameEvent,
+  userNameEvent,
+  symbolEvent,
+  backgroundColorEvent,
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,6 +51,7 @@ class _HomePageState extends State<HomePage> {
 
   final SchedulerEngine _scheduler = SchedulerEngine();
   final TaskSelector _selector = TaskSelector();
+  final CompanionEventController _companionEvents = CompanionEventController();
   final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
 
@@ -51,6 +68,10 @@ class _HomePageState extends State<HomePage> {
   FocusArea? _activeFocusArea;
   Sinnsstemning? _currentMood;
   TaskItem? _currentTask;
+  String? _companionName;
+  String? _userName;
+  CompanionSymbolOption _companionSymbol = CompanionSymbolOption.none;
+  CompanionBackgroundTone _backgroundTone = CompanionBackgroundTone.defaultDark;
   String? _statusMessage;
   String? _resultMessage;
   CompanionAnimationState _companionAnimationState =
@@ -153,6 +174,7 @@ class _HomePageState extends State<HomePage> {
           timestamp: DateTime.now(),
         ),
       );
+      _companionEvents.onTaskResult(done: done);
 
       if (done) {
         _recentFailedTaskIds.remove(task.id);
@@ -257,7 +279,212 @@ class _HomePageState extends State<HomePage> {
     return _pickFrom(CompanionTextLibrary.taskDoneNo);
   }
 
+  bool _hasPendingCompanionNameEvent() {
+    return _companionEvents.pendingEvent?.id ==
+        CompanionEventDefinitions.companionNameId;
+  }
+
+  bool _hasPendingUserNameEvent() {
+    return _companionEvents.pendingEvent?.id ==
+        CompanionEventDefinitions.userNameId;
+  }
+
+  bool _hasPendingSymbolEvent() {
+    return _companionEvents.pendingEvent?.id ==
+        CompanionEventDefinitions.symbolId;
+  }
+
+  bool _hasPendingBackgroundColorEvent() {
+    return _companionEvents.pendingEvent?.id ==
+        CompanionEventDefinitions.backgroundColorId;
+  }
+
+  void _consumeDeferredAudioEvents() {
+    _companionEvents.consumeDeferredAudioPendingEvents();
+  }
+
+  void _skipCompanionNameEvent() {
+    setState(() {
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _saveCompanionName(String value) {
+    final normalizedValue = value.trim();
+    if (normalizedValue.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _companionName = normalizedValue;
+      _companionEvents.markPendingEventHandled(skipped: false);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _skipUserNameEvent() {
+    setState(() {
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _saveUserName(String value) {
+    final normalizedValue = value.trim();
+    if (normalizedValue.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _userName = normalizedValue;
+      _companionEvents.markPendingEventHandled(skipped: false);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _skipSymbolEvent() {
+    setState(() {
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _saveSymbol(CompanionSymbolOption symbol) {
+    setState(() {
+      _companionSymbol = symbol;
+      _companionEvents.markPendingEventHandled(skipped: false);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _skipBackgroundColorEvent() {
+    setState(() {
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  void _saveBackgroundTone(CompanionBackgroundTone tone) {
+    setState(() {
+      _backgroundTone = tone;
+      _companionEvents.markPendingEventHandled(skipped: false);
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+  }
+
+  String _headerTitle() {
+    final baseName = _companionName ?? '.....';
+    final symbol = _companionSymbol.glyph;
+    if (symbol == null || _companionName == null) {
+      return baseName;
+    }
+    return '$symbol $baseName $symbol';
+  }
+
   void _resetToIdle() {
+    _consumeDeferredAudioEvents();
+
+    if (_stage == PromptStage.result && _hasPendingCompanionNameEvent()) {
+      setState(() {
+        _stage = PromptStage.companionNameEvent;
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage = null;
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
+    if (_stage == PromptStage.result && _hasPendingSymbolEvent()) {
+      setState(() {
+        _stage = PromptStage.symbolEvent;
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage = null;
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
+    if (_stage == PromptStage.result && _hasPendingBackgroundColorEvent()) {
+      setState(() {
+        _stage = PromptStage.backgroundColorEvent;
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage = null;
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
+    if (_stage == PromptStage.result && _hasPendingUserNameEvent()) {
+      setState(() {
+        _stage = PromptStage.userNameEvent;
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage = null;
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
     setState(() {
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -275,6 +502,38 @@ class _HomePageState extends State<HomePage> {
         builder: (_) => SettingsPage(
           focusAreas: _focusAreas,
           simulatedHour: _simulatedHour,
+          allowCompanionNameEditing:
+              _companionEvents.isEventHandled(
+                CompanionEventDefinitions.companionNameId,
+              ) ||
+              _companionEvents.isEventAutoTriggered(
+                CompanionEventDefinitions.companionNameId,
+              ),
+          allowUserNameEditing:
+              _companionEvents.isEventHandled(
+                CompanionEventDefinitions.userNameId,
+              ) ||
+              _companionEvents.isEventAutoTriggered(
+                CompanionEventDefinitions.userNameId,
+              ),
+          allowSymbolEditing:
+              _companionEvents.isEventHandled(
+                CompanionEventDefinitions.symbolId,
+              ) ||
+              _companionEvents.isEventAutoTriggered(
+                CompanionEventDefinitions.symbolId,
+              ),
+          allowBackgroundToneEditing:
+              _companionEvents.isEventHandled(
+                CompanionEventDefinitions.backgroundColorId,
+              ) ||
+              _companionEvents.isEventAutoTriggered(
+                CompanionEventDefinitions.backgroundColorId,
+              ),
+          initialCompanionName: _companionName,
+          initialUserName: _userName,
+          initialSymbol: _companionSymbol,
+          initialBackgroundTone: _backgroundTone,
         ),
       ),
     );
@@ -286,6 +545,10 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _focusAreas = result.focusAreas;
       _simulatedHour = result.simulatedHour;
+      _companionName = result.companionName;
+      _userName = result.userName;
+      _companionSymbol = result.symbol;
+      _backgroundTone = result.backgroundTone;
     });
   }
 
@@ -309,7 +572,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('.....'),
+        title: Text(_headerTitle()),
         actions: [
           IconButton(
             onPressed: _openSettings,
@@ -318,6 +581,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      backgroundColor: _backgroundTone.scaffoldColor,
       body: HomeLayoutShell(
         dialogue: DialogueBox(text: _dialogueLines().join(' ')),
         figure: _stage == PromptStage.result
@@ -340,7 +604,9 @@ class _HomePageState extends State<HomePage> {
         if (_statusMessage != null)
           _statusMessage!
         else
-          'Hei. Hvordan er formen din akkurat nå?',
+          _userName == null
+              ? 'Hei. Hvordan er formen din akkurat nå?'
+              : 'Hei, $_userName. Hvordan er formen din akkurat nå?',
       ];
     }
 
@@ -357,6 +623,22 @@ class _HomePageState extends State<HomePage> {
       }
 
       return [task.title];
+    }
+
+    if (_stage == PromptStage.companionNameEvent) {
+      return ['Vil du gi meg et navn?'];
+    }
+
+    if (_stage == PromptStage.userNameEvent) {
+      return ['Hva heter du?'];
+    }
+
+    if (_stage == PromptStage.symbolEvent) {
+      return ['Vil du velge et lite symbol som kan være en del av meg?'];
+    }
+
+    if (_stage == PromptStage.backgroundColorEvent) {
+      return ['Hvilken farge føles best for deg i appen?'];
     }
 
     return [_resultMessage ?? 'Helt greit.'];
@@ -377,6 +659,31 @@ class _HomePageState extends State<HomePage> {
         onDone: () => _submitResult(true),
         onSkipped: () => _submitResult(false),
         onBack: _resetToIdle,
+      );
+    }
+
+    if (_stage == PromptStage.companionNameEvent) {
+      return CompanionNameEventView(
+        onSave: _saveCompanionName,
+        onSkip: _skipCompanionNameEvent,
+      );
+    }
+
+    if (_stage == PromptStage.userNameEvent) {
+      return UserNameEventView(
+        onSave: _saveUserName,
+        onSkip: _skipUserNameEvent,
+      );
+    }
+
+    if (_stage == PromptStage.symbolEvent) {
+      return SymbolEventView(onSave: _saveSymbol, onSkip: _skipSymbolEvent);
+    }
+
+    if (_stage == PromptStage.backgroundColorEvent) {
+      return BackgroundColorEventView(
+        onSave: _saveBackgroundTone,
+        onSkip: _skipBackgroundColorEvent,
       );
     }
 

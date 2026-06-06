@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:companion_app/app/companion_app.dart';
+import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
 
@@ -51,6 +52,10 @@ void main() {
     expect(find.text('Huslige oppgaver'), findsWidgets);
     expect(find.text('Modus'), findsOneWidget);
     expect(find.text('Aktivt tidsrom'), findsOneWidget);
+    expect(find.text('Companion-navn'), findsNothing);
+    expect(find.text('Ditt navn'), findsNothing);
+    expect(find.text('Symbol'), findsNothing);
+    expect(find.text('Bakgrunnsfarge'), findsNothing);
 
     await tester.tap(find.byKey(const ValueKey('focus-area-circle-study')));
     await tester.pumpAndSettle();
@@ -84,6 +89,326 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Fortsett'), findsOneWidget);
+  });
+
+  testWidgets(
+    'companion-navneevent vises etter tre fullforte og skip beholder .....',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const CompanionApp());
+
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+
+      await _startPromptAndPickMood(tester, 'Ok');
+      await tester.tap(find.text('Ja'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Fortsett'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Vil du gi meg et navn?'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('companion-name-input')),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey('companion-name-skip-button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('.....'), findsOneWidget);
+      expect(find.text('Simuler neste prompt'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'lagret companion-navn erstatter ..... og event trigges ikke pa nytt',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const CompanionApp());
+
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+
+      await _startPromptAndPickMood(tester, 'Ok');
+      await tester.tap(find.text('Ja'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Fortsett'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.byKey(const ValueKey('companion-name-input')),
+        'Milo',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('companion-name-save-button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Milo'), findsOneWidget);
+
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+      await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+
+      expect(find.text('Vil du gi meg et navn?'), findsNothing);
+      expect(find.text('Milo'), findsOneWidget);
+    },
+  );
+
+  testWidgets('etter skip kan companion-navn settes i innstillinger', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+    await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
+
+    await _startPromptAndPickMood(tester, 'Ok');
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fortsett'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('companion-name-skip-button')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Innstillinger'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('settings-companion-name-input')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Companion-navn'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('settings-companion-name-input')),
+      'Nova',
+    );
+
+    await tester.tap(find.text('Lagre'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nova'), findsOneWidget);
+  });
+
+  testWidgets('user-navneevent vises etter seks fullforte og skip er mulig', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _runSinglePromptAndFinish(
+      tester,
+      moodLabel: 'Ok',
+      done: true,
+      autoHandleCompanionNameEvent: true,
+      autoHandleUserNameEvent: false,
+    );
+    await _runSinglePromptAndFinish(
+      tester,
+      moodLabel: 'Ok',
+      done: true,
+      autoHandleCompanionNameEvent: true,
+      autoHandleUserNameEvent: false,
+    );
+    await _runSinglePromptAndFinish(
+      tester,
+      moodLabel: 'Ok',
+      done: true,
+      autoHandleCompanionNameEvent: true,
+      autoHandleUserNameEvent: false,
+    );
+    await _runSinglePromptAndFinish(
+      tester,
+      moodLabel: 'Ok',
+      done: true,
+      autoHandleCompanionNameEvent: true,
+      autoHandleUserNameEvent: false,
+    );
+    await _runSinglePromptAndFinish(
+      tester,
+      moodLabel: 'Ok',
+      done: true,
+      autoHandleCompanionNameEvent: true,
+      autoHandleUserNameEvent: false,
+    );
+
+    await _startPromptAndPickMood(tester, 'Ok');
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fortsett'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hva heter du?'), findsOneWidget);
+    expect(find.byKey(const ValueKey('user-name-input')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('user-name-skip-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Simuler neste prompt'), findsOneWidget);
+  });
+
+  testWidgets('lagret brukernavn kan brukes i rolig hilsen', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    for (int i = 0; i < 5; i++) {
+      await _runSinglePromptAndFinish(
+        tester,
+        moodLabel: 'Ok',
+        done: true,
+        autoHandleCompanionNameEvent: true,
+        autoHandleUserNameEvent: false,
+      );
+    }
+
+    await _startPromptAndPickMood(tester, 'Ok');
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fortsett'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('user-name-input')),
+      'Ada',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('user-name-save-button')));
+    await tester.pumpAndSettle();
+
+    final idleDialogue = _currentDialogueText(tester).toLowerCase();
+    expect(idleDialogue, contains('ada'));
+  });
+
+  testWidgets('etter user-navneevent kan navn endres i innstillinger', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    for (int i = 0; i < 5; i++) {
+      await _runSinglePromptAndFinish(
+        tester,
+        moodLabel: 'Ok',
+        done: true,
+        autoHandleCompanionNameEvent: true,
+        autoHandleUserNameEvent: false,
+      );
+    }
+
+    await _startPromptAndPickMood(tester, 'Ok');
+    await tester.tap(find.text('Ja'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Fortsett'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('user-name-skip-button')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Innstillinger'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('settings-user-name-input')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ditt navn'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('settings-user-name-input')),
+      'Luna',
+    );
+
+    await tester.tap(find.text('Lagre'));
+    await tester.pumpAndSettle();
+
+    final idleDialogue = _currentDialogueText(tester).toLowerCase();
+    expect(idleDialogue, contains('luna'));
+  });
+
+  testWidgets('symbolevent vises etter femten fullforte og kan lagres', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _setAllFocusAreasToSporty(tester);
+
+    for (int i = 0; i < 10; i++) {
+      await _runSinglePromptAndFinish(
+        tester,
+        moodLabel: 'Energisk',
+        done: true,
+        autoHandleCompanionNameEvent: true,
+        autoHandleUserNameEvent: true,
+        autoHandleSymbolEvent: false,
+      );
+    }
+
+    expect(
+      find.text('Vil du velge et lite symbol som kan være en del av meg?'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('symbol-option-star')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('symbol-save-button')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Innstillinger'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('settings-symbol-option-star')),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    final starChip = tester.widget<ChoiceChip>(
+      find.byKey(const ValueKey('settings-symbol-option-star')),
+    );
+    expect(starChip.selected, isTrue);
+  });
+
+  testWidgets('bakgrunnsfargeevent vises etter atten fullforte og kan lagres', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    await _setAllFocusAreasToSporty(tester);
+
+    for (int i = 0; i < 12; i++) {
+      await _runSinglePromptAndFinish(
+        tester,
+        moodLabel: 'Energisk',
+        done: true,
+        autoHandleCompanionNameEvent: true,
+        autoHandleUserNameEvent: true,
+        autoHandleSymbolEvent: true,
+        autoHandleBackgroundColorEvent: false,
+      );
+    }
+
+    expect(
+      find.text('Hvilken farge føles best for deg i appen?'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('background-option-deepGreen')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('background-color-save-button')),
+    );
+    await tester.pumpAndSettle();
+
+    final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
+    expect(
+      scaffold.backgroundColor,
+      CompanionBackgroundTone.deepGreen.scaffoldColor,
+    );
   });
 
   testWidgets('stemningsknapper vises i rekkefolge Energisk, Ok, Tung', (
@@ -304,6 +629,8 @@ Future<void> _startPromptAndPickMood(
   WidgetTester tester,
   String moodLabel,
 ) async {
+  await _dismissPendingIdentityEvents(tester);
+
   await tester.tap(find.text('Simuler neste prompt'));
   await tester.pumpAndSettle();
 
@@ -315,11 +642,106 @@ Future<void> _runSinglePromptAndFinish(
   WidgetTester tester, {
   required String moodLabel,
   required bool done,
+  bool autoHandleCompanionNameEvent = true,
+  bool autoHandleUserNameEvent = true,
+  bool autoHandleSymbolEvent = true,
+  bool autoHandleBackgroundColorEvent = true,
 }) async {
   await _startPromptAndPickMood(tester, moodLabel);
   await tester.tap(find.text(done ? 'Ja' : 'Nei'));
   await tester.pumpAndSettle();
+
+  if (find.text('Fortsett').evaluate().isEmpty &&
+      find.text('Fikk du gjort oppgaven?').evaluate().isNotEmpty) {
+    await tester.tap(find.text(done ? 'Ja' : 'Nei'));
+    await tester.pumpAndSettle();
+  }
+
   await tester.tap(find.text('Fortsett'));
+  await tester.pumpAndSettle();
+
+  if (autoHandleCompanionNameEvent &&
+      find
+          .byKey(const ValueKey('companion-name-skip-button'))
+          .evaluate()
+          .isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('companion-name-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (autoHandleUserNameEvent &&
+      find
+          .byKey(const ValueKey('user-name-skip-button'))
+          .evaluate()
+          .isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('user-name-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (autoHandleSymbolEvent &&
+      find.byKey(const ValueKey('symbol-skip-button')).evaluate().isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('symbol-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (autoHandleBackgroundColorEvent &&
+      find
+          .byKey(const ValueKey('background-color-skip-button'))
+          .evaluate()
+          .isNotEmpty) {
+    await tester.tap(
+      find.byKey(const ValueKey('background-color-skip-button')),
+    );
+    await tester.pumpAndSettle();
+  }
+}
+
+Future<void> _dismissPendingIdentityEvents(WidgetTester tester) async {
+  if (find
+      .byKey(const ValueKey('companion-name-skip-button'))
+      .evaluate()
+      .isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('companion-name-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (find
+      .byKey(const ValueKey('user-name-skip-button'))
+      .evaluate()
+      .isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('user-name-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (find.byKey(const ValueKey('symbol-skip-button')).evaluate().isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('symbol-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (find
+      .byKey(const ValueKey('background-color-skip-button'))
+      .evaluate()
+      .isNotEmpty) {
+    await tester.tap(
+      find.byKey(const ValueKey('background-color-skip-button')),
+    );
+    await tester.pumpAndSettle();
+  }
+}
+
+Future<void> _setAllFocusAreasToSporty(WidgetTester tester) async {
+  await tester.tap(find.byTooltip('Innstillinger'));
+  await tester.pumpAndSettle();
+
+  const focusAreaIds = <String>['household', 'study', 'exercise', 'reminders'];
+  for (final areaId in focusAreaIds) {
+    await tester.tap(find.byKey(ValueKey('focus-area-circle-$areaId')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('sporty'));
+    await tester.pumpAndSettle();
+  }
+
+  await tester.tap(find.text('Lagre'));
   await tester.pumpAndSettle();
 }
 

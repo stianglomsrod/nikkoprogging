@@ -1,14 +1,30 @@
+import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/models/focus_area.dart';
+import 'package:companion_app/features/home/widgets/background_tone_settings_panel.dart';
+import 'package:companion_app/features/home/widgets/companion_name_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/focus_area_circle_selector.dart';
 import 'package:companion_app/features/home/widgets/focus_area_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/prototype_time_panel.dart';
+import 'package:companion_app/features/home/widgets/symbol_settings_panel.dart';
+import 'package:companion_app/features/home/widgets/user_name_settings_panel.dart';
 import 'package:flutter/material.dart';
 
 class SettingsResult {
-  const SettingsResult({required this.focusAreas, required this.simulatedHour});
+  const SettingsResult({
+    required this.focusAreas,
+    required this.simulatedHour,
+    required this.companionName,
+    required this.userName,
+    required this.symbol,
+    required this.backgroundTone,
+  });
 
   final List<FocusArea> focusAreas;
   final int simulatedHour;
+  final String? companionName;
+  final String? userName;
+  final CompanionSymbolOption symbol;
+  final CompanionBackgroundTone backgroundTone;
 }
 
 class SettingsPage extends StatefulWidget {
@@ -16,10 +32,26 @@ class SettingsPage extends StatefulWidget {
     super.key,
     required this.focusAreas,
     required this.simulatedHour,
+    required this.allowCompanionNameEditing,
+    required this.allowUserNameEditing,
+    required this.allowSymbolEditing,
+    required this.allowBackgroundToneEditing,
+    required this.initialSymbol,
+    required this.initialBackgroundTone,
+    this.initialCompanionName,
+    this.initialUserName,
   });
 
   final List<FocusArea> focusAreas;
   final int simulatedHour;
+  final bool allowCompanionNameEditing;
+  final bool allowUserNameEditing;
+  final bool allowSymbolEditing;
+  final bool allowBackgroundToneEditing;
+  final String? initialCompanionName;
+  final String? initialUserName;
+  final CompanionSymbolOption initialSymbol;
+  final CompanionBackgroundTone initialBackgroundTone;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -29,6 +61,10 @@ class _SettingsPageState extends State<SettingsPage> {
   late List<FocusArea> _localFocusAreas;
   late int _localHour;
   late String _selectedAreaId;
+  late String _localCompanionName;
+  late String _localUserName;
+  late CompanionSymbolOption _localSymbol;
+  late CompanionBackgroundTone _localBackgroundTone;
 
   @override
   void initState() {
@@ -45,14 +81,29 @@ class _SettingsPageState extends State<SettingsPage> {
         .toList(growable: true);
     _localHour = widget.simulatedHour;
     _selectedAreaId = _localFocusAreas.first.id;
+    _localCompanionName = widget.initialCompanionName ?? '';
+    _localUserName = widget.initialUserName ?? '';
+    _localSymbol = widget.initialSymbol;
+    _localBackgroundTone = widget.initialBackgroundTone;
   }
 
   FocusArea get _selectedArea =>
       _localFocusAreas.firstWhere((area) => area.id == _selectedAreaId);
 
   void _saveAndClose() {
+    final normalizedCompanionName = _localCompanionName.trim();
+    final normalizedUserName = _localUserName.trim();
     Navigator.of(context).pop(
-      SettingsResult(focusAreas: _localFocusAreas, simulatedHour: _localHour),
+      SettingsResult(
+        focusAreas: _localFocusAreas,
+        simulatedHour: _localHour,
+        companionName: normalizedCompanionName.isEmpty
+            ? null
+            : normalizedCompanionName,
+        userName: normalizedUserName.isEmpty ? null : normalizedUserName,
+        symbol: _localSymbol,
+        backgroundTone: _localBackgroundTone,
+      ),
     );
   }
 
@@ -123,6 +174,46 @@ class _SettingsPageState extends State<SettingsPage> {
               });
             },
           ),
+          if (widget.allowCompanionNameEditing) ...[
+            const SizedBox(height: 20),
+            CompanionNameSettingsPanel(
+              initialName: _localCompanionName,
+              onChanged: (value) {
+                _localCompanionName = value;
+              },
+            ),
+          ],
+          if (widget.allowUserNameEditing) ...[
+            const SizedBox(height: 20),
+            UserNameSettingsPanel(
+              initialName: _localUserName,
+              onChanged: (value) {
+                _localUserName = value;
+              },
+            ),
+          ],
+          if (widget.allowSymbolEditing) ...[
+            const SizedBox(height: 20),
+            SymbolSettingsPanel(
+              selected: _localSymbol,
+              onChanged: (value) {
+                setState(() {
+                  _localSymbol = value;
+                });
+              },
+            ),
+          ],
+          if (widget.allowBackgroundToneEditing) ...[
+            const SizedBox(height: 20),
+            BackgroundToneSettingsPanel(
+              selected: _localBackgroundTone,
+              onChanged: (value) {
+                setState(() {
+                  _localBackgroundTone = value;
+                });
+              },
+            ),
+          ],
         ],
       ),
     );

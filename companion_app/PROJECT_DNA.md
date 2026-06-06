@@ -41,6 +41,12 @@ Current implementation status:
 - Energisk chain is exactly two tasks and resets after the second task result.
 - Completion (`Ja`/`Nei`) on the first task does not decide whether the second chain task appears.
 - Energisk chain transitions are extracted into a dedicated helper (`lib/core/flow/energisk_chain_controller.dart`) so `home_page.dart` can stay focused on UI coordination.
+- Companion events chunk 1 foundation is in place via a focused core controller (`lib/core/events/companion_event_controller.dart`) for `Ja`-only completion counting and pending unlock state preparation (no event UI yet).
+- Companion name event is now wired as the first visible unlock slice: after 3 completed tasks (`Ja`), `Fortsett` leads to a calm naming prompt (`Vil du gi meg et navn?`) with save/skip; skip keeps `.....`.
+- User name event is now wired as the second visible unlock slice: after 6 completed tasks (`Ja`), `Fortsett` leads to `Hva heter du?` with save/skip; name usage is limited to small gentle greetings and can be edited later in Settings.
+- Symbol event (15 completed `Ja`) and background color event (18 completed `Ja`) are now wired with save/skip and later editing in Settings.
+- Audio events (9/12 completed `Ja`) remain deferred; in prototype flow they are auto-skipped so they do not block non-audio event progression.
+- Deferred-audio auto-skip policy is centralized in the companion-event layer (not hardcoded in multiple UI checks) to keep later real-audio integration simpler.
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Companion figure now uses frame-based asset animation.
