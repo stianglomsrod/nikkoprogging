@@ -14,6 +14,26 @@ void main() {
     expect(find.byTooltip('Innstillinger'), findsOneWidget);
   });
 
+  testWidgets('companion figur rendres med idle-animasjonsframes', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const CompanionApp());
+
+    final image = tester.widget<Image>(
+      find.descendant(
+        of: find.byType(CompanionFigure),
+        matching: find.byType(Image),
+      ),
+    );
+
+    final provider = image.image;
+    expect(provider, isA<AssetImage>());
+    expect(
+      (provider as AssetImage).assetName,
+      startsWith('assets/animations/companion/idle/frame_'),
+    );
+  });
+
   testWidgets('apner roligere innstillinger med fokusomradevalg', (
     WidgetTester tester,
   ) async {

@@ -12,6 +12,28 @@ companion_app/
 |- FILE_TREE.md
 |- TECH_DEBT.md
 |- assets/
+|  |- animations/
+|  |  |- companion/
+|  |  |  |- idle/
+|  |  |  |  |- frame_01.png
+|  |  |  |  |- frame_02.png
+|  |  |  |  |- frame_03.png
+|  |  |  |  |- frame_04.png
+|  |  |  |  |- frame_05.png
+|  |  |  |  |- frame_06.png
+|  |  |  |- happy/
+|  |  |  |  |- frame_01.png
+|  |  |  |  |- frame_02.png
+|  |  |  |  |- frame_03.png
+|  |  |  |  |- frame_04.png
+|  |  |  |  |- frame_05.png
+|  |  |  |  |- frame_06.png
+|  |  |  |- sleep/
+|  |  |     |- frame_01.png
+|  |  |     |- frame_02.png
+|  |  |     |- frame_03.png
+|  |  |     |- frame_04.png
+|  |  |     |- frame_05.png
 |  |- figures/
 |  |  |- companion_figur.png
 |- lib/
@@ -99,6 +121,9 @@ companion_app/
 |  |- CMakeLists.txt
 |  |- runner/
 |  |- flutter/
+|- tools/
+|  |- asset_processing/
+|  |  |- split_companion_animation_sheet.py
 ```
 
 Notes:

@@ -140,6 +140,18 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Persist kjedetilstand nar persisteringslag prioriteres.
   - Avklar og implementer endelig kvotepolicy mellom scheduler-prompt og intern kjedeoppgave i senere modell.
 
+### 13) Companion-animasjon er forelopig spritesheet-basert prototypeflyt
+
+- Status: Active (intentional)
+- Decision: Companion-animasjon er i denne fasen frame-basert og generert fra et kilde-spritesheet via lokalt verktøy.
+- Reason: Rask validering av rolig figurbevegelse uten a introdusere runtime-avhengigheter eller kompleks animasjonspipeline.
+- Risk:
+  - Frame-sett og timinger er forelopige og kan trenge justering nar endelig visuell profil er klar.
+  - Ved oppdatert spritesheet ma generering kjores pa nytt.
+- Future resolution:
+  - Erstatt med endelige produksjonsassets nar visuell retning er ferdig.
+  - Behold eller forenkle verktoyflyten avhengig av endelig art pipeline.
+
 ## Deferred Integrations (By Decision)
 
 - Riverpod

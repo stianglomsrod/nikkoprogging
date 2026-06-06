@@ -58,6 +58,9 @@ flutter:
 
   assets:
     - assets/figures/companion_figur.png
+    - assets/animations/companion/idle/
+    - assets/animations/companion/happy/
+    - assets/animations/companion/sleep/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

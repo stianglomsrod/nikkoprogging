@@ -42,6 +42,10 @@ Current implementation status:
 - Energisk chain transitions are extracted into a dedicated helper (`lib/core/flow/energisk_chain_controller.dart`) so `home_page.dart` can stay focused on UI coordination.
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
+- Companion figure now uses frame-based asset animation.
+- Default companion animation is a calm `idle/breathing` loop.
+- Companion animation assets are stored under `assets/animations/companion/`.
+- Animation style should remain subtle and low-stimuli (avoid noisy or game-like motion).
 - Main screen should behave as stable top/middle/bottom zones so the figure keeps a consistent visual center across idle/mood/task/result states.
 - Top dialogue content should not push the figure downward.
 - Primary input/action buttons in active flow states are anchored near the bottom action area.
