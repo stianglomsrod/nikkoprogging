@@ -320,5 +320,7 @@ String _currentDialogueText(WidgetTester tester) {
 }
 
 CompanionAnimationState _currentCompanionAnimationState(WidgetTester tester) {
-  return tester.widget<CompanionFigure>(find.byType(CompanionFigure)).animationState;
+  return tester
+      .widget<CompanionFigure>(find.byType(CompanionFigure))
+      .animationState;
 }
