@@ -15,12 +15,7 @@ class IdleStateView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomActionGroup(
       groupKey: const ValueKey('actions-idle'),
-      children: [
-        FilledButton(
-          onPressed: onSimulate,
-          child: Text(actionLabel),
-        ),
-      ],
+      children: [FilledButton(onPressed: onSimulate, child: Text(actionLabel))],
     );
   }
 }

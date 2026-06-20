@@ -49,15 +49,15 @@ Commands:
 
 ## Persistence Snapshot
 
-| Domain                                | Status       | Storage         |
-| ------------------------------------- | ------------ | --------------- |
-| History timeline (attempt/mood/event) | Persisted    | Drift + SQLite  |
-| Companion event state                 | Persisted    | Drift + SQLite  |
-| Companion identity state              | Persisted    | Drift + SQLite  |
-| Focus-area settings                   | Persisted    | Drift + SQLite  |
-| Simulated prototype time              | Runtime-only | In-memory       |
-| Scheduler runtime counters/state      | Runtime-only | In-memory       |
-| Global feedback                       | Persisted    | Drift + SQLite  |
+| Domain                                | Status       | Storage        |
+| ------------------------------------- | ------------ | -------------- |
+| History timeline (attempt/mood/event) | Persisted    | Drift + SQLite |
+| Companion event state                 | Persisted    | Drift + SQLite |
+| Companion identity state              | Persisted    | Drift + SQLite |
+| Focus-area settings                   | Persisted    | Drift + SQLite |
+| Simulated prototype time              | Runtime-only | In-memory      |
+| Scheduler runtime counters/state      | Runtime-only | In-memory      |
+| Global feedback                       | Persisted    | Drift + SQLite |
 
 ## Agent Reporting Rule
 
