@@ -71,13 +71,18 @@ No database code is introduced in this pass.
 Recommended persistence order when implementation is approved later:
 
 1. Persist raw timeline entries first:
-  - task attempts with timestamp, result state, focus area, mood, task id, and task-title snapshot
-  - mood entries with timestamp
-  - event lifecycle actions (triggered/skipped/saved) with timestamp and event id
+
+- task attempts with timestamp, result state, focus area, mood, task id, and task-title snapshot
+- mood entries with timestamp
+- event lifecycle actions (triggered/skipped/saved) with timestamp and event id
+
 2. Keep aggregates derived at read-time first:
-  - day summaries can be computed from raw entries in early persistence rollout
+
+- day summaries can be computed from raw entries in early persistence rollout
+
 3. Add cached summaries only if needed later:
-  - weekly/monthly cache should be optional and performance-driven, not required for first persistence slice
+
+- weekly/monthly cache should be optional and performance-driven, not required for first persistence slice
 
 Conceptual query/index direction for later Drift planning (no schema commitment):
 
