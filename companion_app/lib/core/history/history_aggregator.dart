@@ -52,8 +52,8 @@ class HistoryAggregator {
     final summaries = <DayHistorySummary>[];
     for (int i = 0; i < dayCount; i++) {
       final dayKey = rangeStart.add(Duration(days: i));
-      final summary = accumulators[dayKey]?.toSummary() ??
-          DayHistorySummary.empty(dayKey);
+      final summary =
+          accumulators[dayKey]?.toSummary() ?? DayHistorySummary.empty(dayKey);
       if (includeEmptyDays || summary.hasActivity) {
         summaries.add(summary);
       }

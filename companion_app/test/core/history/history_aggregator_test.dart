@@ -114,10 +114,7 @@ void main() {
 
       expect(summaries, hasLength(3));
       expect(summaries.every((day) => day.hasActivity == false), isTrue);
-      expect(
-        summaries.every((day) => day.completedTaskCount == 0),
-        isTrue,
-      );
+      expect(summaries.every((day) => day.completedTaskCount == 0), isTrue);
     });
 
     test('event records become timeline markers in summary', () {
