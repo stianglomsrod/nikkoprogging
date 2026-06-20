@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DayDetailSection extends StatelessWidget {
-  const DayDetailSection({
-    super.key,
-    required this.title,
-    required this.items,
-  });
+  const DayDetailSection({super.key, required this.title, required this.items});
 
   final String title;
   final List<String> items;
