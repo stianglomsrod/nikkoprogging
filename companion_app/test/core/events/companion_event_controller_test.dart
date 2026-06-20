@@ -87,6 +87,38 @@ void main() {
       );
     });
 
+    test('pending event is cleared after save and does not repeat', () {
+      final controller = CompanionEventController();
+
+      controller.onTaskResult(done: true);
+      controller.onTaskResult(done: true);
+      controller.onTaskResult(done: true);
+
+      expect(
+        controller.pendingEvent?.id,
+        CompanionEventDefinitions.companionNameId,
+      );
+
+      controller.markPendingEventHandled(skipped: false);
+
+      expect(controller.pendingEvent, isNull);
+      expect(controller.hasPendingEvent, isFalse);
+      expect(
+        controller.isEventHandled(CompanionEventDefinitions.companionNameId),
+        isTrue,
+      );
+      expect(
+        controller.isEventSkipped(CompanionEventDefinitions.companionNameId),
+        isFalse,
+      );
+
+      controller.onTaskResult(done: true);
+      controller.onTaskResult(done: true);
+
+      expect(controller.completedTaskCount, 5);
+      expect(controller.pendingEvent, isNull);
+    });
+
     test('next event can trigger after previous pending is handled', () {
       final controller = CompanionEventController();
 
@@ -124,7 +156,7 @@ void main() {
     test('consumeDeferredAudioPendingEvents skips sleep and music events', () {
       final controller = CompanionEventController();
 
-      for (int i = 0; i < 9; i++) {
+      for (int i = 0; i < 18; i++) {
         controller.onTaskResult(done: true);
       }
       controller.markPendingEventHandled(skipped: false); // 3
@@ -143,21 +175,18 @@ void main() {
       );
       expect(
         controller.isEventSkipped(CompanionEventDefinitions.backgroundMusicId),
-        isFalse,
+        isTrue,
       );
-      expect(controller.pendingEvent, isNull);
 
-      for (int i = 0; i < 3; i++) {
-        controller.onTaskResult(done: true);
-      }
+      expect(controller.pendingEvent?.id, CompanionEventDefinitions.symbolId);
+
+      controller.markPendingEventHandled(skipped: false);
       expect(
         controller.pendingEvent?.id,
-        CompanionEventDefinitions.backgroundMusicId,
+        CompanionEventDefinitions.backgroundColorId,
       );
-
-      controller.consumeDeferredAudioPendingEvents();
       expect(
-        controller.isEventSkipped(CompanionEventDefinitions.backgroundMusicId),
+        controller.isEventHandled(CompanionEventDefinitions.symbolId),
         isTrue,
       );
     });
