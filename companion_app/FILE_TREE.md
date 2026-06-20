@@ -79,6 +79,11 @@ companion_app/
 |  |  |  |- seed_data.dart
 |  |  |  |- task_library.dart
 |  |- features/
+|  |  |- history/
+|  |  |  |- history_screen.dart
+|  |  |  |- widgets/
+|  |  |     |- day_activity_bar.dart
+|  |  |     |- history_empty_state.dart
 |     |- home/
 |        |- home_page.dart
 |        |- settings_page.dart
@@ -107,6 +112,9 @@ companion_app/
 |           |- user_name_settings_panel.dart
 |- test/
 |  |- widget_test.dart
+|  |- features/
+|  |  |- history/
+|  |     |- history_screen_test.dart
 |  |- core/
 |  |  |- flow/
 |  |  |  |- energisk_chain_controller_test.dart

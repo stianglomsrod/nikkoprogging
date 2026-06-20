@@ -15,6 +15,7 @@ import 'package:companion_app/core/models/sinnsstemning.dart';
 import 'package:companion_app/core/models/task_item.dart';
 import 'package:companion_app/core/scheduler/scheduler_engine.dart';
 import 'package:companion_app/core/seed_data/seed_data.dart';
+import 'package:companion_app/features/history/history_screen.dart';
 import 'package:companion_app/features/home/settings_page.dart';
 import 'package:companion_app/features/home/widgets/background_color_event_view.dart';
 import 'package:companion_app/features/home/widgets/bottom_action_area.dart';
@@ -589,6 +590,14 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _openHistory() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => HistoryScreen(historyRepository: _historyRepository),
+      ),
+    );
+  }
+
   String _moodLabel(Sinnsstemning mood) {
     switch (mood) {
       case Sinnsstemning.negativ:
@@ -611,6 +620,11 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: Text(_headerTitle()),
         actions: [
+          IconButton(
+            onPressed: _openHistory,
+            icon: const Icon(Icons.bar_chart_outlined),
+            tooltip: 'Historikk',
+          ),
           IconButton(
             onPressed: _openSettings,
             icon: const Icon(Icons.settings_outlined),

@@ -165,18 +165,21 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Implementer unlock-state-maskin bak repository/persisteringslag.
   - Legg til rolige event-flyter etter resultat-state uten a avbryte oppgaveflyt.
 
-### 15) Historikk/statistikk er kun grunnmur i minne og avhenger fortsatt av persistering
+### 15) Historikk/statistikk er MVP i minne og avhenger fortsatt av persistering
 
 - Status: Active (intentional)
-- Decision: En liten in-memory grunnmur for historikk (entry-modeller + dagaggregering) er lagt i `lib/core/history/`, men ingen historikkskjerm, detaljvisning eller persistert lagring er implementert enn.
+- Decision: En liten in-memory grunnmur for historikk (entry-modeller + dagaggregering) er lagt i `lib/core/history/`.
 - Decision: En enkel repository-grense for historikk er ogsa lagt (`history_repository` + `in_memory_history_repository`) for a forberede senere lagringsbytte uten a koble UI direkte til persistering.
+- Decision: En enkel historikkskjerm med 7-dagers stolper og rolig empty-state er lagt i `lib/features/history/`, men detaljvisning per dag og gruppering (uke/maned/ar) er ikke implementert enn.
 - Reason: Holder tidlig validering enkel, men forbereder tydelig domene og aggregeringsregler for senere iterasjoner.
 - Risk:
 - Bruker far fortsatt ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.
 - Uten repository/persistering kan historikkdata ikke overleve app-restart.
+- Historikkvisningen kan oppleves for enkel over tid uten dagdetalj og gruppering.
 - Future resolution:
 - Etabler repository-grense og deretter persistering for attempts/mood/events.
 - Bygg deretter rolig historikkskjerm (for eksempel 7-dagers stolper + dagdetalj) og senere gruppering/oppsummering uten press-sprak.
+- Legg til dagdetalj, deretter uke/maned/ar-gruppering og rolige oppsummeringer etter validering av MVP-bruk.
 
 ### 16) Global feedback-system er roadmap-only og avhenger av lagring/sync
 
