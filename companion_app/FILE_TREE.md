@@ -54,6 +54,10 @@ companion_app/
 |  |  |  |- companion_text_library.dart
 |  |  |- flow/
 |  |  |  |- energisk_chain_controller.dart
+|  |  |- history/
+|  |  |  |- day_history_summary.dart
+|  |  |  |- history_aggregator.dart
+|  |  |  |- history_entry.dart
 |  |  |- events/
 |  |  |  |- companion_event.dart
 |  |  |  |- companion_event_controller.dart
@@ -106,6 +110,8 @@ companion_app/
 |  |  |  |- energisk_chain_controller_test.dart
 |  |  |- events/
 |  |  |  |- companion_event_controller_test.dart
+|  |  |- history/
+|  |  |  |- history_aggregator_test.dart
 |  |  |- scheduler/
 |  |  |  |- scheduler_engine_test.dart
 |  |  |- adaptive_engine/

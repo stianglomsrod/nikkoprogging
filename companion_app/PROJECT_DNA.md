@@ -47,6 +47,7 @@ Current implementation status:
 - Symbol event (15 completed `Ja`) and background color event (18 completed `Ja`) are now wired with save/skip and later editing in Settings.
 - Audio events (9/12 completed `Ja`) remain deferred; in prototype flow they are auto-skipped so they do not block non-audio event progression.
 - Deferred-audio auto-skip policy is centralized in the companion-event layer (not hardcoded in multiple UI checks) to keep later real-audio integration simpler.
+- History/statistics chunk 1 foundation is now in place via focused in-memory core models and aggregation (`lib/core/history/`) for day-level summaries and timeline markers (no history UI or persistence yet).
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Companion figure now uses frame-based asset animation.

@@ -165,16 +165,17 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Implementer unlock-state-maskin bak repository/persisteringslag.
   - Legg til rolige event-flyter etter resultat-state uten a avbryte oppgaveflyt.
 
-### 15) Historikk/statistikk er roadmap-only og avhenger av persistering
+### 15) Historikk/statistikk er kun grunnmur i minne og avhenger fortsatt av persistering
 
 - Status: Active (intentional)
-- Decision: Historikk/statistikk med dag-/uke-/maned-/arsvisning er dokumentert, men ikke implementert i prototypen.
-- Reason: Krever vedvarende data over tid for oppgaver, stemning og hendelser.
+- Decision: En liten in-memory grunnmur for historikk (entry-modeller + dagaggregering) er lagt i `lib/core/history/`, men ingen historikkskjerm, detaljvisning eller persistert lagring er implementert enn.
+- Reason: Holder tidlig validering enkel, men forbereder tydelig domene og aggregeringsregler for senere iterasjoner.
 - Risk:
-  - Bruker far ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.
+- Bruker far fortsatt ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.
+- Uten repository/persistering kan historikkdata ikke overleve app-restart.
 - Future resolution:
-  - Etabler persistering for attempts/mood/events.
-  - Bygg deretter rolige visualiseringer og oppsummeringer uten press-språk.
+- Etabler repository-grense og deretter persistering for attempts/mood/events.
+- Bygg deretter rolig historikkskjerm (for eksempel 7-dagers stolper + dagdetalj) og senere gruppering/oppsummering uten press-sprak.
 
 ### 16) Global feedback-system er roadmap-only og avhenger av lagring/sync
 
