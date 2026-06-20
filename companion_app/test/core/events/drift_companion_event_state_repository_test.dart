@@ -39,6 +39,41 @@ void main() {
       expect(after.pendingEventId, 'event_symbol');
       expect(after.handledEventIds.contains('event_user_name'), isTrue);
       expect(after.skippedEventIds.contains('event_sleep_sound'), isTrue);
+
+      await database.close();
+    });
+
+    test('returns null on fresh database (empty state)', () async {
+      final database = AppDatabase(NativeDatabase.memory());
+      final repository = DriftCompanionEventStateRepository(database);
+
+      final state = await repository.readState();
+      expect(state, isNull, reason: 'Fresh DB should hydrate with null');
+
+      await database.close();
+    });
+
+    test('succeeds with empty snapshot values', () async {
+      final database = AppDatabase(NativeDatabase.memory());
+      final repository = DriftCompanionEventStateRepository(database);
+
+      await repository.writeState(
+        const CompanionEventStateSnapshot(
+          completedTaskCount: 0,
+          autoTriggeredEventIds: {},
+          handledEventIds: {},
+          skippedEventIds: {},
+          pendingEventId: null,
+        ),
+      );
+
+      final after = await repository.readState();
+      expect(after, isNotNull);
+      expect(after!.completedTaskCount, 0);
+      expect(after.pendingEventId, isNull);
+      expect(after.autoTriggeredEventIds, isEmpty);
+
+      await database.close();
     });
   });
 }

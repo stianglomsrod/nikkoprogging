@@ -65,5 +65,36 @@ void main() {
 
       await reloadedRepository.close();
     });
+
+    test('returns empty list on fresh database', () async {
+      final database = AppDatabase(NativeDatabase.memory());
+      final repository = DriftHistoryRepository(database);
+      await repository.initialize();
+
+      final entries = repository.readEntriesForDay(DateTime(2026, 6, 20));
+      expect(entries, isEmpty, reason: 'Fresh DB should hydrate with empty');
+
+      final summaries = repository.readDaySummaries(
+        startDate: DateTime(2026, 6, 20),
+        dayCount: 7,
+      );
+      expect(
+        summaries,
+        hasLength(7),
+        reason: 'Summary range should include empty days',
+      );
+      for (final summary in summaries) {
+        expect(summary.completedTaskCount, 0);
+        expect(summary.attemptCount, 0);
+        expect(summary.notCompletedAttemptCount, 0);
+        expect(summary.interruptedAttemptCount, 0);
+        expect(summary.moodEntryCount, 0);
+        expect(summary.eventMarkers, isEmpty);
+        expect(summary.activityMoments, isEmpty);
+        expect(summary.hasActivity, isFalse);
+      }
+
+      await repository.close();
+    });
   });
 }

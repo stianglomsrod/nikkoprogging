@@ -29,6 +29,8 @@ void main() {
       expect(after.userName, 'Eli');
       expect(after.symbol, CompanionSymbolOption.moon);
       expect(after.backgroundTone, CompanionBackgroundTone.deepGreen);
+
+      await database.close();
     });
 
     test('persists empty identity values as null and defaults', () async {
@@ -50,6 +52,18 @@ void main() {
       expect(after.userName, isNull);
       expect(after.symbol, CompanionSymbolOption.none);
       expect(after.backgroundTone, CompanionBackgroundTone.defaultDark);
+
+      await database.close();
+    });
+
+    test('returns null on fresh database (empty state)', () async {
+      final database = AppDatabase(NativeDatabase.memory());
+      final repository = DriftCompanionIdentityRepository(database);
+
+      final state = await repository.readState();
+      expect(state, isNull, reason: 'Fresh DB should hydrate with null');
+
+      await database.close();
     });
   });
 }
