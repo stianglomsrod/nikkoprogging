@@ -26,9 +26,11 @@ Split into:
 ## MVP now (implementable scope)
 
 1. Global feedback entry point
+
 - One globally available trigger from primary app views.
 
 2. Feedback modal
+
 - Free-text message
 - Feedback type selector:
   - generell feedback
@@ -37,10 +39,12 @@ Split into:
 - Send / avbryt
 
 3. Local storage (minimal)
+
 - Persist locally using existing repository-first approach.
 - Keep payload minimal and calm.
 
 4. History list (minimal)
+
 - Simple list of submitted items
 - Basic detail view per item (text + type + timestamp)
 
