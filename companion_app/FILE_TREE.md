@@ -55,6 +55,7 @@ companion_app/
 |  |  |  |- app_database.g.dart
 |  |  |  |- tables/
 |  |  |     |- companion_event_state.dart
+|  |  |     |- companion_identity_state.dart
 |  |  |     |- history_entries.dart
 |  |  |- content/
 |  |  |  |- companion_text_library.dart
@@ -72,8 +73,11 @@ companion_app/
 |  |  |  |- companion_event_controller.dart
 |  |  |  |- companion_event_definitions.dart
 |  |  |  |- companion_identity.dart
+|  |  |  |- companion_identity_repository.dart
+|  |  |  |- companion_identity_state_snapshot.dart
 |  |  |  |- companion_event_state_repository.dart
 |  |  |  |- companion_event_state_snapshot.dart
+|  |  |  |- drift_companion_identity_repository.dart
 |  |  |  |- drift_companion_event_state_repository.dart
 |  |  |- models/
 |  |  |  |- attempt_entry.dart
@@ -134,6 +138,7 @@ companion_app/
 |  |  |- events/
 |  |  |  |- companion_event_controller_test.dart
 |  |  |  |- drift_companion_event_state_repository_test.dart
+|  |  |  |- drift_companion_identity_repository_test.dart
 |  |  |- history/
 |  |  |  |- drift_history_repository_test.dart
 |  |  |  |- history_aggregator_test.dart

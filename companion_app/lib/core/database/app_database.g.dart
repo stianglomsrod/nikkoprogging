@@ -1204,12 +1204,443 @@ class CompanionEventStatesCompanion
   }
 }
 
+class $CompanionIdentityStatesTable extends CompanionIdentityStates
+    with TableInfo<$CompanionIdentityStatesTable, CompanionIdentityStateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CompanionIdentityStatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _companionNameMeta = const VerificationMeta(
+    'companionName',
+  );
+  @override
+  late final GeneratedColumn<String> companionName = GeneratedColumn<String>(
+    'companion_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _userNameMeta = const VerificationMeta(
+    'userName',
+  );
+  @override
+  late final GeneratedColumn<String> userName = GeneratedColumn<String>(
+    'user_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _selectedSymbolMeta = const VerificationMeta(
+    'selectedSymbol',
+  );
+  @override
+  late final GeneratedColumn<String> selectedSymbol = GeneratedColumn<String>(
+    'selected_symbol',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('none'),
+  );
+  static const VerificationMeta _backgroundToneMeta = const VerificationMeta(
+    'backgroundTone',
+  );
+  @override
+  late final GeneratedColumn<String> backgroundTone = GeneratedColumn<String>(
+    'background_tone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('defaultDark'),
+  );
+  static const VerificationMeta _updatedAtMsMeta = const VerificationMeta(
+    'updatedAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAtMs = GeneratedColumn<int>(
+    'updated_at_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    companionName,
+    userName,
+    selectedSymbol,
+    backgroundTone,
+    updatedAtMs,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'companion_identity_states';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CompanionIdentityStateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('companion_name')) {
+      context.handle(
+        _companionNameMeta,
+        companionName.isAcceptableOrUnknown(
+          data['companion_name']!,
+          _companionNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('user_name')) {
+      context.handle(
+        _userNameMeta,
+        userName.isAcceptableOrUnknown(data['user_name']!, _userNameMeta),
+      );
+    }
+    if (data.containsKey('selected_symbol')) {
+      context.handle(
+        _selectedSymbolMeta,
+        selectedSymbol.isAcceptableOrUnknown(
+          data['selected_symbol']!,
+          _selectedSymbolMeta,
+        ),
+      );
+    }
+    if (data.containsKey('background_tone')) {
+      context.handle(
+        _backgroundToneMeta,
+        backgroundTone.isAcceptableOrUnknown(
+          data['background_tone']!,
+          _backgroundToneMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at_ms')) {
+      context.handle(
+        _updatedAtMsMeta,
+        updatedAtMs.isAcceptableOrUnknown(
+          data['updated_at_ms']!,
+          _updatedAtMsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CompanionIdentityStateRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CompanionIdentityStateRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      companionName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}companion_name'],
+      ),
+      userName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_name'],
+      ),
+      selectedSymbol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selected_symbol'],
+      )!,
+      backgroundTone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}background_tone'],
+      )!,
+      updatedAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at_ms'],
+      )!,
+    );
+  }
+
+  @override
+  $CompanionIdentityStatesTable createAlias(String alias) {
+    return $CompanionIdentityStatesTable(attachedDatabase, alias);
+  }
+}
+
+class CompanionIdentityStateRow extends DataClass
+    implements Insertable<CompanionIdentityStateRow> {
+  final int id;
+  final String? companionName;
+  final String? userName;
+  final String selectedSymbol;
+  final String backgroundTone;
+  final int updatedAtMs;
+  const CompanionIdentityStateRow({
+    required this.id,
+    this.companionName,
+    this.userName,
+    required this.selectedSymbol,
+    required this.backgroundTone,
+    required this.updatedAtMs,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || companionName != null) {
+      map['companion_name'] = Variable<String>(companionName);
+    }
+    if (!nullToAbsent || userName != null) {
+      map['user_name'] = Variable<String>(userName);
+    }
+    map['selected_symbol'] = Variable<String>(selectedSymbol);
+    map['background_tone'] = Variable<String>(backgroundTone);
+    map['updated_at_ms'] = Variable<int>(updatedAtMs);
+    return map;
+  }
+
+  CompanionIdentityStatesCompanion toCompanion(bool nullToAbsent) {
+    return CompanionIdentityStatesCompanion(
+      id: Value(id),
+      companionName: companionName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(companionName),
+      userName: userName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userName),
+      selectedSymbol: Value(selectedSymbol),
+      backgroundTone: Value(backgroundTone),
+      updatedAtMs: Value(updatedAtMs),
+    );
+  }
+
+  factory CompanionIdentityStateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CompanionIdentityStateRow(
+      id: serializer.fromJson<int>(json['id']),
+      companionName: serializer.fromJson<String?>(json['companionName']),
+      userName: serializer.fromJson<String?>(json['userName']),
+      selectedSymbol: serializer.fromJson<String>(json['selectedSymbol']),
+      backgroundTone: serializer.fromJson<String>(json['backgroundTone']),
+      updatedAtMs: serializer.fromJson<int>(json['updatedAtMs']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'companionName': serializer.toJson<String?>(companionName),
+      'userName': serializer.toJson<String?>(userName),
+      'selectedSymbol': serializer.toJson<String>(selectedSymbol),
+      'backgroundTone': serializer.toJson<String>(backgroundTone),
+      'updatedAtMs': serializer.toJson<int>(updatedAtMs),
+    };
+  }
+
+  CompanionIdentityStateRow copyWith({
+    int? id,
+    Value<String?> companionName = const Value.absent(),
+    Value<String?> userName = const Value.absent(),
+    String? selectedSymbol,
+    String? backgroundTone,
+    int? updatedAtMs,
+  }) => CompanionIdentityStateRow(
+    id: id ?? this.id,
+    companionName: companionName.present
+        ? companionName.value
+        : this.companionName,
+    userName: userName.present ? userName.value : this.userName,
+    selectedSymbol: selectedSymbol ?? this.selectedSymbol,
+    backgroundTone: backgroundTone ?? this.backgroundTone,
+    updatedAtMs: updatedAtMs ?? this.updatedAtMs,
+  );
+  CompanionIdentityStateRow copyWithCompanion(
+    CompanionIdentityStatesCompanion data,
+  ) {
+    return CompanionIdentityStateRow(
+      id: data.id.present ? data.id.value : this.id,
+      companionName: data.companionName.present
+          ? data.companionName.value
+          : this.companionName,
+      userName: data.userName.present ? data.userName.value : this.userName,
+      selectedSymbol: data.selectedSymbol.present
+          ? data.selectedSymbol.value
+          : this.selectedSymbol,
+      backgroundTone: data.backgroundTone.present
+          ? data.backgroundTone.value
+          : this.backgroundTone,
+      updatedAtMs: data.updatedAtMs.present
+          ? data.updatedAtMs.value
+          : this.updatedAtMs,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanionIdentityStateRow(')
+          ..write('id: $id, ')
+          ..write('companionName: $companionName, ')
+          ..write('userName: $userName, ')
+          ..write('selectedSymbol: $selectedSymbol, ')
+          ..write('backgroundTone: $backgroundTone, ')
+          ..write('updatedAtMs: $updatedAtMs')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    companionName,
+    userName,
+    selectedSymbol,
+    backgroundTone,
+    updatedAtMs,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CompanionIdentityStateRow &&
+          other.id == this.id &&
+          other.companionName == this.companionName &&
+          other.userName == this.userName &&
+          other.selectedSymbol == this.selectedSymbol &&
+          other.backgroundTone == this.backgroundTone &&
+          other.updatedAtMs == this.updatedAtMs);
+}
+
+class CompanionIdentityStatesCompanion
+    extends UpdateCompanion<CompanionIdentityStateRow> {
+  final Value<int> id;
+  final Value<String?> companionName;
+  final Value<String?> userName;
+  final Value<String> selectedSymbol;
+  final Value<String> backgroundTone;
+  final Value<int> updatedAtMs;
+  const CompanionIdentityStatesCompanion({
+    this.id = const Value.absent(),
+    this.companionName = const Value.absent(),
+    this.userName = const Value.absent(),
+    this.selectedSymbol = const Value.absent(),
+    this.backgroundTone = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+  });
+  CompanionIdentityStatesCompanion.insert({
+    this.id = const Value.absent(),
+    this.companionName = const Value.absent(),
+    this.userName = const Value.absent(),
+    this.selectedSymbol = const Value.absent(),
+    this.backgroundTone = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+  });
+  static Insertable<CompanionIdentityStateRow> custom({
+    Expression<int>? id,
+    Expression<String>? companionName,
+    Expression<String>? userName,
+    Expression<String>? selectedSymbol,
+    Expression<String>? backgroundTone,
+    Expression<int>? updatedAtMs,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (companionName != null) 'companion_name': companionName,
+      if (userName != null) 'user_name': userName,
+      if (selectedSymbol != null) 'selected_symbol': selectedSymbol,
+      if (backgroundTone != null) 'background_tone': backgroundTone,
+      if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
+    });
+  }
+
+  CompanionIdentityStatesCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? companionName,
+    Value<String?>? userName,
+    Value<String>? selectedSymbol,
+    Value<String>? backgroundTone,
+    Value<int>? updatedAtMs,
+  }) {
+    return CompanionIdentityStatesCompanion(
+      id: id ?? this.id,
+      companionName: companionName ?? this.companionName,
+      userName: userName ?? this.userName,
+      selectedSymbol: selectedSymbol ?? this.selectedSymbol,
+      backgroundTone: backgroundTone ?? this.backgroundTone,
+      updatedAtMs: updatedAtMs ?? this.updatedAtMs,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (companionName.present) {
+      map['companion_name'] = Variable<String>(companionName.value);
+    }
+    if (userName.present) {
+      map['user_name'] = Variable<String>(userName.value);
+    }
+    if (selectedSymbol.present) {
+      map['selected_symbol'] = Variable<String>(selectedSymbol.value);
+    }
+    if (backgroundTone.present) {
+      map['background_tone'] = Variable<String>(backgroundTone.value);
+    }
+    if (updatedAtMs.present) {
+      map['updated_at_ms'] = Variable<int>(updatedAtMs.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanionIdentityStatesCompanion(')
+          ..write('id: $id, ')
+          ..write('companionName: $companionName, ')
+          ..write('userName: $userName, ')
+          ..write('selectedSymbol: $selectedSymbol, ')
+          ..write('backgroundTone: $backgroundTone, ')
+          ..write('updatedAtMs: $updatedAtMs')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $HistoryEntriesTable historyEntries = $HistoryEntriesTable(this);
   late final $CompanionEventStatesTable companionEventStates =
       $CompanionEventStatesTable(this);
+  late final $CompanionIdentityStatesTable companionIdentityStates =
+      $CompanionIdentityStatesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1217,6 +1648,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     historyEntries,
     companionEventStates,
+    companionIdentityStates,
   ];
 }
 
@@ -1806,6 +2238,246 @@ typedef $$CompanionEventStatesTableProcessedTableManager =
       CompanionEventStateRow,
       PrefetchHooks Function()
     >;
+typedef $$CompanionIdentityStatesTableCreateCompanionBuilder =
+    CompanionIdentityStatesCompanion Function({
+      Value<int> id,
+      Value<String?> companionName,
+      Value<String?> userName,
+      Value<String> selectedSymbol,
+      Value<String> backgroundTone,
+      Value<int> updatedAtMs,
+    });
+typedef $$CompanionIdentityStatesTableUpdateCompanionBuilder =
+    CompanionIdentityStatesCompanion Function({
+      Value<int> id,
+      Value<String?> companionName,
+      Value<String?> userName,
+      Value<String> selectedSymbol,
+      Value<String> backgroundTone,
+      Value<int> updatedAtMs,
+    });
+
+class $$CompanionIdentityStatesTableFilterComposer
+    extends Composer<_$AppDatabase, $CompanionIdentityStatesTable> {
+  $$CompanionIdentityStatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get companionName => $composableBuilder(
+    column: $table.companionName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userName => $composableBuilder(
+    column: $table.userName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get selectedSymbol => $composableBuilder(
+    column: $table.selectedSymbol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backgroundTone => $composableBuilder(
+    column: $table.backgroundTone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CompanionIdentityStatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CompanionIdentityStatesTable> {
+  $$CompanionIdentityStatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get companionName => $composableBuilder(
+    column: $table.companionName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userName => $composableBuilder(
+    column: $table.userName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get selectedSymbol => $composableBuilder(
+    column: $table.selectedSymbol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get backgroundTone => $composableBuilder(
+    column: $table.backgroundTone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CompanionIdentityStatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CompanionIdentityStatesTable> {
+  $$CompanionIdentityStatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get companionName => $composableBuilder(
+    column: $table.companionName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get userName =>
+      $composableBuilder(column: $table.userName, builder: (column) => column);
+
+  GeneratedColumn<String> get selectedSymbol => $composableBuilder(
+    column: $table.selectedSymbol,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get backgroundTone => $composableBuilder(
+    column: $table.backgroundTone,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => column,
+  );
+}
+
+class $$CompanionIdentityStatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CompanionIdentityStatesTable,
+          CompanionIdentityStateRow,
+          $$CompanionIdentityStatesTableFilterComposer,
+          $$CompanionIdentityStatesTableOrderingComposer,
+          $$CompanionIdentityStatesTableAnnotationComposer,
+          $$CompanionIdentityStatesTableCreateCompanionBuilder,
+          $$CompanionIdentityStatesTableUpdateCompanionBuilder,
+          (
+            CompanionIdentityStateRow,
+            BaseReferences<
+              _$AppDatabase,
+              $CompanionIdentityStatesTable,
+              CompanionIdentityStateRow
+            >,
+          ),
+          CompanionIdentityStateRow,
+          PrefetchHooks Function()
+        > {
+  $$CompanionIdentityStatesTableTableManager(
+    _$AppDatabase db,
+    $CompanionIdentityStatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CompanionIdentityStatesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$CompanionIdentityStatesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$CompanionIdentityStatesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> companionName = const Value.absent(),
+                Value<String?> userName = const Value.absent(),
+                Value<String> selectedSymbol = const Value.absent(),
+                Value<String> backgroundTone = const Value.absent(),
+                Value<int> updatedAtMs = const Value.absent(),
+              }) => CompanionIdentityStatesCompanion(
+                id: id,
+                companionName: companionName,
+                userName: userName,
+                selectedSymbol: selectedSymbol,
+                backgroundTone: backgroundTone,
+                updatedAtMs: updatedAtMs,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> companionName = const Value.absent(),
+                Value<String?> userName = const Value.absent(),
+                Value<String> selectedSymbol = const Value.absent(),
+                Value<String> backgroundTone = const Value.absent(),
+                Value<int> updatedAtMs = const Value.absent(),
+              }) => CompanionIdentityStatesCompanion.insert(
+                id: id,
+                companionName: companionName,
+                userName: userName,
+                selectedSymbol: selectedSymbol,
+                backgroundTone: backgroundTone,
+                updatedAtMs: updatedAtMs,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CompanionIdentityStatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CompanionIdentityStatesTable,
+      CompanionIdentityStateRow,
+      $$CompanionIdentityStatesTableFilterComposer,
+      $$CompanionIdentityStatesTableOrderingComposer,
+      $$CompanionIdentityStatesTableAnnotationComposer,
+      $$CompanionIdentityStatesTableCreateCompanionBuilder,
+      $$CompanionIdentityStatesTableUpdateCompanionBuilder,
+      (
+        CompanionIdentityStateRow,
+        BaseReferences<
+          _$AppDatabase,
+          $CompanionIdentityStatesTable,
+          CompanionIdentityStateRow
+        >,
+      ),
+      CompanionIdentityStateRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1814,4 +2486,9 @@ class $AppDatabaseManager {
       $$HistoryEntriesTableTableManager(_db, _db.historyEntries);
   $$CompanionEventStatesTableTableManager get companionEventStates =>
       $$CompanionEventStatesTableTableManager(_db, _db.companionEventStates);
+  $$CompanionIdentityStatesTableTableManager get companionIdentityStates =>
+      $$CompanionIdentityStatesTableTableManager(
+        _db,
+        _db.companionIdentityStates,
+      );
 }

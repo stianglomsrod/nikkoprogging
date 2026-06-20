@@ -4,13 +4,13 @@ History persistence slice 1 is now implemented.
 
 Current implemented local persistence scope:
 
-- Drift + SQLite is used for raw history timeline entries only
+- Drift + SQLite is used for history timeline and companion event/identity state slices
 - persisted entry types: attempts, moods, event actions
 - companion event state is persisted (completed count, auto-triggered ids, handled ids, skipped ids, pending event id)
+- companion identity state is persisted (companion name, user name, selected symbol, selected background tone)
 - daily summaries remain derived through the existing history aggregator
 - no cached summaries yet
 - no week/month/year grouping persistence yet
-- no unrelated app-state persistence yet
 
 Local-first persistence is planned later.
 
@@ -30,7 +30,7 @@ Still not implemented:
 
 - no backend yet
 - no auth yet
-- no persistence yet for settings, unlock state machine, scheduler state, or global feedback
+- no persistence yet for focus-area settings/modus windows, scheduler state, or global feedback
 
 Future persistence note for energisk chain rule:
 
@@ -43,21 +43,13 @@ Future backend options:
 
 ## Future Data Implications from Planned Epics
 
-Notes below cover areas not yet implemented in persistence.
+Notes below cover areas that are partially implemented or not yet implemented in persistence.
 
 ### Companion events and unlocks
 
 Likely future data areas:
 
-- completed-task counter based on `Ja` outcomes
-- unlock state per event id and one-time auto-trigger flags
 - event seen/triggered timestamps
-- skipped-event flags
-- companion identity preferences:
-  - companion name
-  - user name
-  - symbol
-  - background color
 - sound preference placeholders:
   - sleep sound choice + enabled/disabled
   - background sound choice + enabled/disabled

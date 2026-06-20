@@ -102,9 +102,10 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 
 - Status: Active (intentional)
 - Decision: Endringer i Fokusomrader, Aktivt tidsrom og Modus lagres kun i runtime-minne.
+- Decision: Companion-identitet i innstillinger (companion-navn, brukernavn, symbol, bakgrunnstone) persisteres na lokalt via Drift + SQLite.
 - Reason: Ingen persistering i tidlig prototyping.
 - Risk:
-  - Innstillinger resettes ved app-restart.
+  - Fokusomrade-oppsett og modus resettes fortsatt ved app-restart.
 - Future resolution:
   - Persist innstillinger via repository + valgt lagringslag nar dette prioriteres.
 

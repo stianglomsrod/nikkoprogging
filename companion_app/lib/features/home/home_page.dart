@@ -5,6 +5,8 @@ import 'package:companion_app/core/content/companion_text_library.dart';
 import 'package:companion_app/core/adaptive_engine/task_selector.dart';
 import 'package:companion_app/core/events/companion_event_controller.dart';
 import 'package:companion_app/core/events/companion_event_definitions.dart';
+import 'package:companion_app/core/events/companion_identity_repository.dart';
+import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/events/companion_event_state_repository.dart';
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
@@ -49,12 +51,16 @@ class HomePage extends StatefulWidget {
     super.key,
     required this.historyRepository,
     required this.companionEventStateRepository,
+    required this.companionIdentityRepository,
     this.initialCompanionEventState,
+    this.initialCompanionIdentityState,
   });
 
   final HistoryRepository historyRepository;
   final CompanionEventStateRepository companionEventStateRepository;
+  final CompanionIdentityRepository companionIdentityRepository;
   final CompanionEventStateSnapshot? initialCompanionEventState;
+  final CompanionIdentityStateSnapshot? initialCompanionIdentityState;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -100,6 +106,14 @@ class _HomePageState extends State<HomePage> {
     final initialCompanionEventState = widget.initialCompanionEventState;
     if (initialCompanionEventState != null) {
       _companionEvents.restoreFromSnapshot(initialCompanionEventState);
+    }
+
+    final initialCompanionIdentityState = widget.initialCompanionIdentityState;
+    if (initialCompanionIdentityState != null) {
+      _companionName = initialCompanionIdentityState.companionName;
+      _userName = initialCompanionIdentityState.userName;
+      _companionSymbol = initialCompanionIdentityState.symbol;
+      _backgroundTone = initialCompanionIdentityState.backgroundTone;
     }
   }
 
@@ -378,6 +392,7 @@ class _HomePageState extends State<HomePage> {
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _persistCompanionEventState();
+      _persistCompanionIdentityState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -414,6 +429,7 @@ class _HomePageState extends State<HomePage> {
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _persistCompanionEventState();
+      _persistCompanionIdentityState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -445,6 +461,7 @@ class _HomePageState extends State<HomePage> {
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _persistCompanionEventState();
+      _persistCompanionIdentityState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -476,6 +493,7 @@ class _HomePageState extends State<HomePage> {
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _persistCompanionEventState();
+      _persistCompanionIdentityState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -514,6 +532,19 @@ class _HomePageState extends State<HomePage> {
     unawaited(
       widget.companionEventStateRepository.writeState(
         _companionEvents.toSnapshot(),
+      ),
+    );
+  }
+
+  void _persistCompanionIdentityState() {
+    unawaited(
+      widget.companionIdentityRepository.writeState(
+        CompanionIdentityStateSnapshot(
+          companionName: _companionName,
+          userName: _userName,
+          symbol: _companionSymbol,
+          backgroundTone: _backgroundTone,
+        ),
       ),
     );
   }
@@ -637,6 +668,7 @@ class _HomePageState extends State<HomePage> {
       _userName = result.userName;
       _companionSymbol = result.symbol;
       _backgroundTone = result.backgroundTone;
+      _persistCompanionIdentityState();
     });
   }
 

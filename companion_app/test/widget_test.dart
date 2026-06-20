@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:companion_app/app/companion_app.dart';
 import 'package:companion_app/core/events/companion_event_state_repository.dart';
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
+import 'package:companion_app/core/events/companion_identity_repository.dart';
+import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
 import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
@@ -24,10 +26,26 @@ class _InMemoryCompanionEventStateRepository
   }
 }
 
+class _InMemoryCompanionIdentityRepository
+    implements CompanionIdentityRepository {
+  CompanionIdentityStateSnapshot? _snapshot;
+
+  @override
+  Future<CompanionIdentityStateSnapshot?> readState() async {
+    return _snapshot;
+  }
+
+  @override
+  Future<void> writeState(CompanionIdentityStateSnapshot snapshot) async {
+    _snapshot = snapshot;
+  }
+}
+
 CompanionApp _buildApp() {
   return CompanionApp(
     historyRepository: InMemoryHistoryRepository(),
     companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
+    companionIdentityRepository: _InMemoryCompanionIdentityRepository(),
   );
 }
 
