@@ -112,10 +112,10 @@ void main() {
 
       expect(repository.readEntriesForDay(DateTime(2026, 6, 20)), isEmpty);
       expect(
-        repository.readDaySummaries(
-          startDate: DateTime(2026, 6, 20),
-          dayCount: 1,
-        ).first.hasActivity,
+        repository
+            .readDaySummaries(startDate: DateTime(2026, 6, 20), dayCount: 1)
+            .first
+            .hasActivity,
         isFalse,
       );
     });
