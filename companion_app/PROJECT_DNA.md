@@ -48,6 +48,7 @@ Current implementation status:
 - Audio events (9/12 completed `Ja`) remain deferred; in prototype flow they are auto-skipped so they do not block non-audio event progression.
 - Deferred-audio auto-skip policy is centralized in the companion-event layer (not hardcoded in multiple UI checks) to keep later real-audio integration simpler.
 - History/statistics chunk 1 foundation is now in place via focused in-memory core models and aggregation (`lib/core/history/`) for day-level summaries and timeline markers (no history UI or persistence yet).
+- History/statistics chunk 2 repository boundary is now in place via `lib/core/history/history_repository.dart` and `lib/core/history/in_memory_history_repository.dart`, with home flow appending mood/attempt/event records through that boundary (still in-memory only).
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Companion figure now uses frame-based asset animation.

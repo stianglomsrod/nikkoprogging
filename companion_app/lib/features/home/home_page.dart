@@ -7,6 +7,8 @@ import 'package:companion_app/core/events/companion_event_controller.dart';
 import 'package:companion_app/core/events/companion_event_definitions.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/flow/energisk_chain_controller.dart';
+import 'package:companion_app/core/history/history_entry.dart';
+import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/models/attempt_entry.dart';
 import 'package:companion_app/core/models/focus_area.dart';
 import 'package:companion_app/core/models/sinnsstemning.dart';
@@ -52,6 +54,8 @@ class _HomePageState extends State<HomePage> {
   final SchedulerEngine _scheduler = SchedulerEngine();
   final TaskSelector _selector = TaskSelector();
   final CompanionEventController _companionEvents = CompanionEventController();
+  final InMemoryHistoryRepository _historyRepository =
+      InMemoryHistoryRepository();
   final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
 
@@ -138,6 +142,14 @@ class _HomePageState extends State<HomePage> {
     );
 
     setState(() {
+      _historyRepository.appendEntry(
+        HistoryMoodRecord(
+          mood: mood,
+          timestamp: DateTime.now(),
+          focusAreaId: area.id,
+        ),
+      );
+
       if (shouldStartChain && task != null) {
         _energiskChain.activateChainWithFirstTask(task.id);
       } else if (shouldStartChain && task == null) {
@@ -165,14 +177,16 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      _attemptHistory.add(
-        AttemptEntry(
-          taskId: task.id,
-          focusAreaId: area.id,
-          done: done,
-          mood: mood,
-          timestamp: DateTime.now(),
-        ),
+      final attemptEntry = AttemptEntry(
+        taskId: task.id,
+        focusAreaId: area.id,
+        done: done,
+        mood: mood,
+        timestamp: DateTime.now(),
+      );
+      _attemptHistory.add(attemptEntry);
+      _historyRepository.appendEntry(
+        HistoryAttemptRecord.fromAttemptEntry(attemptEntry),
       );
       _companionEvents.onTaskResult(done: done);
 
@@ -305,6 +319,7 @@ class _HomePageState extends State<HomePage> {
 
   void _skipCompanionNameEvent() {
     setState(() {
+      _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -324,6 +339,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _companionName = normalizedValue;
+      _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -337,6 +353,7 @@ class _HomePageState extends State<HomePage> {
 
   void _skipUserNameEvent() {
     setState(() {
+      _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -356,6 +373,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _userName = normalizedValue;
+      _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -369,6 +387,7 @@ class _HomePageState extends State<HomePage> {
 
   void _skipSymbolEvent() {
     setState(() {
+      _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -383,6 +402,7 @@ class _HomePageState extends State<HomePage> {
   void _saveSymbol(CompanionSymbolOption symbol) {
     setState(() {
       _companionSymbol = symbol;
+      _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -396,6 +416,7 @@ class _HomePageState extends State<HomePage> {
 
   void _skipBackgroundColorEvent() {
     setState(() {
+      _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -410,6 +431,7 @@ class _HomePageState extends State<HomePage> {
   void _saveBackgroundTone(CompanionBackgroundTone tone) {
     setState(() {
       _backgroundTone = tone;
+      _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
       _stage = PromptStage.idle;
       _activeFocusArea = null;
@@ -428,6 +450,21 @@ class _HomePageState extends State<HomePage> {
       return baseName;
     }
     return '$symbol $baseName $symbol';
+  }
+
+  void _recordPendingEventAction(HistoryEventAction action) {
+    final pending = _companionEvents.pendingEvent;
+    if (pending == null) {
+      return;
+    }
+
+    _historyRepository.appendEntry(
+      HistoryEventRecord(
+        eventId: pending.id,
+        action: action,
+        timestamp: DateTime.now(),
+      ),
+    );
   }
 
   void _resetToIdle() {

@@ -169,6 +169,7 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 
 - Status: Active (intentional)
 - Decision: En liten in-memory grunnmur for historikk (entry-modeller + dagaggregering) er lagt i `lib/core/history/`, men ingen historikkskjerm, detaljvisning eller persistert lagring er implementert enn.
+- Decision: En enkel repository-grense for historikk er ogsa lagt (`history_repository` + `in_memory_history_repository`) for a forberede senere lagringsbytte uten a koble UI direkte til persistering.
 - Reason: Holder tidlig validering enkel, men forbereder tydelig domene og aggregeringsregler for senere iterasjoner.
 - Risk:
 - Bruker far fortsatt ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.

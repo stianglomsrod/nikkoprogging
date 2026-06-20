@@ -58,6 +58,8 @@ companion_app/
 |  |  |  |- day_history_summary.dart
 |  |  |  |- history_aggregator.dart
 |  |  |  |- history_entry.dart
+|  |  |  |- history_repository.dart
+|  |  |  |- in_memory_history_repository.dart
 |  |  |- events/
 |  |  |  |- companion_event.dart
 |  |  |  |- companion_event_controller.dart
@@ -112,6 +114,7 @@ companion_app/
 |  |  |  |- companion_event_controller_test.dart
 |  |  |- history/
 |  |  |  |- history_aggregator_test.dart
+|  |  |  |- in_memory_history_repository_test.dart
 |  |  |- scheduler/
 |  |  |  |- scheduler_engine_test.dart
 |  |  |- adaptive_engine/
