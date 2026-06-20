@@ -1,8 +1,4 @@
-enum FeedbackType {
-  general,
-  bug,
-  suggestion,
-}
+enum FeedbackType { general, bug, suggestion }
 
 class FeedbackItem {
   const FeedbackItem({

@@ -10,24 +10,26 @@ class DriftFeedbackRepository implements FeedbackRepository {
 
   @override
   Future<void> append(FeedbackItem item) {
-    return _database.into(_database.feedbackItems).insertOnConflictUpdate(
-      FeedbackItemsCompanion.insert(
-        id: item.id,
-        createdAtMs: item.createdAtMs,
-        feedbackType: item.type.name,
-        message: item.message,
-        appVersion: drift.Value(item.appVersion),
-        screenContext: drift.Value(item.screenContext),
-        updatedAtMs: drift.Value(DateTime.now().millisecondsSinceEpoch),
-      ),
-    );
+    return _database
+        .into(_database.feedbackItems)
+        .insertOnConflictUpdate(
+          FeedbackItemsCompanion.insert(
+            id: item.id,
+            createdAtMs: item.createdAtMs,
+            feedbackType: item.type.name,
+            message: item.message,
+            appVersion: drift.Value(item.appVersion),
+            screenContext: drift.Value(item.screenContext),
+            updatedAtMs: drift.Value(DateTime.now().millisecondsSinceEpoch),
+          ),
+        );
   }
 
   @override
   Future<List<FeedbackItem>> readAll() async {
-    final rows = await (_database.select(_database.feedbackItems)
-          ..orderBy([(table) => drift.OrderingTerm.desc(table.createdAtMs)]))
-        .get();
+    final rows = await (_database.select(
+      _database.feedbackItems,
+    )..orderBy([(table) => drift.OrderingTerm.desc(table.createdAtMs)])).get();
 
     return rows.map(_mapRowToItem).toList(growable: false);
   }

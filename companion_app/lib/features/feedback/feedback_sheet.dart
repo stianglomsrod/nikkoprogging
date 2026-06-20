@@ -93,7 +93,8 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
       }
       setState(() {
         _isSaving = false;
-        _errorMessage = 'Det gikk ikke denne gangen. Du kan gjerne prøve igjen.';
+        _errorMessage =
+            'Det gikk ikke denne gangen. Du kan gjerne prøve igjen.';
       });
     }
   }
@@ -109,7 +110,10 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Del tilbakemelding', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              'Del tilbakemelding',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 8),
             const Text(
               'Takk for at du sier fra. Vi bruker dette til a gjore appen roligere og nyttigere.',
@@ -178,7 +182,9 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
             Row(
               children: [
                 TextButton(
-                  onPressed: _isSaving ? null : () => Navigator.of(context).pop(false),
+                  onPressed: _isSaving
+                      ? null
+                      : () => Navigator.of(context).pop(false),
                   child: const Text('Avbryt'),
                 ),
                 const Spacer(),
