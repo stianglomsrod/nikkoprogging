@@ -22,7 +22,10 @@ void main() {
     );
 
     expect(find.textContaining('Noen dager er roligere.'), findsOneWidget);
-    expect(find.text('Fullførte oppgaver'), findsOneWidget);
+    expect(find.text('Rolig dag'), findsOneWidget);
+    expect(find.text('Fullførte oppgaver'), findsNothing);
+    expect(find.text('Hendelser'), findsNothing);
+    expect(find.text('Tidspunkter med aktivitet'), findsNothing);
   });
 
   testWidgets('renders day detail sections with activity values', (
@@ -91,5 +94,58 @@ void main() {
 
     expect(find.text('Hendelser'), findsOneWidget);
     expect(find.textContaining('Symbol valgt (lagret)'), findsOneWidget);
+    expect(find.text('Tidspunkter med aktivitet'), findsOneWidget);
+  });
+
+  testWidgets('compacts repeated activity times for calm mobile readability', (
+    WidgetTester tester,
+  ) async {
+    final day = DateTime(2026, 6, 22);
+
+    final entries = <HistoryEntry>[
+      HistoryEventRecord(
+        eventId: 'event_user_name',
+        action: HistoryEventAction.saved,
+        timestamp: DateTime(2026, 6, 22, 13, 24),
+        label: 'event_user_name',
+      ),
+    ];
+
+    final summary = DayHistorySummary(
+      dayStart: DateTime(2026, 6, 22),
+      completedTaskCount: 0,
+      attemptCount: 0,
+      notCompletedAttemptCount: 0,
+      interruptedAttemptCount: 0,
+      moodEntryCount: 0,
+      moodCounts: const {},
+      eventMarkers: [
+        HistoryEventMarker(
+          eventId: 'event_user_name',
+          timestamp: DateTime(2026, 6, 22, 13, 24),
+        ),
+      ],
+      activityMoments: [
+        DateTime(2026, 6, 22, 13, 24),
+        DateTime(2026, 6, 22, 13, 24),
+        DateTime(2026, 6, 22, 13, 24),
+        DateTime(2026, 6, 22, 13, 38),
+        DateTime(2026, 6, 22, 13, 38),
+        DateTime(2026, 6, 22, 13, 49),
+        DateTime(2026, 6, 22, 13, 50),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DayDetailView(day: day, summary: summary, entries: entries),
+      ),
+    );
+
+    expect(find.text('Tidspunkter med aktivitet'), findsOneWidget);
+    expect(find.textContaining('13:24 (x3)'), findsOneWidget);
+    expect(find.textContaining('13:38 (x2)'), findsOneWidget);
+    expect(find.textContaining('13:49'), findsOneWidget);
+    expect(find.textContaining('13:50'), findsOneWidget);
   });
 }

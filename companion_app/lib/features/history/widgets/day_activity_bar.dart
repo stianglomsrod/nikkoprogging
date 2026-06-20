@@ -32,7 +32,11 @@ class DayActivityBar extends StatelessWidget {
         ? colorScheme.primary.withValues(alpha: 0.86)
         : colorScheme.outlineVariant.withValues(alpha: 0.65);
 
-    final labelStyle = Theme.of(context).textTheme.labelSmall;
+    final labelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+      color: colorScheme.onSurfaceVariant,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.2,
+    );
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -44,7 +48,7 @@ class DayActivityBar extends StatelessWidget {
               key: ValueKey(
                 'history-bar-fill-${index ?? summary.dayStart.day}',
               ),
-              width: 20,
+              width: 22,
               height: fillHeight,
               decoration: BoxDecoration(
                 color: fillColor,
@@ -62,19 +66,19 @@ class DayActivityBar extends StatelessWidget {
   String _weekdayLabel(int weekday) {
     switch (weekday) {
       case DateTime.monday:
-        return 'man';
+        return 'Man';
       case DateTime.tuesday:
-        return 'tir';
+        return 'Tir';
       case DateTime.wednesday:
-        return 'ons';
+        return 'Ons';
       case DateTime.thursday:
-        return 'tor';
+        return 'Tor';
       case DateTime.friday:
-        return 'fre';
+        return 'Fre';
       case DateTime.saturday:
-        return 'lor';
+        return 'Lør';
       case DateTime.sunday:
-        return 'son';
+        return 'Søn';
       default:
         return '';
     }

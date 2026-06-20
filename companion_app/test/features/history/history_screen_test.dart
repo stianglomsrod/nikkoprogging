@@ -25,6 +25,10 @@ void main() {
 
       expect(find.byType(HistoryEmptyState), findsOneWidget);
       expect(find.text('Noen dager er roligere.'), findsOneWidget);
+      expect(
+        find.textContaining('Her er det stille foreløpig.'),
+        findsOneWidget,
+      );
       expect(find.byType(DayActivityBar), findsNothing);
     },
   );
@@ -59,6 +63,7 @@ void main() {
 
     expect(find.byType(HistoryEmptyState), findsNothing);
     expect(find.byType(DayActivityBar), findsNWidgets(7));
+    expect(find.text('Små spor gjennom uken'), findsOneWidget);
 
     final bars = tester.widgetList<DayActivityBar>(find.byType(DayActivityBar));
     expect(bars.any((bar) => bar.summary.completedTaskCount > 0), isTrue);

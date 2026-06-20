@@ -49,6 +49,7 @@ class DayDetailView extends StatelessWidget {
     final activityTimes = summary.activityMoments
         .map(_formatTime)
         .toList(growable: false);
+    final compactActivityTimes = _compactActivityTimes(activityTimes);
 
     final hasAnyActivity = entries.isNotEmpty || summary.hasActivity;
 
@@ -76,46 +77,47 @@ class DayDetailView extends StatelessWidget {
             Text(
               hasAnyActivity
                   ? 'Her er det du prøvde denne dagen.'
-                  : 'Noen dager er roligere. Det er ingen registrert aktivitet her ennå.',
+                  : 'Dette var en rolig dag. Her er det stille foreløpig.',
             ),
             const SizedBox(height: 12),
             Expanded(
               child: ListView(
                 children: [
-                  DayDetailSection(
-                    title: 'Fullførte oppgaver',
-                    items: completedTaskIds,
-                    emptyText:
-                        'Ingen fullførte oppgaver registrert denne dagen.',
-                  ),
-                  DayDetailSection(
-                    title: 'Ikke fullførte oppgaver',
-                    items: notCompletedTaskIds,
-                    emptyText:
-                        'Ingen ikke-fullførte oppgaver registrert denne dagen.',
-                  ),
-                  DayDetailSection(
-                    title: 'Avbrutte oppgaver',
-                    items: interruptedTaskIds,
-                    emptyText:
-                        'Ingen avbrutte oppgaver registrert denne dagen.',
-                  ),
-                  DayDetailSection(
-                    title: 'Registrerte stemninger',
-                    items: moodLines,
-                    emptyText: 'Ingen stemninger registrert denne dagen.',
-                  ),
-                  DayDetailSection(
-                    title: 'Hendelser',
-                    items: eventLines,
-                    emptyText: 'Ingen hendelser registrert denne dagen.',
-                  ),
-                  DayDetailSection(
-                    title: 'Tidspunkter med aktivitet',
-                    items: activityTimes,
-                    emptyText:
-                        'Ingen aktivitetstidspunkter registrert denne dagen.',
-                  ),
+                  if (!hasAnyActivity)
+                    DayDetailSection(
+                      title: 'Rolig dag',
+                      items: const [
+                        'Noen dager er roligere.',
+                        'Når du bruker appen, vil små spor dukke opp her.',
+                      ],
+                    ),
+                  if (completedTaskIds.isNotEmpty)
+                    DayDetailSection(
+                      title: 'Fullførte oppgaver',
+                      items: completedTaskIds,
+                    ),
+                  if (notCompletedTaskIds.isNotEmpty)
+                    DayDetailSection(
+                      title: 'Ikke fullførte oppgaver',
+                      items: notCompletedTaskIds,
+                    ),
+                  if (interruptedTaskIds.isNotEmpty)
+                    DayDetailSection(
+                      title: 'Avbrutte oppgaver',
+                      items: interruptedTaskIds,
+                    ),
+                  if (moodLines.isNotEmpty)
+                    DayDetailSection(
+                      title: 'Registrerte stemninger',
+                      items: moodLines,
+                    ),
+                  if (eventLines.isNotEmpty)
+                    DayDetailSection(title: 'Hendelser', items: eventLines),
+                  if (compactActivityTimes.isNotEmpty)
+                    DayDetailSection(
+                      title: 'Tidspunkter med aktivitet',
+                      items: compactActivityTimes,
+                    ),
                 ],
               ),
             ),
@@ -154,5 +156,33 @@ class DayDetailView extends StatelessWidget {
       return entry.taskId;
     }
     return snapshot;
+  }
+
+  List<String> _compactActivityTimes(List<String> times) {
+    if (times.isEmpty) {
+      return const <String>[];
+    }
+
+    final counts = <String, int>{};
+    final order = <String>[];
+    for (final time in times) {
+      if (!counts.containsKey(time)) {
+        order.add(time);
+      }
+      counts[time] = (counts[time] ?? 0) + 1;
+    }
+
+    const maxShown = 8;
+    final shown = <String>[];
+    for (final time in order.take(maxShown)) {
+      final count = counts[time] ?? 1;
+      shown.add(count > 1 ? '$time (x$count)' : time);
+    }
+
+    if (order.length > maxShown) {
+      shown.add('Og ${order.length - maxShown} flere tidspunkter');
+    }
+
+    return shown;
   }
 }

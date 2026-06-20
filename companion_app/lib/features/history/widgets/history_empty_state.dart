@@ -22,7 +22,7 @@ class HistoryEmptyState extends StatelessWidget {
             Text('Noen dager er roligere.', style: textTheme.titleMedium),
             const SizedBox(height: 6),
             Text(
-              'Små steg teller. Historikken fylles opp når du bruker appen.',
+              'Her er det stille foreløpig. Når du bruker appen, vil små spor dukke opp her.',
               textAlign: TextAlign.center,
               style: textTheme.bodyMedium,
             ),

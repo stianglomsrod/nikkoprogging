@@ -39,47 +39,68 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Historikk')),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Dette var dagene med aktivitet.',
+              'Små spor gjennom uken',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 6),
             Text(
-              'Oversikten er rolig og enkel, med én stolpe per dag.',
+              'En rolig oversikt med én stolpe per dag.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 18),
-            Expanded(
+            const SizedBox(height: 14),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.22),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outlineVariant.withValues(alpha: 0.25),
+                ),
+              ),
               child: hasAnyActivity
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        for (int i = 0; i < daySummaries.length; i++) ...[
-                          if (i > 0) const SizedBox(width: 10),
-                          Expanded(
-                            child: InkWell(
-                              key: ValueKey('history-day-bar-tap-$i'),
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () => _openDayDetail(
-                                context,
-                                summary: daySummaries[i],
-                              ),
-                              child: DayActivityBar(
-                                key: ValueKey('history-day-bar-$i'),
-                                summary: daySummaries[i],
-                                maxCompletedCount: maxCompletedCount,
-                                index: i,
+                  ? SizedBox(
+                      height: 210,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          for (int i = 0; i < daySummaries.length; i++) ...[
+                            if (i > 0) const SizedBox(width: 10),
+                            Expanded(
+                              child: InkWell(
+                                key: ValueKey('history-day-bar-tap-$i'),
+                                borderRadius: BorderRadius.circular(10),
+                                onTap: () => _openDayDetail(
+                                  context,
+                                  summary: daySummaries[i],
+                                ),
+                                child: DayActivityBar(
+                                  key: ValueKey('history-day-bar-$i'),
+                                  summary: daySummaries[i],
+                                  maxCompletedCount: maxCompletedCount,
+                                  index: i,
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
-                      ],
+                      ),
                     )
-                  : const HistoryEmptyState(),
+                  : const SizedBox(height: 210, child: HistoryEmptyState()),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Trykk på en dag for en rolig detaljvisning.',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),
