@@ -196,8 +196,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tilbakemelding'), findsOneWidget);
-    expect(find.byKey(const ValueKey('feedback-detail-message-title')), findsOneWidget);
-    expect(find.byKey(const ValueKey('feedback-detail-message-body')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('feedback-detail-message-title')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('feedback-detail-message-body')),
+      findsOneWidget,
+    );
     expect(
       find.text('Kunne hatt litt tydeligere overskrifter.'),
       findsOneWidget,
@@ -217,8 +223,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tilbakemeldinger'), findsOneWidget);
-    expect(find.byKey(const ValueKey('feedback-history-empty-title')), findsOneWidget);
-    expect(find.byKey(const ValueKey('feedback-history-empty-subtitle')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('feedback-history-empty-title')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('feedback-history-empty-subtitle')),
+      findsOneWidget,
+    );
     expect(find.textContaining('rolig oversikt'), findsOneWidget);
   });
 
