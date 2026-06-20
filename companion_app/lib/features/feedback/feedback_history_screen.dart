@@ -4,19 +4,14 @@ import 'package:companion_app/features/feedback/feedback_history_detail_screen.d
 import 'package:flutter/material.dart';
 
 class FeedbackHistoryScreen extends StatelessWidget {
-  const FeedbackHistoryScreen({
-    super.key,
-    required this.feedbackRepository,
-  });
+  const FeedbackHistoryScreen({super.key, required this.feedbackRepository});
 
   final FeedbackRepository feedbackRepository;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tilbakemeldinger'),
-      ),
+      appBar: AppBar(title: const Text('Tilbakemeldinger')),
       body: FutureBuilder<List<FeedbackItem>>(
         future: feedbackRepository.readAll(),
         builder: (context, snapshot) {
@@ -93,10 +88,7 @@ class _FeedbackHistoryEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: const [
-            Text(
-              'Ingen tilbakemeldinger enda',
-              textAlign: TextAlign.center,
-            ),
+            Text('Ingen tilbakemeldinger enda', textAlign: TextAlign.center),
             SizedBox(height: 8),
             Text(
               'Nar du sender innspill, dukker de opp her.',

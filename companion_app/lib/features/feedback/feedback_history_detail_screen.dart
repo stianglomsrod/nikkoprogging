@@ -2,19 +2,14 @@ import 'package:companion_app/core/feedback/feedback_item.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackHistoryDetailScreen extends StatelessWidget {
-  const FeedbackHistoryDetailScreen({
-    super.key,
-    required this.item,
-  });
+  const FeedbackHistoryDetailScreen({super.key, required this.item});
 
   final FeedbackItem item;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tilbakemelding'),
-      ),
+      appBar: AppBar(title: const Text('Tilbakemelding')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -23,7 +18,10 @@ class FeedbackHistoryDetailScreen extends StatelessWidget {
           _MetaRow(label: 'Type', value: _typeLabel(item.type)),
           if (item.screenContext != null && item.screenContext!.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _MetaRow(label: 'Skjerm', value: _screenContextLabel(item.screenContext!)),
+            _MetaRow(
+              label: 'Skjerm',
+              value: _screenContextLabel(item.screenContext!),
+            ),
           ],
           const SizedBox(height: 20),
           Text('Melding', style: Theme.of(context).textTheme.titleMedium),
@@ -66,10 +64,7 @@ class FeedbackHistoryDetailScreen extends StatelessWidget {
 }
 
 class _MetaRow extends StatelessWidget {
-  const _MetaRow({
-    required this.label,
-    required this.value,
-  });
+  const _MetaRow({required this.label, required this.value});
 
   final String label;
   final String value;

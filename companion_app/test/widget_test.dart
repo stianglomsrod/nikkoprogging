@@ -187,14 +187,20 @@ void main() {
     expect(find.text('Tilbakemeldinger'), findsOneWidget);
     expect(find.text('Forslag'), findsOneWidget);
     expect(find.text('Generell'), findsOneWidget);
-    expect(find.text('Kunne hatt litt tydeligere overskrifter.'), findsOneWidget);
+    expect(
+      find.text('Kunne hatt litt tydeligere overskrifter.'),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const ValueKey('feedback-history-item-fb_b')));
     await tester.pumpAndSettle();
 
     expect(find.text('Tilbakemelding'), findsOneWidget);
     expect(find.text('Melding'), findsOneWidget);
-    expect(find.text('Kunne hatt litt tydeligere overskrifter.'), findsOneWidget);
+    expect(
+      find.text('Kunne hatt litt tydeligere overskrifter.'),
+      findsOneWidget,
+    );
     expect(find.text('Skjerm'), findsOneWidget);
     expect(find.text('Hjem'), findsOneWidget);
   });
