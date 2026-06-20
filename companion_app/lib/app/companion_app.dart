@@ -2,6 +2,7 @@ import 'package:companion_app/core/events/companion_event_state_repository.dart'
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/events/companion_identity_repository.dart';
 import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
+import 'package:companion_app/core/feedback/feedback_repository.dart';
 import 'package:companion_app/core/history/history_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
@@ -12,6 +13,7 @@ class CompanionApp extends StatelessWidget {
   const CompanionApp({
     super.key,
     required this.historyRepository,
+    required this.feedbackRepository,
     required this.companionEventStateRepository,
     required this.companionIdentityRepository,
     required this.focusAreaSettingsRepository,
@@ -21,6 +23,7 @@ class CompanionApp extends StatelessWidget {
   });
 
   final HistoryRepository historyRepository;
+  final FeedbackRepository feedbackRepository;
   final CompanionEventStateRepository companionEventStateRepository;
   final CompanionIdentityRepository companionIdentityRepository;
   final FocusAreaSettingsRepository focusAreaSettingsRepository;
@@ -90,6 +93,7 @@ class CompanionApp extends StatelessWidget {
       ),
       home: HomePage(
         historyRepository: historyRepository,
+        feedbackRepository: feedbackRepository,
         companionEventStateRepository: companionEventStateRepository,
         initialCompanionEventState: initialCompanionEventState,
         companionIdentityRepository: companionIdentityRepository,

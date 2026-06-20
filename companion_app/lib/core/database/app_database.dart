@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:companion_app/core/database/tables/companion_event_state.dart';
 import 'package:companion_app/core/database/tables/companion_identity_state.dart';
+import 'package:companion_app/core/database/tables/feedback_items.dart';
 import 'package:companion_app/core/database/tables/focus_area_settings_state.dart';
 import 'package:companion_app/core/database/tables/history_entries.dart';
 import 'package:drift/drift.dart';
@@ -17,6 +18,7 @@ part 'app_database.g.dart';
     CompanionEventStates,
     CompanionIdentityStates,
     FocusAreaSettingsStates,
+    FeedbackItems,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -27,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -39,6 +41,9 @@ class AppDatabase extends _$AppDatabase {
       await customStatement(
         'CREATE INDEX idx_history_entries_type ON history_entries(entry_type)',
       );
+      await customStatement(
+        'CREATE INDEX idx_feedback_items_created_at_ms ON feedback_items(created_at_ms)',
+      );
     },
     onUpgrade: (Migrator m, int from, int to) async {
       if (from < 2) {
@@ -49,6 +54,12 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 4) {
         await m.createTable(focusAreaSettingsStates);
+      }
+      if (from < 5) {
+        await m.createTable(feedbackItems);
+        await customStatement(
+          'CREATE INDEX idx_feedback_items_created_at_ms ON feedback_items(created_at_ms)',
+        );
       }
     },
   );

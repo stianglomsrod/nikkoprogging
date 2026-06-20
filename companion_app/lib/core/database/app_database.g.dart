@@ -2106,6 +2106,497 @@ class FocusAreaSettingsStatesCompanion
   }
 }
 
+class $FeedbackItemsTable extends FeedbackItems
+    with TableInfo<$FeedbackItemsTable, FeedbackItemRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FeedbackItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMsMeta = const VerificationMeta(
+    'createdAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> createdAtMs = GeneratedColumn<int>(
+    'created_at_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _feedbackTypeMeta = const VerificationMeta(
+    'feedbackType',
+  );
+  @override
+  late final GeneratedColumn<String> feedbackType = GeneratedColumn<String>(
+    'feedback_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _messageMeta = const VerificationMeta(
+    'message',
+  );
+  @override
+  late final GeneratedColumn<String> message = GeneratedColumn<String>(
+    'message',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _appVersionMeta = const VerificationMeta(
+    'appVersion',
+  );
+  @override
+  late final GeneratedColumn<String> appVersion = GeneratedColumn<String>(
+    'app_version',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _screenContextMeta = const VerificationMeta(
+    'screenContext',
+  );
+  @override
+  late final GeneratedColumn<String> screenContext = GeneratedColumn<String>(
+    'screen_context',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMsMeta = const VerificationMeta(
+    'updatedAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAtMs = GeneratedColumn<int>(
+    'updated_at_ms',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAtMs,
+    feedbackType,
+    message,
+    appVersion,
+    screenContext,
+    updatedAtMs,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'feedback_items';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FeedbackItemRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at_ms')) {
+      context.handle(
+        _createdAtMsMeta,
+        createdAtMs.isAcceptableOrUnknown(
+          data['created_at_ms']!,
+          _createdAtMsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMsMeta);
+    }
+    if (data.containsKey('feedback_type')) {
+      context.handle(
+        _feedbackTypeMeta,
+        feedbackType.isAcceptableOrUnknown(
+          data['feedback_type']!,
+          _feedbackTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_feedbackTypeMeta);
+    }
+    if (data.containsKey('message')) {
+      context.handle(
+        _messageMeta,
+        message.isAcceptableOrUnknown(data['message']!, _messageMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_messageMeta);
+    }
+    if (data.containsKey('app_version')) {
+      context.handle(
+        _appVersionMeta,
+        appVersion.isAcceptableOrUnknown(data['app_version']!, _appVersionMeta),
+      );
+    }
+    if (data.containsKey('screen_context')) {
+      context.handle(
+        _screenContextMeta,
+        screenContext.isAcceptableOrUnknown(
+          data['screen_context']!,
+          _screenContextMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at_ms')) {
+      context.handle(
+        _updatedAtMsMeta,
+        updatedAtMs.isAcceptableOrUnknown(
+          data['updated_at_ms']!,
+          _updatedAtMsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FeedbackItemRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FeedbackItemRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at_ms'],
+      )!,
+      feedbackType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}feedback_type'],
+      )!,
+      message: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}message'],
+      )!,
+      appVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}app_version'],
+      ),
+      screenContext: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}screen_context'],
+      ),
+      updatedAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at_ms'],
+      ),
+    );
+  }
+
+  @override
+  $FeedbackItemsTable createAlias(String alias) {
+    return $FeedbackItemsTable(attachedDatabase, alias);
+  }
+}
+
+class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
+  final String id;
+  final int createdAtMs;
+  final String feedbackType;
+  final String message;
+  final String? appVersion;
+  final String? screenContext;
+  final int? updatedAtMs;
+  const FeedbackItemRow({
+    required this.id,
+    required this.createdAtMs,
+    required this.feedbackType,
+    required this.message,
+    this.appVersion,
+    this.screenContext,
+    this.updatedAtMs,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at_ms'] = Variable<int>(createdAtMs);
+    map['feedback_type'] = Variable<String>(feedbackType);
+    map['message'] = Variable<String>(message);
+    if (!nullToAbsent || appVersion != null) {
+      map['app_version'] = Variable<String>(appVersion);
+    }
+    if (!nullToAbsent || screenContext != null) {
+      map['screen_context'] = Variable<String>(screenContext);
+    }
+    if (!nullToAbsent || updatedAtMs != null) {
+      map['updated_at_ms'] = Variable<int>(updatedAtMs);
+    }
+    return map;
+  }
+
+  FeedbackItemsCompanion toCompanion(bool nullToAbsent) {
+    return FeedbackItemsCompanion(
+      id: Value(id),
+      createdAtMs: Value(createdAtMs),
+      feedbackType: Value(feedbackType),
+      message: Value(message),
+      appVersion: appVersion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(appVersion),
+      screenContext: screenContext == null && nullToAbsent
+          ? const Value.absent()
+          : Value(screenContext),
+      updatedAtMs: updatedAtMs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAtMs),
+    );
+  }
+
+  factory FeedbackItemRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FeedbackItemRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAtMs: serializer.fromJson<int>(json['createdAtMs']),
+      feedbackType: serializer.fromJson<String>(json['feedbackType']),
+      message: serializer.fromJson<String>(json['message']),
+      appVersion: serializer.fromJson<String?>(json['appVersion']),
+      screenContext: serializer.fromJson<String?>(json['screenContext']),
+      updatedAtMs: serializer.fromJson<int?>(json['updatedAtMs']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAtMs': serializer.toJson<int>(createdAtMs),
+      'feedbackType': serializer.toJson<String>(feedbackType),
+      'message': serializer.toJson<String>(message),
+      'appVersion': serializer.toJson<String?>(appVersion),
+      'screenContext': serializer.toJson<String?>(screenContext),
+      'updatedAtMs': serializer.toJson<int?>(updatedAtMs),
+    };
+  }
+
+  FeedbackItemRow copyWith({
+    String? id,
+    int? createdAtMs,
+    String? feedbackType,
+    String? message,
+    Value<String?> appVersion = const Value.absent(),
+    Value<String?> screenContext = const Value.absent(),
+    Value<int?> updatedAtMs = const Value.absent(),
+  }) => FeedbackItemRow(
+    id: id ?? this.id,
+    createdAtMs: createdAtMs ?? this.createdAtMs,
+    feedbackType: feedbackType ?? this.feedbackType,
+    message: message ?? this.message,
+    appVersion: appVersion.present ? appVersion.value : this.appVersion,
+    screenContext: screenContext.present
+        ? screenContext.value
+        : this.screenContext,
+    updatedAtMs: updatedAtMs.present ? updatedAtMs.value : this.updatedAtMs,
+  );
+  FeedbackItemRow copyWithCompanion(FeedbackItemsCompanion data) {
+    return FeedbackItemRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAtMs: data.createdAtMs.present
+          ? data.createdAtMs.value
+          : this.createdAtMs,
+      feedbackType: data.feedbackType.present
+          ? data.feedbackType.value
+          : this.feedbackType,
+      message: data.message.present ? data.message.value : this.message,
+      appVersion: data.appVersion.present
+          ? data.appVersion.value
+          : this.appVersion,
+      screenContext: data.screenContext.present
+          ? data.screenContext.value
+          : this.screenContext,
+      updatedAtMs: data.updatedAtMs.present
+          ? data.updatedAtMs.value
+          : this.updatedAtMs,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FeedbackItemRow(')
+          ..write('id: $id, ')
+          ..write('createdAtMs: $createdAtMs, ')
+          ..write('feedbackType: $feedbackType, ')
+          ..write('message: $message, ')
+          ..write('appVersion: $appVersion, ')
+          ..write('screenContext: $screenContext, ')
+          ..write('updatedAtMs: $updatedAtMs')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAtMs,
+    feedbackType,
+    message,
+    appVersion,
+    screenContext,
+    updatedAtMs,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FeedbackItemRow &&
+          other.id == this.id &&
+          other.createdAtMs == this.createdAtMs &&
+          other.feedbackType == this.feedbackType &&
+          other.message == this.message &&
+          other.appVersion == this.appVersion &&
+          other.screenContext == this.screenContext &&
+          other.updatedAtMs == this.updatedAtMs);
+}
+
+class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
+  final Value<String> id;
+  final Value<int> createdAtMs;
+  final Value<String> feedbackType;
+  final Value<String> message;
+  final Value<String?> appVersion;
+  final Value<String?> screenContext;
+  final Value<int?> updatedAtMs;
+  final Value<int> rowid;
+  const FeedbackItemsCompanion({
+    this.id = const Value.absent(),
+    this.createdAtMs = const Value.absent(),
+    this.feedbackType = const Value.absent(),
+    this.message = const Value.absent(),
+    this.appVersion = const Value.absent(),
+    this.screenContext = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FeedbackItemsCompanion.insert({
+    required String id,
+    required int createdAtMs,
+    required String feedbackType,
+    required String message,
+    this.appVersion = const Value.absent(),
+    this.screenContext = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAtMs = Value(createdAtMs),
+       feedbackType = Value(feedbackType),
+       message = Value(message);
+  static Insertable<FeedbackItemRow> custom({
+    Expression<String>? id,
+    Expression<int>? createdAtMs,
+    Expression<String>? feedbackType,
+    Expression<String>? message,
+    Expression<String>? appVersion,
+    Expression<String>? screenContext,
+    Expression<int>? updatedAtMs,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAtMs != null) 'created_at_ms': createdAtMs,
+      if (feedbackType != null) 'feedback_type': feedbackType,
+      if (message != null) 'message': message,
+      if (appVersion != null) 'app_version': appVersion,
+      if (screenContext != null) 'screen_context': screenContext,
+      if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FeedbackItemsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? createdAtMs,
+    Value<String>? feedbackType,
+    Value<String>? message,
+    Value<String?>? appVersion,
+    Value<String?>? screenContext,
+    Value<int?>? updatedAtMs,
+    Value<int>? rowid,
+  }) {
+    return FeedbackItemsCompanion(
+      id: id ?? this.id,
+      createdAtMs: createdAtMs ?? this.createdAtMs,
+      feedbackType: feedbackType ?? this.feedbackType,
+      message: message ?? this.message,
+      appVersion: appVersion ?? this.appVersion,
+      screenContext: screenContext ?? this.screenContext,
+      updatedAtMs: updatedAtMs ?? this.updatedAtMs,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAtMs.present) {
+      map['created_at_ms'] = Variable<int>(createdAtMs.value);
+    }
+    if (feedbackType.present) {
+      map['feedback_type'] = Variable<String>(feedbackType.value);
+    }
+    if (message.present) {
+      map['message'] = Variable<String>(message.value);
+    }
+    if (appVersion.present) {
+      map['app_version'] = Variable<String>(appVersion.value);
+    }
+    if (screenContext.present) {
+      map['screen_context'] = Variable<String>(screenContext.value);
+    }
+    if (updatedAtMs.present) {
+      map['updated_at_ms'] = Variable<int>(updatedAtMs.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FeedbackItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAtMs: $createdAtMs, ')
+          ..write('feedbackType: $feedbackType, ')
+          ..write('message: $message, ')
+          ..write('appVersion: $appVersion, ')
+          ..write('screenContext: $screenContext, ')
+          ..write('updatedAtMs: $updatedAtMs, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2116,6 +2607,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $CompanionIdentityStatesTable(this);
   late final $FocusAreaSettingsStatesTable focusAreaSettingsStates =
       $FocusAreaSettingsStatesTable(this);
+  late final $FeedbackItemsTable feedbackItems = $FeedbackItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2125,6 +2617,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     companionEventStates,
     companionIdentityStates,
     focusAreaSettingsStates,
+    feedbackItems,
   ];
 }
 
@@ -3215,6 +3708,254 @@ typedef $$FocusAreaSettingsStatesTableProcessedTableManager =
       FocusAreaSettingsStateRow,
       PrefetchHooks Function()
     >;
+typedef $$FeedbackItemsTableCreateCompanionBuilder =
+    FeedbackItemsCompanion Function({
+      required String id,
+      required int createdAtMs,
+      required String feedbackType,
+      required String message,
+      Value<String?> appVersion,
+      Value<String?> screenContext,
+      Value<int?> updatedAtMs,
+      Value<int> rowid,
+    });
+typedef $$FeedbackItemsTableUpdateCompanionBuilder =
+    FeedbackItemsCompanion Function({
+      Value<String> id,
+      Value<int> createdAtMs,
+      Value<String> feedbackType,
+      Value<String> message,
+      Value<String?> appVersion,
+      Value<String?> screenContext,
+      Value<int?> updatedAtMs,
+      Value<int> rowid,
+    });
+
+class $$FeedbackItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $FeedbackItemsTable> {
+  $$FeedbackItemsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAtMs => $composableBuilder(
+    column: $table.createdAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get feedbackType => $composableBuilder(
+    column: $table.feedbackType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get message => $composableBuilder(
+    column: $table.message,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get appVersion => $composableBuilder(
+    column: $table.appVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get screenContext => $composableBuilder(
+    column: $table.screenContext,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FeedbackItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FeedbackItemsTable> {
+  $$FeedbackItemsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAtMs => $composableBuilder(
+    column: $table.createdAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get feedbackType => $composableBuilder(
+    column: $table.feedbackType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get message => $composableBuilder(
+    column: $table.message,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get appVersion => $composableBuilder(
+    column: $table.appVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get screenContext => $composableBuilder(
+    column: $table.screenContext,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FeedbackItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FeedbackItemsTable> {
+  $$FeedbackItemsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAtMs => $composableBuilder(
+    column: $table.createdAtMs,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get feedbackType => $composableBuilder(
+    column: $table.feedbackType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get message =>
+      $composableBuilder(column: $table.message, builder: (column) => column);
+
+  GeneratedColumn<String> get appVersion => $composableBuilder(
+    column: $table.appVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get screenContext => $composableBuilder(
+    column: $table.screenContext,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => column,
+  );
+}
+
+class $$FeedbackItemsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FeedbackItemsTable,
+          FeedbackItemRow,
+          $$FeedbackItemsTableFilterComposer,
+          $$FeedbackItemsTableOrderingComposer,
+          $$FeedbackItemsTableAnnotationComposer,
+          $$FeedbackItemsTableCreateCompanionBuilder,
+          $$FeedbackItemsTableUpdateCompanionBuilder,
+          (
+            FeedbackItemRow,
+            BaseReferences<_$AppDatabase, $FeedbackItemsTable, FeedbackItemRow>,
+          ),
+          FeedbackItemRow,
+          PrefetchHooks Function()
+        > {
+  $$FeedbackItemsTableTableManager(_$AppDatabase db, $FeedbackItemsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FeedbackItemsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FeedbackItemsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FeedbackItemsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> createdAtMs = const Value.absent(),
+                Value<String> feedbackType = const Value.absent(),
+                Value<String> message = const Value.absent(),
+                Value<String?> appVersion = const Value.absent(),
+                Value<String?> screenContext = const Value.absent(),
+                Value<int?> updatedAtMs = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FeedbackItemsCompanion(
+                id: id,
+                createdAtMs: createdAtMs,
+                feedbackType: feedbackType,
+                message: message,
+                appVersion: appVersion,
+                screenContext: screenContext,
+                updatedAtMs: updatedAtMs,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int createdAtMs,
+                required String feedbackType,
+                required String message,
+                Value<String?> appVersion = const Value.absent(),
+                Value<String?> screenContext = const Value.absent(),
+                Value<int?> updatedAtMs = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FeedbackItemsCompanion.insert(
+                id: id,
+                createdAtMs: createdAtMs,
+                feedbackType: feedbackType,
+                message: message,
+                appVersion: appVersion,
+                screenContext: screenContext,
+                updatedAtMs: updatedAtMs,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FeedbackItemsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FeedbackItemsTable,
+      FeedbackItemRow,
+      $$FeedbackItemsTableFilterComposer,
+      $$FeedbackItemsTableOrderingComposer,
+      $$FeedbackItemsTableAnnotationComposer,
+      $$FeedbackItemsTableCreateCompanionBuilder,
+      $$FeedbackItemsTableUpdateCompanionBuilder,
+      (
+        FeedbackItemRow,
+        BaseReferences<_$AppDatabase, $FeedbackItemsTable, FeedbackItemRow>,
+      ),
+      FeedbackItemRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3233,4 +3974,6 @@ class $AppDatabaseManager {
         _db,
         _db.focusAreaSettingsStates,
       );
+  $$FeedbackItemsTableTableManager get feedbackItems =>
+      $$FeedbackItemsTableTableManager(_db, _db.feedbackItems);
 }

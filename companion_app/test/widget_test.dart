@@ -6,6 +6,8 @@ import 'package:companion_app/core/events/companion_event_state_repository.dart'
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/events/companion_identity_repository.dart';
 import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
+import 'package:companion_app/core/feedback/feedback_item.dart';
+import 'package:companion_app/core/feedback/feedback_repository.dart';
 import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
@@ -58,9 +60,37 @@ class _InMemoryFocusAreaSettingsRepository
   }
 }
 
-CompanionApp _buildApp() {
+class _InMemoryFeedbackRepository implements FeedbackRepository {
+  final List<FeedbackItem> items = <FeedbackItem>[];
+
+  @override
+  Future<void> append(FeedbackItem item) async {
+    items.removeWhere((existing) => existing.id == item.id);
+    items.add(item);
+  }
+
+  @override
+  Future<List<FeedbackItem>> readAll() async {
+    final copied = List<FeedbackItem>.from(items);
+    copied.sort((a, b) => b.createdAtMs.compareTo(a.createdAtMs));
+    return copied;
+  }
+
+  @override
+  Future<FeedbackItem?> readById(String id) async {
+    for (final item in items) {
+      if (item.id == id) {
+        return item;
+      }
+    }
+    return null;
+  }
+}
+
+CompanionApp _buildApp({FeedbackRepository? feedbackRepository}) {
   return CompanionApp(
     historyRepository: InMemoryHistoryRepository(),
+    feedbackRepository: feedbackRepository ?? _InMemoryFeedbackRepository(),
     companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
     companionIdentityRepository: _InMemoryCompanionIdentityRepository(),
     focusAreaSettingsRepository: _InMemoryFocusAreaSettingsRepository(),
@@ -73,7 +103,55 @@ void main() {
 
     expect(find.text('.....'), findsOneWidget);
     expect(find.text('Simuler neste prompt'), findsOneWidget);
+    expect(find.byTooltip('Tilbakemelding'), findsOneWidget);
     expect(find.byTooltip('Innstillinger'), findsOneWidget);
+  });
+
+  testWidgets('feedbackmodal validerer tom melding', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp());
+
+    await tester.tap(find.byTooltip('Tilbakemelding'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Del tilbakemelding'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('feedback-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Skriv litt om hva du vil dele.'), findsOneWidget);
+    expect(find.text('Del tilbakemelding'), findsOneWidget);
+  });
+
+  testWidgets('feedbackmodal sender og lagrer tilbakemelding', (
+    WidgetTester tester,
+  ) async {
+    final feedbackRepository = _InMemoryFeedbackRepository();
+    await tester.pumpWidget(_buildApp(feedbackRepository: feedbackRepository));
+
+    await tester.tap(find.byTooltip('Tilbakemelding'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Feil'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('feedback-message-input')),
+      'Appen hopper litt nar jeg gar tilbake.',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('feedback-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Del tilbakemelding'), findsNothing);
+    expect(find.text('Takk. Tilbakemeldingen er lagret.'), findsOneWidget);
+    expect(feedbackRepository.items, hasLength(1));
+    expect(feedbackRepository.items.first.type, FeedbackType.bug);
+    expect(
+      feedbackRepository.items.first.message,
+      'Appen hopper litt nar jeg gar tilbake.',
+    );
+    expect(feedbackRepository.items.first.screenContext, 'home');
   });
 
   testWidgets('companion figur rendres med idle-animasjonsframes', (

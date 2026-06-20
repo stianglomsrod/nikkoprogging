@@ -11,6 +11,7 @@ import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/events/companion_event_state_repository.dart';
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/flow/energisk_chain_controller.dart';
+import 'package:companion_app/core/feedback/feedback_repository.dart';
 import 'package:companion_app/core/history/history_entry.dart';
 import 'package:companion_app/core/history/history_repository.dart';
 import 'package:companion_app/core/models/attempt_entry.dart';
@@ -22,6 +23,7 @@ import 'package:companion_app/core/seed_data/seed_data.dart';
 import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
 import 'package:companion_app/features/history/history_screen.dart';
+import 'package:companion_app/features/feedback/feedback_sheet.dart';
 import 'package:companion_app/features/home/settings_page.dart';
 import 'package:companion_app/features/home/widgets/background_color_event_view.dart';
 import 'package:companion_app/features/home/widgets/bottom_action_area.dart';
@@ -52,6 +54,7 @@ class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     required this.historyRepository,
+    required this.feedbackRepository,
     required this.companionEventStateRepository,
     required this.companionIdentityRepository,
     required this.focusAreaSettingsRepository,
@@ -61,6 +64,7 @@ class HomePage extends StatefulWidget {
   });
 
   final HistoryRepository historyRepository;
+  final FeedbackRepository feedbackRepository;
   final CompanionEventStateRepository companionEventStateRepository;
   final CompanionIdentityRepository companionIdentityRepository;
   final FocusAreaSettingsRepository focusAreaSettingsRepository;
@@ -756,6 +760,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _openFeedback() async {
+    final didSubmit = await FeedbackSheet.show(
+      context: context,
+      feedbackRepository: widget.feedbackRepository,
+      screenContext: 'home',
+    );
+
+    if (!mounted || !didSubmit) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Takk. Tilbakemeldingen er lagret.')),
+    );
+  }
+
   String _moodLabel(Sinnsstemning mood) {
     switch (mood) {
       case Sinnsstemning.negativ:
@@ -782,6 +802,11 @@ class _HomePageState extends State<HomePage> {
             onPressed: _openHistory,
             icon: const Icon(Icons.bar_chart_outlined),
             tooltip: 'Historikk',
+          ),
+          IconButton(
+            onPressed: _openFeedback,
+            icon: const Icon(Icons.feedback_outlined),
+            tooltip: 'Tilbakemelding',
           ),
           IconButton(
             onPressed: _openSettings,

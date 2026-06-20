@@ -14,9 +14,9 @@ void main() {
   });
 
   group('AppDatabase migrations', () {
-    test('schema version is 4 in current build', () async {
+    test('schema version is 5 in current build', () async {
       final database = AppDatabase(NativeDatabase.memory());
-      expect(database.schemaVersion, 4);
+      expect(database.schemaVersion, 5);
       await database.close();
     });
 
@@ -49,6 +49,7 @@ void main() {
         containsAll([
           'idx_history_entries_timestamp',
           'idx_history_entries_type',
+          'idx_feedback_items_created_at_ms',
         ]),
         reason: 'Indexes for history queries should exist',
       );
@@ -64,7 +65,7 @@ void main() {
       expect(database.migration, isNotNull);
 
       // Verify schemaVersion matches declared constant
-      expect(database.schemaVersion, equals(4));
+      expect(database.schemaVersion, equals(5));
 
       await database.close();
     });

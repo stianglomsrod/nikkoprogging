@@ -20,6 +20,7 @@ companion_app/
 |  |- plans/
 |  |  |- PLAN_COMPANION_EVENTS.md
 |  |  |- PLAN_GLOBAL_FEEDBACK_DISCOVERY.md
+|  |  |- PLAN_GLOBAL_FEEDBACK_IMPLEMENTATION.md
 |  |  |- PLAN_HISTORY_AND_STATS.md
 |  |  |- PLAN_SETTINGS_PERSISTENCE_EVAL.md
 |- assets/
@@ -58,6 +59,7 @@ companion_app/
 |  |  |  |- tables/
 |  |  |     |- companion_event_state.dart
 |  |  |     |- companion_identity_state.dart
+|  |  |     |- feedback_items.dart
 |  |  |     |- focus_area_settings_state.dart
 |  |  |     |- history_entries.dart
 |  |  |- content/
@@ -90,6 +92,10 @@ companion_app/
 |  |  |  |- task_item.dart
 |  |  |- scheduler/
 |  |  |  |- scheduler_engine.dart
+|  |  |- feedback/
+|  |  |  |- drift_feedback_repository.dart
+|  |  |  |- feedback_item.dart
+|  |  |  |- feedback_repository.dart
 |  |  |- adaptive_engine/
 |  |  |  |- task_selector.dart
 |  |  |- seed_data/
@@ -100,6 +106,8 @@ companion_app/
 |  |  |  |- focus_area_settings_repository.dart
 |  |  |  |- focus_area_settings_state_snapshot.dart
 |  |- features/
+|  |  |- feedback/
+|  |  |  |- feedback_sheet.dart
 |  |  |- history/
 |  |  |  |- history_screen.dart
 |  |  |  |- widgets/
@@ -154,6 +162,8 @@ companion_app/
 |  |  |  |- scheduler_engine_test.dart
 |  |  |- adaptive_engine/
 |  |     |- task_selector_test.dart
+|  |  |- feedback/
+|  |     |- drift_feedback_repository_test.dart
 |  |  |- settings/
 |  |     |- drift_focus_area_settings_repository_test.dart
 |- android/
