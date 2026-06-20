@@ -17,23 +17,23 @@ Early prototype / flow-validation.
 - Focus is on validating scheduler-oriented product flow and adaptive task behavior.
 - Hardcoded/local seed data is intentional for now.
 - Local persistence now covers:
-	- history raw timeline entries
-	- companion event state
-	- companion identity state
-	- focus-area settings
+  - history raw timeline entries
+  - companion event state
+  - companion identity state
+  - focus-area settings
 - No backend/auth/notifications/TTS yet.
 
 ## Persistence Snapshot
 
-| Domain | Status | Storage |
-| --- | --- | --- |
-| History timeline (attempt/mood/event) | Persisted | Drift + SQLite |
-| Companion event state | Persisted | Drift + SQLite |
-| Companion identity state | Persisted | Drift + SQLite |
-| Focus-area settings | Persisted | Drift + SQLite |
-| Simulated prototype time | Runtime-only | In-memory |
-| Scheduler runtime counters/state | Runtime-only | In-memory |
-| Global feedback | Deferred | Not implemented |
+| Domain                                | Status       | Storage         |
+| ------------------------------------- | ------------ | --------------- |
+| History timeline (attempt/mood/event) | Persisted    | Drift + SQLite  |
+| Companion event state                 | Persisted    | Drift + SQLite  |
+| Companion identity state              | Persisted    | Drift + SQLite  |
+| Focus-area settings                   | Persisted    | Drift + SQLite  |
+| Simulated prototype time              | Runtime-only | In-memory       |
+| Scheduler runtime counters/state      | Runtime-only | In-memory       |
+| Global feedback                       | Deferred     | Not implemented |
 
 ## Agent Reporting Rule
 

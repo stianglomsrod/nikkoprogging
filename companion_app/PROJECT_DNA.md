@@ -236,15 +236,15 @@ Current state:
 
 Persistence status snapshot:
 
-| Domain | Status | Storage |
-| --- | --- | --- |
-| History timeline | Persisted | Drift + SQLite |
-| Companion event state | Persisted | Drift + SQLite |
-| Companion identity state | Persisted | Drift + SQLite |
-| Focus-area settings | Persisted | Drift + SQLite |
-| Simulated prototype time | Runtime-only | In-memory |
-| Scheduler runtime state | Runtime-only | In-memory |
-| Global feedback | Deferred | Not implemented |
+| Domain                   | Status       | Storage         |
+| ------------------------ | ------------ | --------------- |
+| History timeline         | Persisted    | Drift + SQLite  |
+| Companion event state    | Persisted    | Drift + SQLite  |
+| Companion identity state | Persisted    | Drift + SQLite  |
+| Focus-area settings      | Persisted    | Drift + SQLite  |
+| Simulated prototype time | Runtime-only | In-memory       |
+| Scheduler runtime state  | Runtime-only | In-memory       |
+| Global feedback          | Deferred     | Not implemented |
 
 Later decision point:
 
