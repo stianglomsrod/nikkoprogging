@@ -154,6 +154,51 @@ void main() {
     expect(feedbackRepository.items.first.screenContext, 'home');
   });
 
+  testWidgets('feedbackhistorikk viser lagrede innspill og detalj', (
+    WidgetTester tester,
+  ) async {
+    final feedbackRepository = _InMemoryFeedbackRepository();
+    await feedbackRepository.append(
+      const FeedbackItem(
+        id: 'fb_a',
+        createdAtMs: 100,
+        type: FeedbackType.general,
+        message: 'Rolig flyt i appen.',
+        screenContext: 'home',
+      ),
+    );
+    await feedbackRepository.append(
+      const FeedbackItem(
+        id: 'fb_b',
+        createdAtMs: 200,
+        type: FeedbackType.suggestion,
+        message: 'Kunne hatt litt tydeligere overskrifter.',
+        screenContext: 'home',
+      ),
+    );
+
+    await tester.pumpWidget(_buildApp(feedbackRepository: feedbackRepository));
+
+    await tester.tap(find.byTooltip('Tilbakemelding'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Historikk'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tilbakemeldinger'), findsOneWidget);
+    expect(find.text('Forslag'), findsOneWidget);
+    expect(find.text('Generell'), findsOneWidget);
+    expect(find.text('Kunne hatt litt tydeligere overskrifter.'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('feedback-history-item-fb_b')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tilbakemelding'), findsOneWidget);
+    expect(find.text('Melding'), findsOneWidget);
+    expect(find.text('Kunne hatt litt tydeligere overskrifter.'), findsOneWidget);
+    expect(find.text('Skjerm'), findsOneWidget);
+    expect(find.text('Hjem'), findsOneWidget);
+  });
+
   testWidgets('companion figur rendres med idle-animasjonsframes', (
     WidgetTester tester,
   ) async {

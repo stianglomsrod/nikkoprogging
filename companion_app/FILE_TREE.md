@@ -107,6 +107,8 @@ companion_app/
 |  |  |  |- focus_area_settings_state_snapshot.dart
 |  |- features/
 |  |  |- feedback/
+|  |  |  |- feedback_history_detail_screen.dart
+|  |  |  |- feedback_history_screen.dart
 |  |  |  |- feedback_sheet.dart
 |  |  |- history/
 |  |  |  |- history_screen.dart

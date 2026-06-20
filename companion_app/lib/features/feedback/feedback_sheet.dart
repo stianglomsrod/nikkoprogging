@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:companion_app/core/feedback/feedback_item.dart';
 import 'package:companion_app/core/feedback/feedback_repository.dart';
+import 'package:companion_app/features/feedback/feedback_history_screen.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackSheet extends StatefulWidget {
@@ -117,6 +118,22 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
             const SizedBox(height: 8),
             const Text(
               'Takk for at du sier fra. Vi bruker dette til a gjore appen roligere og nyttigere.',
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => FeedbackHistoryScreen(
+                        feedbackRepository: widget.feedbackRepository,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history),
+                label: const Text('Historikk'),
+              ),
             ),
             const SizedBox(height: 16),
             Text('Type', style: Theme.of(context).textTheme.titleSmall),
