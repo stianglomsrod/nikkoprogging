@@ -172,15 +172,18 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 - Decision: En enkel repository-grense for historikk er ogsa lagt (`history_repository` + `in_memory_history_repository`) for a forberede senere lagringsbytte uten a koble UI direkte til persistering.
 - Decision: En enkel historikkskjerm med 7-dagers stolper og rolig empty-state er lagt i `lib/features/history/`.
 - Decision: Dagdetalj er lagt via tap pa stolpe (fullfort/ikke-fullfort, stemning, hendelser, aktivitetstidspunkter), men gruppering (uke/maned/ar) og oppsummeringer er ikke implementert enn.
+- Decision: Chunk 5 handoff-plan for persistering er dokumentert (plan + DB-notater), men fortsatt uten databasekode eller schema.
 - Reason: Holder tidlig validering enkel, men forbereder tydelig domene og aggregeringsregler for senere iterasjoner.
 - Risk:
 - Bruker far fortsatt ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.
 - Uten repository/persistering kan historikkdata ikke overleve app-restart.
 - Historikkvisningen kan fortsatt oppleves for enkel over tid uten gruppering og oppsummeringer.
+- Uten faktisk persistering er dokumentert handoff ennå ikke realisert i appatferd.
 - Future resolution:
 - Etabler repository-grense og deretter persistering for attempts/mood/events.
 - Bygg deretter rolig historikkskjerm (for eksempel 7-dagers stolper + dagdetalj) og senere gruppering/oppsummering uten press-sprak.
 - Legg til uke/maned/ar-gruppering og rolige oppsummeringer etter validering av dagdetaljflyt.
+- Implementer persistering bak eksisterende repository-grense etter godkjent Drift-plan, deretter fortsett med gruppering/oppsummering.
 
 ### 16) Global feedback-system er roadmap-only og avhenger av lagring/sync
 

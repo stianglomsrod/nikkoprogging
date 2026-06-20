@@ -315,6 +315,35 @@ High-level future storage needs (no schema commitment):
 - optional weekly/monthly summary cache strategy
 - user-facing history entry stream
 
+### Handoff package (documentation deliverables only)
+
+- Persistence-readiness checklist for history:
+  - which writes must be persisted first to avoid UX regressions
+  - which values can remain derived on read
+  - which values are optional for MVP persistence
+- Repository migration boundary notes:
+  - keep `HistoryRepository` API stable while swapping implementation
+  - avoid leaking storage-specific types into feature UI
+- Drift handoff notes (no schema implementation):
+  - likely tables/records by concept (attempts, moods, events, aggregates)
+  - required indexes at a conceptual level only (for day/range reads)
+  - day-boundary and timezone policy to apply consistently across reads/writes
+- Migration and rollout sequence:
+  1. dual-run validation in dev (in-memory and planned persisted reads compared manually)
+  2. replace in-memory repository implementation behind same interface
+  3. keep UI unchanged while validating parity
+
+### Suggested persistence phases (still no code in this chunk)
+
+1. Phase A: Persist raw timeline entries first
+   - attempts, moods, event actions with timestamps
+   - keep day summaries derived at read time initially
+2. Phase B: Add optional summary cache only if needed
+   - weekly/monthly caches introduced only after measuring read complexity
+3. Phase C: Backfill and compatibility policy
+   - how older in-memory sessions are treated (acceptable to start fresh)
+   - explicit note that no migration from volatile runtime data is required
+
 ### UI behavior
 
 - None in this chunk (planning only).
@@ -335,11 +364,15 @@ High-level future storage needs (no schema commitment):
 
 - Migration strategy is clear enough for a future implementation agent.
 - No database or dependency is introduced.
+- Documentation clearly states what must be persisted first versus what can stay derived.
+- Documentation clearly states that personal milestone reporting remains out of scope.
 
 ### Risks/open questions
 
 - On-demand aggregation vs cached summaries for long timelines.
 - Data-retention and pruning policy for very long-term use.
+- Exact timezone policy for day grouping on travel/daylight saving boundaries.
+- Whether event labels should be stored as snapshots or regenerated from ids.
 
 ---
 

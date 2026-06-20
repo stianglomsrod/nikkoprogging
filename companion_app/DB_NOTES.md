@@ -63,6 +63,34 @@ Likely future data areas:
 - event/unlock timeline history
 - derived daily/weekly/monthly aggregates or summary snapshots
 
+### History chunk 5 handoff notes (planning only)
+
+No schema is implemented in this pass.
+No database code is introduced in this pass.
+
+Recommended persistence order when implementation is approved later:
+
+1. Persist raw timeline entries first:
+  - task attempts with timestamp, result state, focus area, mood, task id, and task-title snapshot
+  - mood entries with timestamp
+  - event lifecycle actions (triggered/skipped/saved) with timestamp and event id
+2. Keep aggregates derived at read-time first:
+  - day summaries can be computed from raw entries in early persistence rollout
+3. Add cached summaries only if needed later:
+  - weekly/monthly cache should be optional and performance-driven, not required for first persistence slice
+
+Conceptual query/index direction for later Drift planning (no schema commitment):
+
+- day-range timeline queries by timestamp
+- single-day detail queries by day start/end boundaries
+- event timeline queries by timestamp and event id
+
+Policy decisions to keep explicit before persistence implementation:
+
+- timezone/day-boundary normalization strategy
+- snapshot policy for user-facing labels (for example task title at attempt time)
+- retention policy for long-term history growth
+
 ### Global feedback
 
 Likely future data areas:
@@ -77,3 +105,4 @@ Likely future data areas:
 - Database status remains unchanged: no database implemented yet.
 - Local-first persistence remains the planned path.
 - Drift + SQLite remains likely/preferred for local metadata when persistence work starts.
+- Drift + SQLite remains likely/preferred for local metadata when persistence work starts, but this file does not lock a final schema yet.
