@@ -19,6 +19,18 @@ class FeedbackHistoryScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (snapshot.hasError) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(24),
+                child: Text(
+                  'Historikken er ikke tilgjengelig akkurat na. Prove gjerne igjen om litt.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
           final items = snapshot.data ?? const <FeedbackItem>[];
           if (items.isEmpty) {
             return const _FeedbackHistoryEmptyState();
@@ -88,10 +100,15 @@ class _FeedbackHistoryEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: const [
-            Text('Ingen tilbakemeldinger enda', textAlign: TextAlign.center),
+            Text(
+              'Ingen tilbakemeldinger enda',
+              key: ValueKey('feedback-history-empty-title'),
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 8),
             Text(
-              'Nar du sender innspill, dukker de opp her.',
+              'Nar du sender innspill, dukker de opp her i rolig oversikt.',
+              key: ValueKey('feedback-history-empty-subtitle'),
               textAlign: TextAlign.center,
             ),
           ],

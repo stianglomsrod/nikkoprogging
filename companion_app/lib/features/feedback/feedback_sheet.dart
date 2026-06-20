@@ -119,9 +119,15 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
             const Text(
               'Takk for at du sier fra. Vi bruker dette til a gjore appen roligere og nyttigere.',
             ),
+            const SizedBox(height: 4),
+            Text(
+              'Kort og tydelig er nok.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
+                key: const ValueKey('feedback-history-button'),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -169,6 +175,7 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
             TextField(
               key: const ValueKey('feedback-message-input'),
               controller: _messageController,
+              autofocus: true,
               minLines: 4,
               maxLines: 8,
               maxLength: _maxMessageLength,

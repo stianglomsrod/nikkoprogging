@@ -181,7 +181,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Tilbakemelding'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Historikk'));
+    await tester.tap(find.byKey(const ValueKey('feedback-history-button')));
     await tester.pumpAndSettle();
 
     expect(find.text('Tilbakemeldinger'), findsOneWidget);
@@ -196,13 +196,30 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Tilbakemelding'), findsOneWidget);
-    expect(find.text('Melding'), findsOneWidget);
+    expect(find.byKey(const ValueKey('feedback-detail-message-title')), findsOneWidget);
+    expect(find.byKey(const ValueKey('feedback-detail-message-body')), findsOneWidget);
     expect(
       find.text('Kunne hatt litt tydeligere overskrifter.'),
       findsOneWidget,
     );
     expect(find.text('Skjerm'), findsOneWidget);
     expect(find.text('Hjem'), findsOneWidget);
+  });
+
+  testWidgets('feedbackhistorikk viser rolig tomtilstand nar ingen finnes', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp());
+
+    await tester.tap(find.byTooltip('Tilbakemelding'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('feedback-history-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tilbakemeldinger'), findsOneWidget);
+    expect(find.byKey(const ValueKey('feedback-history-empty-title')), findsOneWidget);
+    expect(find.byKey(const ValueKey('feedback-history-empty-subtitle')), findsOneWidget);
+    expect(find.textContaining('rolig oversikt'), findsOneWidget);
   });
 
   testWidgets('companion figur rendres med idle-animasjonsframes', (

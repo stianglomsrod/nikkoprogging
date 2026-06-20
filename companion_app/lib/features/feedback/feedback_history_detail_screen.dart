@@ -24,9 +24,16 @@ class FeedbackHistoryDetailScreen extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 20),
-          Text('Melding', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Melding',
+            key: const ValueKey('feedback-detail-message-title'),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
-          SelectableText(item.message),
+          SelectableText(
+            item.message,
+            key: const ValueKey('feedback-detail-message-body'),
+          ),
         ],
       ),
     );
