@@ -84,17 +84,20 @@ class DayDetailView extends StatelessWidget {
                   DayDetailSection(
                     title: 'Fullførte oppgaver',
                     items: completedTaskIds,
-                    emptyText: 'Ingen fullførte oppgaver registrert denne dagen.',
+                    emptyText:
+                        'Ingen fullførte oppgaver registrert denne dagen.',
                   ),
                   DayDetailSection(
                     title: 'Ikke fullførte oppgaver',
                     items: notCompletedTaskIds,
-                    emptyText: 'Ingen ikke-fullførte oppgaver registrert denne dagen.',
+                    emptyText:
+                        'Ingen ikke-fullførte oppgaver registrert denne dagen.',
                   ),
                   DayDetailSection(
                     title: 'Avbrutte oppgaver',
                     items: interruptedTaskIds,
-                    emptyText: 'Ingen avbrutte oppgaver registrert denne dagen.',
+                    emptyText:
+                        'Ingen avbrutte oppgaver registrert denne dagen.',
                   ),
                   DayDetailSection(
                     title: 'Registrerte stemninger',
@@ -109,7 +112,8 @@ class DayDetailView extends StatelessWidget {
                   DayDetailSection(
                     title: 'Tidspunkter med aktivitet',
                     items: activityTimes,
-                    emptyText: 'Ingen aktivitetstidspunkter registrert denne dagen.',
+                    emptyText:
+                        'Ingen aktivitetstidspunkter registrert denne dagen.',
                   ),
                 ],
               ),
