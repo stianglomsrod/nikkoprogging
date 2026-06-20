@@ -28,10 +28,7 @@ void main() {
             'event_sleep_sound',
             'event_background_music',
           },
-          skippedEventIds: {
-            'event_sleep_sound',
-            'event_background_music',
-          },
+          skippedEventIds: {'event_sleep_sound', 'event_background_music'},
           pendingEventId: 'event_symbol',
         ),
       );

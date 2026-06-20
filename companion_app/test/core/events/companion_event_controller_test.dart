@@ -210,40 +210,46 @@ void main() {
       expect(controller.pendingEvent?.id, CompanionEventDefinitions.symbolId);
     });
 
-    test('restored handled events unlock next pending event from count replay', () {
-      final controller = CompanionEventController();
+    test(
+      'restored handled events unlock next pending event from count replay',
+      () {
+        final controller = CompanionEventController();
 
-      for (int i = 0; i < 6; i++) {
-        controller.onTaskResult(done: true);
-      }
+        for (int i = 0; i < 6; i++) {
+          controller.onTaskResult(done: true);
+        }
 
-      expect(
-        controller.pendingEvent?.id,
-        CompanionEventDefinitions.companionNameId,
-      );
+        expect(
+          controller.pendingEvent?.id,
+          CompanionEventDefinitions.companionNameId,
+        );
 
-      controller.restoreHandledEvent(
-        eventId: CompanionEventDefinitions.companionNameId,
-        skipped: false,
-      );
+        controller.restoreHandledEvent(
+          eventId: CompanionEventDefinitions.companionNameId,
+          skipped: false,
+        );
 
-      expect(controller.pendingEvent?.id, CompanionEventDefinitions.userNameId);
+        expect(
+          controller.pendingEvent?.id,
+          CompanionEventDefinitions.userNameId,
+        );
 
-      controller.restoreHandledEvent(
-        eventId: CompanionEventDefinitions.userNameId,
-        skipped: true,
-      );
+        controller.restoreHandledEvent(
+          eventId: CompanionEventDefinitions.userNameId,
+          skipped: true,
+        );
 
-      expect(controller.pendingEvent, isNull);
-      expect(
-        controller.isEventHandled(CompanionEventDefinitions.userNameId),
-        isTrue,
-      );
-      expect(
-        controller.isEventSkipped(CompanionEventDefinitions.userNameId),
-        isTrue,
-      );
-    });
+        expect(controller.pendingEvent, isNull);
+        expect(
+          controller.isEventHandled(CompanionEventDefinitions.userNameId),
+          isTrue,
+        );
+        expect(
+          controller.isEventSkipped(CompanionEventDefinitions.userNameId),
+          isTrue,
+        );
+      },
+    );
 
     test('snapshot round-trip restores completed count and pending event', () {
       final controller = CompanionEventController();

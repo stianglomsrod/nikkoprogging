@@ -5,7 +5,8 @@ import 'package:companion_app/core/events/companion_event_state_repository.dart'
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:drift/drift.dart' as drift;
 
-class DriftCompanionEventStateRepository implements CompanionEventStateRepository {
+class DriftCompanionEventStateRepository
+    implements CompanionEventStateRepository {
   DriftCompanionEventStateRepository(this._database);
 
   static const int _singletonId = 1;
@@ -14,9 +15,9 @@ class DriftCompanionEventStateRepository implements CompanionEventStateRepositor
 
   @override
   Future<CompanionEventStateSnapshot?> readState() async {
-    final row = await (_database.select(_database.companionEventStates)
-          ..where((table) => table.id.equals(_singletonId)))
-        .getSingleOrNull();
+    final row = await (_database.select(
+      _database.companionEventStates,
+    )..where((table) => table.id.equals(_singletonId))).getSingleOrNull();
 
     if (row == null) {
       return null;
@@ -39,7 +40,9 @@ class DriftCompanionEventStateRepository implements CompanionEventStateRepositor
           CompanionEventStatesCompanion.insert(
             id: drift.Value(_singletonId),
             completedTaskCount: snapshot.completedTaskCount,
-            autoTriggeredEventIdsJson: _encodeSet(snapshot.autoTriggeredEventIds),
+            autoTriggeredEventIdsJson: _encodeSet(
+              snapshot.autoTriggeredEventIds,
+            ),
             handledEventIdsJson: _encodeSet(snapshot.handledEventIds),
             skippedEventIdsJson: _encodeSet(snapshot.skippedEventIds),
             pendingEventId: drift.Value(snapshot.pendingEventId),

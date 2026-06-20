@@ -13,8 +13,8 @@ Future<void> main() async {
   final companionEventStateRepository = DriftCompanionEventStateRepository(
     database,
   );
-  final initialCompanionEventState =
-      await companionEventStateRepository.readState();
+  final initialCompanionEventState = await companionEventStateRepository
+      .readState();
 
   runApp(
     CompanionApp(
