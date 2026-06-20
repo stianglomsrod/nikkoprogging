@@ -205,11 +205,18 @@ void main() {
       findsOneWidget,
     );
     expect(
+      find.byKey(const ValueKey('feedback-detail-message-card')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('feedback-detail-meta-line')),
+      findsOneWidget,
+    );
+    expect(
       find.text('Kunne hatt litt tydeligere overskrifter.'),
       findsOneWidget,
     );
-    expect(find.text('Skjerm'), findsOneWidget);
-    expect(find.text('Hjem'), findsOneWidget);
+    expect(find.textContaining('Fra: Hjem'), findsOneWidget);
   });
 
   testWidgets('feedbackhistorikk viser rolig tomtilstand nar ingen finnes', (

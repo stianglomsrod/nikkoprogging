@@ -8,35 +8,51 @@ class FeedbackHistoryDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Tilbakemelding')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _MetaRow(label: 'Tid', value: _formatTimestamp(item.createdAtMs)),
-          const SizedBox(height: 12),
-          _MetaRow(label: 'Type', value: _typeLabel(item.type)),
-          if (item.screenContext != null && item.screenContext!.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _MetaRow(
-              label: 'Skjerm',
-              value: _screenContextLabel(item.screenContext!),
-            ),
-          ],
+          Text(
+            _metaLine(),
+            key: const ValueKey('feedback-detail-meta-line'),
+            style: theme.textTheme.bodyMedium,
+          ),
           const SizedBox(height: 20),
           Text(
             'Melding',
             key: const ValueKey('feedback-detail-message-title'),
-            style: Theme.of(context).textTheme.titleMedium,
+            style: theme.textTheme.titleMedium,
           ),
-          const SizedBox(height: 8),
-          SelectableText(
-            item.message,
-            key: const ValueKey('feedback-detail-message-body'),
+          const SizedBox(height: 10),
+          DecoratedBox(
+            key: const ValueKey('feedback-detail-message-card'),
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: SelectableText(
+                item.message,
+                key: const ValueKey('feedback-detail-message-body'),
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  String _metaLine() {
+    final pieces = <String>[_typeLabel(item.type)];
+    if (item.screenContext != null && item.screenContext!.isNotEmpty) {
+      pieces.add('Fra: ${_screenContextLabel(item.screenContext!)}');
+    }
+    pieces.add(_formatTimestamp(item.createdAtMs));
+    return pieces.join(' · ');
   }
 
   String _typeLabel(FeedbackType type) {
@@ -67,27 +83,5 @@ class FeedbackHistoryDetailScreen extends StatelessWidget {
     final hour = date.hour.toString().padLeft(2, '0');
     final minute = date.minute.toString().padLeft(2, '0');
     return '$day.$month.$year kl. $hour:$minute';
-  }
-}
-
-class _MetaRow extends StatelessWidget {
-  const _MetaRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 72,
-          child: Text(label, style: Theme.of(context).textTheme.bodyMedium),
-        ),
-        const SizedBox(width: 12),
-        Expanded(child: Text(value)),
-      ],
-    );
   }
 }
