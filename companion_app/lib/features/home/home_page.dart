@@ -139,9 +139,7 @@ class _HomePageState extends State<HomePage> {
       return seeds;
     }
 
-    final byId = {
-      for (final area in snapshot.areas) area.id: area,
-    };
+    final byId = {for (final area in snapshot.areas) area.id: area};
 
     return seeds
         .map((seed) {

@@ -11,9 +11,9 @@ class DriftFocusAreaSettingsRepository implements FocusAreaSettingsRepository {
 
   @override
   Future<FocusAreaSettingsStateSnapshot?> readState() async {
-    final rows = await (_database.select(_database.focusAreaSettingsStates)
-          ..orderBy([(table) => drift.OrderingTerm.asc(table.id)]))
-        .get();
+    final rows = await (_database.select(
+      _database.focusAreaSettingsStates,
+    )..orderBy([(table) => drift.OrderingTerm.asc(table.id)])).get();
 
     if (rows.isEmpty) {
       return null;
@@ -67,7 +67,9 @@ class DriftFocusAreaSettingsRepository implements FocusAreaSettingsRepository {
                   endHour: drift.Value(area.endHour),
                   modus: drift.Value(area.modus.name),
                   isSelected: drift.Value(area.id == selectedAreaId),
-                  updatedAtMs: drift.Value(DateTime.now().millisecondsSinceEpoch),
+                  updatedAtMs: drift.Value(
+                    DateTime.now().millisecondsSinceEpoch,
+                  ),
                 ),
               )
               .toList(growable: false),

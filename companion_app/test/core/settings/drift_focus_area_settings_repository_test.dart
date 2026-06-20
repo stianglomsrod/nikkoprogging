@@ -49,7 +49,9 @@ void main() {
       expect(reloaded!.areas, hasLength(2));
       expect(reloaded.selectedAreaId, 'study');
 
-      final household = reloaded.areas.firstWhere((area) => area.id == 'household');
+      final household = reloaded.areas.firstWhere(
+        (area) => area.id == 'household',
+      );
       final study = reloaded.areas.firstWhere((area) => area.id == 'study');
 
       expect(household.enabled, isFalse);
