@@ -50,6 +50,7 @@ Current implementation status:
 - History/statistics chunk 1 foundation is now in place via focused in-memory core models and aggregation (`lib/core/history/`) for day-level summaries and timeline markers (no history UI or persistence yet).
 - History/statistics chunk 2 repository boundary is now in place via `lib/core/history/history_repository.dart` and `lib/core/history/in_memory_history_repository.dart`, with home flow appending mood/attempt/event records through that boundary (still in-memory only).
 - History/statistics chunk 3 MVP is now in place with a simple in-memory 7-day history screen (`lib/features/history/history_screen.dart`) reachable from home app bar (`Historikk`), using calm bars and supportive empty state (no persistence, no chart package).
+- History/statistics chunk 4 day detail is now in place: tapping a daily history bar opens a calm detail surface with completed/non-completed attempts, moods, event moments, and activity times (still in-memory, no persistence yet).
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Companion figure now uses frame-based asset animation.

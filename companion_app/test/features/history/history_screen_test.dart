@@ -3,6 +3,7 @@ import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/models/sinnsstemning.dart';
 import 'package:companion_app/features/history/history_screen.dart';
 import 'package:companion_app/features/history/widgets/day_activity_bar.dart';
+import 'package:companion_app/features/history/widgets/day_detail_view.dart';
 import 'package:companion_app/features/history/widgets/history_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -60,5 +61,47 @@ void main() {
 
     final bars = tester.widgetList<DayActivityBar>(find.byType(DayActivityBar));
     expect(bars.any((bar) => bar.summary.completedTaskCount > 0), isTrue);
+  });
+
+  testWidgets('tapping a day bar opens day detail view', (
+    WidgetTester tester,
+  ) async {
+    final repository = InMemoryHistoryRepository();
+    repository.appendEntries([
+      HistoryMoodRecord(
+        mood: Sinnsstemning.ok,
+        timestamp: DateTime(2026, 6, 18, 9, 0),
+      ),
+      HistoryAttemptRecord(
+        taskId: 'task-1',
+        focusAreaId: 'study',
+        outcome: HistoryAttemptOutcome.completed,
+        mood: Sinnsstemning.ok,
+        timestamp: DateTime(2026, 6, 18, 9, 5),
+      ),
+      HistoryEventRecord(
+        eventId: 'event_symbol',
+        action: HistoryEventAction.saved,
+        timestamp: DateTime(2026, 6, 18, 9, 8),
+        label: 'Symbol valgt',
+      ),
+    ]);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: HistoryScreen(
+          historyRepository: repository,
+          nowProvider: () => DateTime(2026, 6, 20, 12),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('history-day-bar-tap-4')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(DayDetailView), findsOneWidget);
+    expect(find.textContaining('Detaljer for 18.06.2026'), findsOneWidget);
+    expect(find.text('Fullførte oppgaver'), findsOneWidget);
+    expect(find.textContaining('task-1'), findsOneWidget);
   });
 }

@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:companion_app/core/history/day_history_summary.dart';
+import 'package:companion_app/core/history/history_entry.dart';
 import 'package:companion_app/core/history/history_repository.dart';
 import 'package:companion_app/features/history/widgets/day_activity_bar.dart';
+import 'package:companion_app/features/history/widgets/day_detail_view.dart';
 import 'package:companion_app/features/history/widgets/history_empty_state.dart';
 import 'package:flutter/material.dart';
 
@@ -58,11 +61,19 @@ class HistoryScreen extends StatelessWidget {
                         for (int i = 0; i < daySummaries.length; i++) ...[
                           if (i > 0) const SizedBox(width: 10),
                           Expanded(
-                            child: DayActivityBar(
-                              key: ValueKey('history-day-bar-$i'),
-                              summary: daySummaries[i],
-                              maxCompletedCount: maxCompletedCount,
-                              index: i,
+                            child: InkWell(
+                              key: ValueKey('history-day-bar-tap-$i'),
+                              borderRadius: BorderRadius.circular(10),
+                              onTap: () => _openDayDetail(
+                                context,
+                                summary: daySummaries[i],
+                              ),
+                              child: DayActivityBar(
+                                key: ValueKey('history-day-bar-$i'),
+                                summary: daySummaries[i],
+                                maxCompletedCount: maxCompletedCount,
+                                index: i,
+                              ),
                             ),
                           ),
                         ],
@@ -73,6 +84,28 @@ class HistoryScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _openDayDetail(
+    BuildContext context, {
+    required DayHistorySummary summary,
+  }) async {
+    final dayEntries = historyRepository.readEntriesForDay(summary.dayStart);
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return FractionallySizedBox(
+          heightFactor: 0.88,
+          child: DayDetailView(
+            day: summary.dayStart,
+            summary: summary,
+            entries: List<HistoryEntry>.from(dayEntries),
+          ),
+        );
+      },
     );
   }
 }

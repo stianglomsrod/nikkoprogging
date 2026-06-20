@@ -83,6 +83,8 @@ companion_app/
 |  |  |  |- history_screen.dart
 |  |  |  |- widgets/
 |  |  |     |- day_activity_bar.dart
+|  |  |     |- day_detail_section.dart
+|  |  |     |- day_detail_view.dart
 |  |  |     |- history_empty_state.dart
 |     |- home/
 |        |- home_page.dart
@@ -114,6 +116,7 @@ companion_app/
 |  |- widget_test.dart
 |  |- features/
 |  |  |- history/
+|  |  |  |- day_detail_view_test.dart
 |  |     |- history_screen_test.dart
 |  |- core/
 |  |  |- flow/
