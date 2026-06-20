@@ -41,6 +41,7 @@ void main() {
         outcome: HistoryAttemptOutcome.completed,
         mood: Sinnsstemning.ok,
         timestamp: DateTime(2026, 6, 21, 9, 5),
+        taskTitleSnapshot: 'Ta fem minutter med matte',
       ),
       HistoryEventRecord(
         eventId: 'event_symbol',
@@ -79,7 +80,7 @@ void main() {
     );
 
     expect(find.text('Fullførte oppgaver'), findsOneWidget);
-    expect(find.textContaining('task-1'), findsOneWidget);
+    expect(find.textContaining('Ta fem minutter med matte'), findsOneWidget);
 
     await tester.scrollUntilVisible(
       find.text('Hendelser'),

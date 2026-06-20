@@ -22,11 +22,13 @@ class HistoryAttemptRecord extends HistoryEntry {
     required this.outcome,
     required this.mood,
     required super.timestamp,
+    this.taskTitleSnapshot,
     this.wasEnergiskChainFollowUp = false,
   });
 
   factory HistoryAttemptRecord.fromAttemptEntry(
     AttemptEntry entry, {
+    String? taskTitleSnapshot,
     bool wasEnergiskChainFollowUp = false,
   }) {
     return HistoryAttemptRecord(
@@ -37,6 +39,7 @@ class HistoryAttemptRecord extends HistoryEntry {
           : HistoryAttemptOutcome.notCompleted,
       mood: entry.mood,
       timestamp: entry.timestamp,
+      taskTitleSnapshot: taskTitleSnapshot,
       wasEnergiskChainFollowUp: wasEnergiskChainFollowUp,
     );
   }
@@ -45,6 +48,7 @@ class HistoryAttemptRecord extends HistoryEntry {
   final String focusAreaId;
   final HistoryAttemptOutcome outcome;
   final Sinnsstemning mood;
+  final String? taskTitleSnapshot;
   final bool wasEnergiskChainFollowUp;
 
   @override

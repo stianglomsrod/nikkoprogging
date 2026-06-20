@@ -26,15 +26,16 @@ class DayDetailView extends StatelessWidget {
 
     for (final entry in entries) {
       if (entry is HistoryAttemptRecord) {
+        final attemptLabel = _attemptLabel(entry);
         switch (entry.outcome) {
           case HistoryAttemptOutcome.completed:
-            completedTaskIds.add(entry.taskId);
+            completedTaskIds.add(attemptLabel);
             break;
           case HistoryAttemptOutcome.notCompleted:
-            notCompletedTaskIds.add(entry.taskId);
+            notCompletedTaskIds.add(attemptLabel);
             break;
           case HistoryAttemptOutcome.interrupted:
-            interruptedTaskIds.add(entry.taskId);
+            interruptedTaskIds.add(attemptLabel);
             break;
         }
       } else if (entry is HistoryMoodRecord) {
@@ -145,5 +146,13 @@ class DayDetailView extends StatelessWidget {
     final hour = value.hour.toString().padLeft(2, '0');
     final minute = value.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
+  }
+
+  String _attemptLabel(HistoryAttemptRecord entry) {
+    final snapshot = entry.taskTitleSnapshot?.trim();
+    if (snapshot == null || snapshot.isEmpty) {
+      return entry.taskId;
+    }
+    return snapshot;
   }
 }

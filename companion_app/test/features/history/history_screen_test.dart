@@ -44,6 +44,7 @@ void main() {
         outcome: HistoryAttemptOutcome.completed,
         mood: Sinnsstemning.ok,
         timestamp: DateTime(2026, 6, 18, 9, 5),
+        taskTitleSnapshot: 'Rydd skrivebordet i to minutter',
       ),
     ]);
 
@@ -78,6 +79,7 @@ void main() {
         outcome: HistoryAttemptOutcome.completed,
         mood: Sinnsstemning.ok,
         timestamp: DateTime(2026, 6, 18, 9, 5),
+        taskTitleSnapshot: 'Rydd skrivebordet i to minutter',
       ),
       HistoryEventRecord(
         eventId: 'event_symbol',
@@ -91,17 +93,21 @@ void main() {
       MaterialApp(
         home: HistoryScreen(
           historyRepository: repository,
-          nowProvider: () => DateTime(2026, 6, 20, 12),
+          nowProvider: () => DateTime(2026, 6, 18, 12),
         ),
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('history-day-bar-tap-4')));
+    await tester.tap(find.byKey(const ValueKey('history-day-bar-tap-6')));
     await tester.pumpAndSettle();
 
     expect(find.byType(DayDetailView), findsOneWidget);
     expect(find.textContaining('Detaljer for 18.06.2026'), findsOneWidget);
     expect(find.text('Fullførte oppgaver'), findsOneWidget);
-    expect(find.textContaining('task-1'), findsOneWidget);
+
+    expect(
+      find.textContaining('Rydd skrivebordet i to minutter'),
+      findsOneWidget,
+    );
   });
 }

@@ -20,6 +20,7 @@ void main() {
           outcome: HistoryAttemptOutcome.completed,
           mood: Sinnsstemning.ok,
           timestamp: DateTime(2026, 6, 20, 9, 05),
+          taskTitleSnapshot: 'Rydd arbeidsflaten i ett minutt',
         ),
       ]);
 
@@ -30,6 +31,8 @@ void main() {
       expect(entries.last, isA<HistoryAttemptRecord>());
       expect(entries.first.timestamp, DateTime(2026, 6, 20, 9, 00));
       expect(entries.last.timestamp, DateTime(2026, 6, 20, 9, 05));
+      final attempt = entries.last as HistoryAttemptRecord;
+      expect(attempt.taskTitleSnapshot, 'Rydd arbeidsflaten i ett minutt');
     });
 
     test('range query returns only entries inside range', () {

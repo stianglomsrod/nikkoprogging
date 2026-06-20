@@ -187,7 +187,10 @@ class _HomePageState extends State<HomePage> {
       );
       _attemptHistory.add(attemptEntry);
       _historyRepository.appendEntry(
-        HistoryAttemptRecord.fromAttemptEntry(attemptEntry),
+        HistoryAttemptRecord.fromAttemptEntry(
+          attemptEntry,
+          taskTitleSnapshot: task.title,
+        ),
       );
       _companionEvents.onTaskResult(done: done);
 
