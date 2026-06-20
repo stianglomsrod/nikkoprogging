@@ -2,13 +2,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:companion_app/app/companion_app.dart';
+import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
 
+CompanionApp _buildApp() {
+  return CompanionApp(historyRepository: InMemoryHistoryRepository());
+}
+
 void main() {
   testWidgets('viser prototype-startskjerm', (WidgetTester tester) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     expect(find.text('.....'), findsOneWidget);
     expect(find.text('Simuler neste prompt'), findsOneWidget);
@@ -18,7 +23,7 @@ void main() {
   testWidgets('companion figur rendres med idle-animasjonsframes', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     final image = tester.widget<Image>(
       find.descendant(
@@ -42,7 +47,7 @@ void main() {
   testWidgets('apner roligere innstillinger med fokusomradevalg', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await tester.tap(find.byTooltip('Innstillinger'));
     await tester.pumpAndSettle();
@@ -68,7 +73,7 @@ void main() {
   testWidgets('flyt gar fra stemning til oppgave og resultat', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await tester.tap(find.text('Simuler neste prompt'));
     await tester.pumpAndSettle();
@@ -94,7 +99,7 @@ void main() {
   testWidgets(
     'companion-navneevent vises etter tre fullforte og skip beholder .....',
     (WidgetTester tester) async {
-      await tester.pumpWidget(const CompanionApp());
+      await tester.pumpWidget(_buildApp());
 
       await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
       await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
@@ -124,7 +129,7 @@ void main() {
   testWidgets(
     'lagret companion-navn erstatter ..... og event trigges ikke pa nytt',
     (WidgetTester tester) async {
-      await tester.pumpWidget(const CompanionApp());
+      await tester.pumpWidget(_buildApp());
 
       await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
       await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
@@ -159,7 +164,7 @@ void main() {
   testWidgets('etter skip kan companion-navn settes i innstillinger', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
     await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
@@ -197,7 +202,7 @@ void main() {
   testWidgets('user-navneevent vises etter seks fullforte og skip er mulig', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(
       tester,
@@ -253,7 +258,7 @@ void main() {
   testWidgets('lagret brukernavn kan brukes i rolig hilsen', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     for (int i = 0; i < 5; i++) {
       await _runSinglePromptAndFinish(
@@ -286,7 +291,7 @@ void main() {
   testWidgets('etter user-navneevent kan navn endres i innstillinger', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     for (int i = 0; i < 5; i++) {
       await _runSinglePromptAndFinish(
@@ -332,7 +337,7 @@ void main() {
   testWidgets('symbolevent vises etter femten fullforte og kan lagres', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _setAllFocusAreasToSporty(tester);
 
@@ -376,7 +381,7 @@ void main() {
   testWidgets('bakgrunnsfargeevent vises etter atten fullforte og kan lagres', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _setAllFocusAreasToSporty(tester);
 
@@ -414,7 +419,7 @@ void main() {
   testWidgets(
     'bakgrunnsfargeevent kan hoppes over og beholder standard mørk tone',
     (WidgetTester tester) async {
-      await tester.pumpWidget(const CompanionApp());
+      await tester.pumpWidget(_buildApp());
 
       await _setAllFocusAreasToSporty(tester);
 
@@ -451,7 +456,7 @@ void main() {
   testWidgets('stemningsknapper vises i rekkefolge Energisk, Ok, Tung', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await tester.tap(find.text('Simuler neste prompt'));
     await tester.pumpAndSettle();
@@ -480,7 +485,7 @@ void main() {
   testWidgets(
     'idle viser vennlig ingen-oppgaver-kopi nar kvoter er brukt opp',
     (WidgetTester tester) async {
-      await tester.pumpWidget(const CompanionApp());
+      await tester.pumpWidget(_buildApp());
 
       for (int i = 0; i < 7; i++) {
         await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
@@ -502,7 +507,7 @@ void main() {
   testWidgets('ja viser happy kortvarig og gar tilbake til idle', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _startPromptAndPickMood(tester, 'Ok');
     await tester.tap(find.text('Ja'));
@@ -525,7 +530,7 @@ void main() {
   testWidgets('forste energisk utloser ikke kjede alene', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _startPromptAndPickMood(tester, 'Energisk');
 
@@ -539,7 +544,7 @@ void main() {
   testWidgets('andre energisk pa rad utloser tokjedeutgave uten ny mood', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(tester, moodLabel: 'Energisk', done: true);
 
@@ -563,7 +568,7 @@ void main() {
   testWidgets('etter andre kjedeutgave resettes kjeden', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(tester, moodLabel: 'Energisk', done: true);
 
@@ -585,7 +590,7 @@ void main() {
   testWidgets('ikke-energisk bryter energisk-sekvensen', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(tester, moodLabel: 'Energisk', done: true);
     await _runSinglePromptAndFinish(tester, moodLabel: 'Ok', done: true);
@@ -600,7 +605,7 @@ void main() {
   testWidgets('andre kjedeutgave unngar a repetere forste oppgave nar mulig', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(tester, moodLabel: 'Energisk', done: true);
 
@@ -617,7 +622,7 @@ void main() {
   testWidgets('tapping figur i resultattilstand fortsetter til idle', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _startPromptAndPickMood(tester, 'Ok');
     await tester.tap(find.text('Ja'));
@@ -634,7 +639,7 @@ void main() {
   testWidgets('energisk-kjede fullforer og flyten forblir brukbar etterpa', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const CompanionApp());
+    await tester.pumpWidget(_buildApp());
 
     await _runSinglePromptAndFinish(tester, moodLabel: 'Energisk', done: true);
 

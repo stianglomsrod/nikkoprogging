@@ -1,6 +1,15 @@
 ## Database direction
 
-No database yet.
+History persistence slice 1 is now implemented.
+
+Current implemented local persistence scope:
+
+- Drift + SQLite is used for raw history timeline entries only
+- persisted entry types: attempts, moods, event actions
+- daily summaries remain derived through the existing history aggregator
+- no cached summaries yet
+- no week/month/year grouping persistence yet
+- no unrelated app-state persistence yet
 
 Local-first persistence is planned later.
 
@@ -16,11 +25,11 @@ Reason:
 - Keeps private user data local by default
 - Allows future sync/backend integration through a repository layer
 
-Not now:
+Still not implemented:
 
-- No database in the first clickable prototype
-- No backend yet
-- No auth yet
+- no backend yet
+- no auth yet
+- no persistence yet for settings, unlock state machine, scheduler state, or global feedback
 
 Future persistence note for energisk chain rule:
 
@@ -33,8 +42,7 @@ Future backend options:
 
 ## Future Data Implications from Planned Epics
 
-No new database implementation is introduced now.
-These are planning notes only for future local-first persistence work.
+Notes below cover areas not yet implemented in persistence.
 
 ### Companion events and unlocks
 
@@ -65,8 +73,8 @@ Likely future data areas:
 
 ### History chunk 5 handoff notes (planning only)
 
-No schema is implemented in this pass.
-No database code is introduced in this pass.
+Schema and database code are now implemented for the approved history slice.
+This section remains relevant as rollout intent for next slices.
 
 Recommended persistence order when implementation is approved later:
 
@@ -107,7 +115,7 @@ Likely future data areas:
 
 ### Direction reminder
 
-- Database status remains unchanged: no database implemented yet.
-- Local-first persistence remains the planned path.
-- Drift + SQLite remains likely/preferred for local metadata when persistence work starts.
-- Drift + SQLite remains likely/preferred for local metadata when persistence work starts, but this file does not lock a final schema yet.
+- Database status: partial implementation is now in place for history raw timeline only.
+- Local-first persistence remains the path.
+- Drift + SQLite is now in use for history persistence.
+- Additional persisted domains should still be added gradually behind repository boundaries.

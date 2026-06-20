@@ -50,12 +50,18 @@ companion_app/
 |  |- app/
 |  |  |- companion_app.dart
 |  |- core/
+|  |  |- database/
+|  |  |  |- app_database.dart
+|  |  |  |- app_database.g.dart
+|  |  |  |- tables/
+|  |  |     |- history_entries.dart
 |  |  |- content/
 |  |  |  |- companion_text_library.dart
 |  |  |- flow/
 |  |  |  |- energisk_chain_controller.dart
 |  |  |- history/
 |  |  |  |- day_history_summary.dart
+|  |  |  |- drift_history_repository.dart
 |  |  |  |- history_aggregator.dart
 |  |  |  |- history_entry.dart
 |  |  |  |- history_repository.dart
@@ -124,6 +130,7 @@ companion_app/
 |  |  |- events/
 |  |  |  |- companion_event_controller_test.dart
 |  |  |- history/
+|  |  |  |- drift_history_repository_test.dart
 |  |  |  |- history_aggregator_test.dart
 |  |  |  |- in_memory_history_repository_test.dart
 |  |  |- scheduler/

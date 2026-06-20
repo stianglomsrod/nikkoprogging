@@ -6,6 +6,15 @@ This document breaks the History and Statistics epic into small implementation c
 
 The goal is a supportive overview of activity over time, not a performance dashboard.
 
+## Status Update
+
+- Chunks 1-4.5 are implemented.
+- Chunk 5 documentation handoff is completed.
+- Persistence Slice 1 is now implemented:
+  - Drift + SQLite local persistence for raw history timeline entries (attempt/mood/event)
+  - day summaries still derived through existing aggregator
+  - no cached summary table and no week/month/year grouping persistence yet
+
 ## Current State to Preserve
 
 - Dark, low-stimuli visual style.

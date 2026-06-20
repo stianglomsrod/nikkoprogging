@@ -1,6 +1,14 @@
 import 'package:companion_app/app/companion_app.dart';
+import 'package:companion_app/core/database/app_database.dart';
+import 'package:companion_app/core/history/drift_history_repository.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const CompanionApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final database = AppDatabase.openAtDefaultLocation();
+  final historyRepository = DriftHistoryRepository(database);
+  await historyRepository.initialize();
+
+  runApp(CompanionApp(historyRepository: historyRepository));
 }

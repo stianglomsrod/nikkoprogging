@@ -8,7 +8,7 @@ import 'package:companion_app/core/events/companion_event_definitions.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/flow/energisk_chain_controller.dart';
 import 'package:companion_app/core/history/history_entry.dart';
-import 'package:companion_app/core/history/in_memory_history_repository.dart';
+import 'package:companion_app/core/history/history_repository.dart';
 import 'package:companion_app/core/models/attempt_entry.dart';
 import 'package:companion_app/core/models/focus_area.dart';
 import 'package:companion_app/core/models/sinnsstemning.dart';
@@ -43,7 +43,12 @@ enum PromptStage {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    super.key,
+    required this.historyRepository,
+  });
+
+  final HistoryRepository historyRepository;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -55,8 +60,6 @@ class _HomePageState extends State<HomePage> {
   final SchedulerEngine _scheduler = SchedulerEngine();
   final TaskSelector _selector = TaskSelector();
   final CompanionEventController _companionEvents = CompanionEventController();
-  final InMemoryHistoryRepository _historyRepository =
-      InMemoryHistoryRepository();
   final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
 
@@ -143,7 +146,7 @@ class _HomePageState extends State<HomePage> {
     );
 
     setState(() {
-      _historyRepository.appendEntry(
+      widget.historyRepository.appendEntry(
         HistoryMoodRecord(
           mood: mood,
           timestamp: DateTime.now(),
@@ -186,7 +189,7 @@ class _HomePageState extends State<HomePage> {
         timestamp: DateTime.now(),
       );
       _attemptHistory.add(attemptEntry);
-      _historyRepository.appendEntry(
+      widget.historyRepository.appendEntry(
         HistoryAttemptRecord.fromAttemptEntry(
           attemptEntry,
           taskTitleSnapshot: task.title,
@@ -462,7 +465,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    _historyRepository.appendEntry(
+    widget.historyRepository.appendEntry(
       HistoryEventRecord(
         eventId: pending.id,
         action: action,
@@ -596,7 +599,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _openHistory() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => HistoryScreen(historyRepository: _historyRepository),
+        builder: (_) =>
+            HistoryScreen(historyRepository: widget.historyRepository),
       ),
     );
   }

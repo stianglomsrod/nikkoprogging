@@ -16,7 +16,8 @@ Early prototype / flow-validation.
 
 - Focus is on validating scheduler-oriented product flow and adaptive task behavior.
 - Hardcoded/local seed data is intentional for now.
-- No database/backend/auth/notifications/TTS yet.
+- Local persistence is now introduced only for history raw timeline entries (Drift + SQLite).
+- No backend/auth/notifications/TTS yet.
 
 ## Agent Reporting Rule
 

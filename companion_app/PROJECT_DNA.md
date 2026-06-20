@@ -48,9 +48,11 @@ Current implementation status:
 - Audio events (9/12 completed `Ja`) remain deferred; in prototype flow they are auto-skipped so they do not block non-audio event progression.
 - Deferred-audio auto-skip policy is centralized in the companion-event layer (not hardcoded in multiple UI checks) to keep later real-audio integration simpler.
 - History/statistics chunk 1 foundation is now in place via focused in-memory core models and aggregation (`lib/core/history/`) for day-level summaries and timeline markers (no history UI or persistence yet).
-- History/statistics chunk 2 repository boundary is now in place via `lib/core/history/history_repository.dart` and `lib/core/history/in_memory_history_repository.dart`, with home flow appending mood/attempt/event records through that boundary (still in-memory only).
+- History/statistics chunk 2 repository boundary is now in place via `lib/core/history/history_repository.dart`, with home flow appending mood/attempt/event records through that boundary.
 - History/statistics chunk 3 MVP is now in place with a simple in-memory 7-day history screen (`lib/features/history/history_screen.dart`) reachable from home app bar (`Historikk`), using calm bars and supportive empty state (no persistence, no chart package).
-- History/statistics chunk 4 day detail is now in place: tapping a daily history bar opens a calm detail surface with completed/non-completed attempts, moods, event moments, and activity times (still in-memory, no persistence yet).
+- History/statistics chunk 4 day detail is now in place: tapping a daily history bar opens a calm detail surface with completed/non-completed attempts, moods, event moments, and activity times.
+- History/statistics persistence slice 1 is now in place: raw history timeline entries are persisted locally with Drift + SQLite through `lib/core/history/drift_history_repository.dart` and `lib/core/database/app_database.dart`.
+- History daily summaries are still derived through the existing aggregator flow (no summary cache yet).
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Companion figure now uses frame-based asset animation.
@@ -202,7 +204,7 @@ These are deferred by design and should only be introduced when explicitly reque
 - Keep the flow simple: one task at a time, few choices, clear next step.
 - Attempts matter, not only completed tasks.
 - Keep adaptive logic separate from UI code.
-- Do not add backend, database, authentication, notifications, or TTS unless explicitly requested.
+- Do not add backend, additional database domains, authentication, notifications, or TTS unless explicitly requested.
 - Prefer small, understandable architecture over premature abstraction.
 - Follow Flutter/mobile best practice by extracting distinct UI/flow/product-rule behaviors into small, focused widgets/helpers/controllers instead of allowing monolithic files to grow.
 - When product logic becomes a distinct rule (for example chain behaviors), place it in an appropriately named core/helper module and add tests when practical.
@@ -217,7 +219,7 @@ These are deferred by design and should only be introduced when explicitly reque
 
 Current state:
 
-- No database yet.
+- Local database is partially implemented for history raw timeline entries only (Drift + SQLite).
 - No backend yet.
 - No auth yet.
 - Hardcoded/local seed data is intentional technical debt for prototype speed.

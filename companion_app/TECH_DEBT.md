@@ -30,17 +30,18 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Add a dedicated scheduler component that respects per-focus-area active windows and `Modus` quotas.
   - Integrate notification delivery when explicitly requested.
 
-### 3) No persistent history yet
+### 3) History persistence is partial (raw timeline only)
 
 - Status: Active (intentional)
-- Decision: Task outcomes, mood history, and adaptive state may be kept in memory for prototype flow testing.
-- Reason: Keeps implementation simple while validating UX and adaptation rules.
+- Decision: Raw history timeline entries are now persisted locally for attempts, moods, and event actions using Drift + SQLite.
+- Decision: Aggregates remain derived and several adjacent domains still run in memory.
+- Reason: This keeps persistence rollout narrow and low-risk while preserving current repository/UI behavior.
 - Risk:
-  - State resets between sessions.
-  - Success-rate behavior cannot be validated over realistic long-term use.
+  - Some behavior still resets between sessions because non-history state is not persisted yet.
+  - Aggregation cost may grow with larger timelines until optional cache slices are introduced.
 - Future resolution:
-  - Introduce persistence/history storage behind repository interfaces.
-  - Then decide database/backend strategy based on validated product needs.
+  - Add next persistence slices incrementally behind existing repository interfaces.
+  - Keep summary caches optional and performance-driven.
 
 ### 4) Failed/skipped-task avoidance may be simulated in memory
 
@@ -165,25 +166,21 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Implementer unlock-state-maskin bak repository/persisteringslag.
   - Legg til rolige event-flyter etter resultat-state uten a avbryte oppgaveflyt.
 
-### 15) Historikk/statistikk er MVP i minne og avhenger fortsatt av persistering
+### 15) Historikk/statistikk er MVP med delvis persistering
 
 - Status: Active (intentional)
 - Decision: En liten in-memory grunnmur for historikk (entry-modeller + dagaggregering) er lagt i `lib/core/history/`.
-- Decision: En enkel repository-grense for historikk er ogsa lagt (`history_repository` + `in_memory_history_repository`) for a forberede senere lagringsbytte uten a koble UI direkte til persistering.
+- Decision: Repository-grensen for historikk er beholdt, og en Drift-basert implementasjon er lagt bak samme API (`drift_history_repository`) for raw timeline persistering.
 - Decision: En enkel historikkskjerm med 7-dagers stolper og rolig empty-state er lagt i `lib/features/history/`.
 - Decision: Dagdetalj er lagt via tap pa stolpe (fullfort/ikke-fullfort, stemning, hendelser, aktivitetstidspunkter), men gruppering (uke/maned/ar) og oppsummeringer er ikke implementert enn.
-- Decision: Chunk 5 handoff-plan for persistering er dokumentert (plan + DB-notater), men fortsatt uten databasekode eller schema.
+- Decision: Chunk 5 handoff-plan er delvis realisert gjennom Persistence Slice 1 (Drift + SQLite for raw timeline), mens videre slices gjenstar.
 - Reason: Holder tidlig validering enkel, men forbereder tydelig domene og aggregeringsregler for senere iterasjoner.
 - Risk:
-- Bruker far fortsatt ingen langsiktig oversikt mellom sesjoner i dagens in-memory prototype.
-- Uten repository/persistering kan historikkdata ikke overleve app-restart.
 - Historikkvisningen kan fortsatt oppleves for enkel over tid uten gruppering og oppsummeringer.
-- Uten faktisk persistering er dokumentert handoff ennå ikke realisert i appatferd.
+- Dagens oppsett persisterer ikke ennå andre domener rundt historikk (for eksempel innstillinger/unlock state), sa helhetsopplevelsen er fortsatt delvis runtime-basert.
 - Future resolution:
-- Etabler repository-grense og deretter persistering for attempts/mood/events.
-- Bygg deretter rolig historikkskjerm (for eksempel 7-dagers stolper + dagdetalj) og senere gruppering/oppsummering uten press-sprak.
 - Legg til uke/maned/ar-gruppering og rolige oppsummeringer etter validering av dagdetaljflyt.
-- Implementer persistering bak eksisterende repository-grense etter godkjent Drift-plan, deretter fortsett med gruppering/oppsummering.
+- Hold dagoppsummeringer derivert i neste fase, og vurder cache bare ved reelt behov.
 
 ### 16) Global feedback-system er roadmap-only og avhenger av lagring/sync
 
@@ -199,7 +196,6 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 ## Deferred Integrations (By Decision)
 
 - Riverpod
-- Drift + SQLite (not now; evaluate later)
 - Supabase (not now)
 - Firebase (not now)
 - `flutter_local_notifications`
