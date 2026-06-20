@@ -98,7 +98,7 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 - Future resolution:
   - Implementer navneevent som lar bruker gi companion/figur et navn.
 
-### 9) Innstillinger er fortsatt kun in-memory
+### 9) Innstillinger er delvis persistert; prototype-time er fortsatt runtime-only
 
 - Status: Active (intentional)
 - Decision: Endringer i Fokusomrader, Aktivt tidsrom og Modus persisteres na lokalt via Drift + SQLite.

@@ -222,10 +222,29 @@ These are deferred by design and should only be introduced when explicitly reque
 
 Current state:
 
-- Local database is partially implemented for history raw timeline entries only (Drift + SQLite).
+- Local database is implemented for core prototype persistence slices (Drift + SQLite):
+  - history raw timeline entries
+  - companion event state
+  - companion identity state
+  - focus-area settings
+- Runtime-only state remains for selected dev/runtime concerns:
+  - simulated prototype time
+  - scheduler runtime counters/state
 - No backend yet.
 - No auth yet.
 - Hardcoded/local seed data is intentional technical debt for prototype speed.
+
+Persistence status snapshot:
+
+| Domain | Status | Storage |
+| --- | --- | --- |
+| History timeline | Persisted | Drift + SQLite |
+| Companion event state | Persisted | Drift + SQLite |
+| Companion identity state | Persisted | Drift + SQLite |
+| Focus-area settings | Persisted | Drift + SQLite |
+| Simulated prototype time | Runtime-only | In-memory |
+| Scheduler runtime state | Runtime-only | In-memory |
+| Global feedback | Deferred | Not implemented |
 
 Later decision point:
 

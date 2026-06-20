@@ -1,6 +1,6 @@
 ## Database direction
 
-History persistence slice 1 is now implemented.
+Core persistence slices are now implemented.
 
 Current implemented local persistence scope:
 
@@ -12,6 +12,18 @@ Current implemented local persistence scope:
 - daily summaries remain derived through the existing history aggregator
 - no cached summaries yet
 - no week/month/year grouping persistence yet
+
+Persistence status snapshot:
+
+| Domain | Status | Storage |
+| --- | --- | --- |
+| History timeline (attempt/mood/event) | Persisted | Drift + SQLite |
+| Companion event state | Persisted | Drift + SQLite |
+| Companion identity state | Persisted | Drift + SQLite |
+| Focus-area settings | Persisted | Drift + SQLite |
+| Simulated prototype time | Runtime-only | In-memory |
+| Scheduler runtime state | Runtime-only | In-memory |
+| Global feedback | Deferred | Not implemented |
 
 Local-first persistence is planned later.
 
@@ -109,7 +121,7 @@ Likely future data areas:
 
 ### Direction reminder
 
-- Database status: partial implementation is now in place for history raw timeline only.
+- Database status: partial implementation is in place for history timeline, companion event state, companion identity state, and focus-area settings.
 - Local-first persistence remains the path.
 - Drift + SQLite is now in use for history persistence.
 - Additional persisted domains should still be added gradually behind repository boundaries.
