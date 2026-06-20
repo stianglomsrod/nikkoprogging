@@ -154,17 +154,15 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
   - Erstatt med endelige produksjonsassets nar visuell retning er ferdig.
   - Behold eller forenkle verktoyflyten avhengig av endelig art pipeline.
 
-### 14) Companion-events/unlocks er dokumentert, men ikke implementert
+### 14) Companion-events/unlocks er implementert med smal persistering
 
 - Status: Active (intentional)
-- Decision: Event-sekvens for unlocks (3/6/9/12/15/18 fullforte oppgaver) er dokumentert i roadmap-epic, men ikke implementert i appflyten enn.
-- Reason: Krever persistert tilstand for teller, engangs-trigger og innstillingsstyrte valg.
+- Decision: Event-sekvens for unlocks er implementert i appflyt, og event-state persistering er innfort i en smal Slice 2 (completed count + trigger/handled/skipped/pending state).
+- Reason: Sikrer stabil unlock-progresjon pa tvers av app-restart uten full data-lags omskriving.
 - Risk:
-  - Placeholder-navn `.....` blir staende inntil navneevent/innstillinger for navn er implementert.
-  - Produktforventninger rundt unlocks kan oppsta for testere for funksjonen finnes.
+- Event-state er persistert, men andre domener rundt langsiktig personalisering og lyd er fortsatt delvis deferred.
 - Future resolution:
-  - Implementer unlock-state-maskin bak repository/persisteringslag.
-  - Legg til rolige event-flyter etter resultat-state uten a avbryte oppgaveflyt.
+- Utvid persistering trinnvis for resterende domener ved behov (for eksempel lydpreferanser nar audio-slice blir aktiv).
 
 ### 15) Historikk/statistikk er MVP med delvis persistering
 

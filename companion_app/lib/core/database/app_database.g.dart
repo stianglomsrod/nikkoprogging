@@ -750,15 +750,474 @@ class HistoryEntriesCompanion extends UpdateCompanion<HistoryEntryRow> {
   }
 }
 
+class $CompanionEventStatesTable extends CompanionEventStates
+    with TableInfo<$CompanionEventStatesTable, CompanionEventStateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CompanionEventStatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _completedTaskCountMeta =
+      const VerificationMeta('completedTaskCount');
+  @override
+  late final GeneratedColumn<int> completedTaskCount = GeneratedColumn<int>(
+    'completed_task_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _autoTriggeredEventIdsJsonMeta =
+      const VerificationMeta('autoTriggeredEventIdsJson');
+  @override
+  late final GeneratedColumn<String> autoTriggeredEventIdsJson =
+      GeneratedColumn<String>(
+        'auto_triggered_event_ids_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _handledEventIdsJsonMeta =
+      const VerificationMeta('handledEventIdsJson');
+  @override
+  late final GeneratedColumn<String> handledEventIdsJson =
+      GeneratedColumn<String>(
+        'handled_event_ids_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _skippedEventIdsJsonMeta =
+      const VerificationMeta('skippedEventIdsJson');
+  @override
+  late final GeneratedColumn<String> skippedEventIdsJson =
+      GeneratedColumn<String>(
+        'skipped_event_ids_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _pendingEventIdMeta = const VerificationMeta(
+    'pendingEventId',
+  );
+  @override
+  late final GeneratedColumn<String> pendingEventId = GeneratedColumn<String>(
+    'pending_event_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    completedTaskCount,
+    autoTriggeredEventIdsJson,
+    handledEventIdsJson,
+    skippedEventIdsJson,
+    pendingEventId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'companion_event_states';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CompanionEventStateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('completed_task_count')) {
+      context.handle(
+        _completedTaskCountMeta,
+        completedTaskCount.isAcceptableOrUnknown(
+          data['completed_task_count']!,
+          _completedTaskCountMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_completedTaskCountMeta);
+    }
+    if (data.containsKey('auto_triggered_event_ids_json')) {
+      context.handle(
+        _autoTriggeredEventIdsJsonMeta,
+        autoTriggeredEventIdsJson.isAcceptableOrUnknown(
+          data['auto_triggered_event_ids_json']!,
+          _autoTriggeredEventIdsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_autoTriggeredEventIdsJsonMeta);
+    }
+    if (data.containsKey('handled_event_ids_json')) {
+      context.handle(
+        _handledEventIdsJsonMeta,
+        handledEventIdsJson.isAcceptableOrUnknown(
+          data['handled_event_ids_json']!,
+          _handledEventIdsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_handledEventIdsJsonMeta);
+    }
+    if (data.containsKey('skipped_event_ids_json')) {
+      context.handle(
+        _skippedEventIdsJsonMeta,
+        skippedEventIdsJson.isAcceptableOrUnknown(
+          data['skipped_event_ids_json']!,
+          _skippedEventIdsJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_skippedEventIdsJsonMeta);
+    }
+    if (data.containsKey('pending_event_id')) {
+      context.handle(
+        _pendingEventIdMeta,
+        pendingEventId.isAcceptableOrUnknown(
+          data['pending_event_id']!,
+          _pendingEventIdMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CompanionEventStateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CompanionEventStateRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      completedTaskCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_task_count'],
+      )!,
+      autoTriggeredEventIdsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}auto_triggered_event_ids_json'],
+      )!,
+      handledEventIdsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}handled_event_ids_json'],
+      )!,
+      skippedEventIdsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}skipped_event_ids_json'],
+      )!,
+      pendingEventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pending_event_id'],
+      ),
+    );
+  }
+
+  @override
+  $CompanionEventStatesTable createAlias(String alias) {
+    return $CompanionEventStatesTable(attachedDatabase, alias);
+  }
+}
+
+class CompanionEventStateRow extends DataClass
+    implements Insertable<CompanionEventStateRow> {
+  final int id;
+  final int completedTaskCount;
+  final String autoTriggeredEventIdsJson;
+  final String handledEventIdsJson;
+  final String skippedEventIdsJson;
+  final String? pendingEventId;
+  const CompanionEventStateRow({
+    required this.id,
+    required this.completedTaskCount,
+    required this.autoTriggeredEventIdsJson,
+    required this.handledEventIdsJson,
+    required this.skippedEventIdsJson,
+    this.pendingEventId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['completed_task_count'] = Variable<int>(completedTaskCount);
+    map['auto_triggered_event_ids_json'] = Variable<String>(
+      autoTriggeredEventIdsJson,
+    );
+    map['handled_event_ids_json'] = Variable<String>(handledEventIdsJson);
+    map['skipped_event_ids_json'] = Variable<String>(skippedEventIdsJson);
+    if (!nullToAbsent || pendingEventId != null) {
+      map['pending_event_id'] = Variable<String>(pendingEventId);
+    }
+    return map;
+  }
+
+  CompanionEventStatesCompanion toCompanion(bool nullToAbsent) {
+    return CompanionEventStatesCompanion(
+      id: Value(id),
+      completedTaskCount: Value(completedTaskCount),
+      autoTriggeredEventIdsJson: Value(autoTriggeredEventIdsJson),
+      handledEventIdsJson: Value(handledEventIdsJson),
+      skippedEventIdsJson: Value(skippedEventIdsJson),
+      pendingEventId: pendingEventId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pendingEventId),
+    );
+  }
+
+  factory CompanionEventStateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CompanionEventStateRow(
+      id: serializer.fromJson<int>(json['id']),
+      completedTaskCount: serializer.fromJson<int>(json['completedTaskCount']),
+      autoTriggeredEventIdsJson: serializer.fromJson<String>(
+        json['autoTriggeredEventIdsJson'],
+      ),
+      handledEventIdsJson: serializer.fromJson<String>(
+        json['handledEventIdsJson'],
+      ),
+      skippedEventIdsJson: serializer.fromJson<String>(
+        json['skippedEventIdsJson'],
+      ),
+      pendingEventId: serializer.fromJson<String?>(json['pendingEventId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'completedTaskCount': serializer.toJson<int>(completedTaskCount),
+      'autoTriggeredEventIdsJson': serializer.toJson<String>(
+        autoTriggeredEventIdsJson,
+      ),
+      'handledEventIdsJson': serializer.toJson<String>(handledEventIdsJson),
+      'skippedEventIdsJson': serializer.toJson<String>(skippedEventIdsJson),
+      'pendingEventId': serializer.toJson<String?>(pendingEventId),
+    };
+  }
+
+  CompanionEventStateRow copyWith({
+    int? id,
+    int? completedTaskCount,
+    String? autoTriggeredEventIdsJson,
+    String? handledEventIdsJson,
+    String? skippedEventIdsJson,
+    Value<String?> pendingEventId = const Value.absent(),
+  }) => CompanionEventStateRow(
+    id: id ?? this.id,
+    completedTaskCount: completedTaskCount ?? this.completedTaskCount,
+    autoTriggeredEventIdsJson:
+        autoTriggeredEventIdsJson ?? this.autoTriggeredEventIdsJson,
+    handledEventIdsJson: handledEventIdsJson ?? this.handledEventIdsJson,
+    skippedEventIdsJson: skippedEventIdsJson ?? this.skippedEventIdsJson,
+    pendingEventId: pendingEventId.present
+        ? pendingEventId.value
+        : this.pendingEventId,
+  );
+  CompanionEventStateRow copyWithCompanion(CompanionEventStatesCompanion data) {
+    return CompanionEventStateRow(
+      id: data.id.present ? data.id.value : this.id,
+      completedTaskCount: data.completedTaskCount.present
+          ? data.completedTaskCount.value
+          : this.completedTaskCount,
+      autoTriggeredEventIdsJson: data.autoTriggeredEventIdsJson.present
+          ? data.autoTriggeredEventIdsJson.value
+          : this.autoTriggeredEventIdsJson,
+      handledEventIdsJson: data.handledEventIdsJson.present
+          ? data.handledEventIdsJson.value
+          : this.handledEventIdsJson,
+      skippedEventIdsJson: data.skippedEventIdsJson.present
+          ? data.skippedEventIdsJson.value
+          : this.skippedEventIdsJson,
+      pendingEventId: data.pendingEventId.present
+          ? data.pendingEventId.value
+          : this.pendingEventId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanionEventStateRow(')
+          ..write('id: $id, ')
+          ..write('completedTaskCount: $completedTaskCount, ')
+          ..write('autoTriggeredEventIdsJson: $autoTriggeredEventIdsJson, ')
+          ..write('handledEventIdsJson: $handledEventIdsJson, ')
+          ..write('skippedEventIdsJson: $skippedEventIdsJson, ')
+          ..write('pendingEventId: $pendingEventId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    completedTaskCount,
+    autoTriggeredEventIdsJson,
+    handledEventIdsJson,
+    skippedEventIdsJson,
+    pendingEventId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CompanionEventStateRow &&
+          other.id == this.id &&
+          other.completedTaskCount == this.completedTaskCount &&
+          other.autoTriggeredEventIdsJson == this.autoTriggeredEventIdsJson &&
+          other.handledEventIdsJson == this.handledEventIdsJson &&
+          other.skippedEventIdsJson == this.skippedEventIdsJson &&
+          other.pendingEventId == this.pendingEventId);
+}
+
+class CompanionEventStatesCompanion
+    extends UpdateCompanion<CompanionEventStateRow> {
+  final Value<int> id;
+  final Value<int> completedTaskCount;
+  final Value<String> autoTriggeredEventIdsJson;
+  final Value<String> handledEventIdsJson;
+  final Value<String> skippedEventIdsJson;
+  final Value<String?> pendingEventId;
+  const CompanionEventStatesCompanion({
+    this.id = const Value.absent(),
+    this.completedTaskCount = const Value.absent(),
+    this.autoTriggeredEventIdsJson = const Value.absent(),
+    this.handledEventIdsJson = const Value.absent(),
+    this.skippedEventIdsJson = const Value.absent(),
+    this.pendingEventId = const Value.absent(),
+  });
+  CompanionEventStatesCompanion.insert({
+    this.id = const Value.absent(),
+    required int completedTaskCount,
+    required String autoTriggeredEventIdsJson,
+    required String handledEventIdsJson,
+    required String skippedEventIdsJson,
+    this.pendingEventId = const Value.absent(),
+  }) : completedTaskCount = Value(completedTaskCount),
+       autoTriggeredEventIdsJson = Value(autoTriggeredEventIdsJson),
+       handledEventIdsJson = Value(handledEventIdsJson),
+       skippedEventIdsJson = Value(skippedEventIdsJson);
+  static Insertable<CompanionEventStateRow> custom({
+    Expression<int>? id,
+    Expression<int>? completedTaskCount,
+    Expression<String>? autoTriggeredEventIdsJson,
+    Expression<String>? handledEventIdsJson,
+    Expression<String>? skippedEventIdsJson,
+    Expression<String>? pendingEventId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (completedTaskCount != null)
+        'completed_task_count': completedTaskCount,
+      if (autoTriggeredEventIdsJson != null)
+        'auto_triggered_event_ids_json': autoTriggeredEventIdsJson,
+      if (handledEventIdsJson != null)
+        'handled_event_ids_json': handledEventIdsJson,
+      if (skippedEventIdsJson != null)
+        'skipped_event_ids_json': skippedEventIdsJson,
+      if (pendingEventId != null) 'pending_event_id': pendingEventId,
+    });
+  }
+
+  CompanionEventStatesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? completedTaskCount,
+    Value<String>? autoTriggeredEventIdsJson,
+    Value<String>? handledEventIdsJson,
+    Value<String>? skippedEventIdsJson,
+    Value<String?>? pendingEventId,
+  }) {
+    return CompanionEventStatesCompanion(
+      id: id ?? this.id,
+      completedTaskCount: completedTaskCount ?? this.completedTaskCount,
+      autoTriggeredEventIdsJson:
+          autoTriggeredEventIdsJson ?? this.autoTriggeredEventIdsJson,
+      handledEventIdsJson: handledEventIdsJson ?? this.handledEventIdsJson,
+      skippedEventIdsJson: skippedEventIdsJson ?? this.skippedEventIdsJson,
+      pendingEventId: pendingEventId ?? this.pendingEventId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (completedTaskCount.present) {
+      map['completed_task_count'] = Variable<int>(completedTaskCount.value);
+    }
+    if (autoTriggeredEventIdsJson.present) {
+      map['auto_triggered_event_ids_json'] = Variable<String>(
+        autoTriggeredEventIdsJson.value,
+      );
+    }
+    if (handledEventIdsJson.present) {
+      map['handled_event_ids_json'] = Variable<String>(
+        handledEventIdsJson.value,
+      );
+    }
+    if (skippedEventIdsJson.present) {
+      map['skipped_event_ids_json'] = Variable<String>(
+        skippedEventIdsJson.value,
+      );
+    }
+    if (pendingEventId.present) {
+      map['pending_event_id'] = Variable<String>(pendingEventId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CompanionEventStatesCompanion(')
+          ..write('id: $id, ')
+          ..write('completedTaskCount: $completedTaskCount, ')
+          ..write('autoTriggeredEventIdsJson: $autoTriggeredEventIdsJson, ')
+          ..write('handledEventIdsJson: $handledEventIdsJson, ')
+          ..write('skippedEventIdsJson: $skippedEventIdsJson, ')
+          ..write('pendingEventId: $pendingEventId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $HistoryEntriesTable historyEntries = $HistoryEntriesTable(this);
+  late final $CompanionEventStatesTable companionEventStates =
+      $CompanionEventStatesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [historyEntries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    historyEntries,
+    companionEventStates,
+  ];
 }
 
 typedef $$HistoryEntriesTableCreateCompanionBuilder =
@@ -1108,10 +1567,251 @@ typedef $$HistoryEntriesTableProcessedTableManager =
       HistoryEntryRow,
       PrefetchHooks Function()
     >;
+typedef $$CompanionEventStatesTableCreateCompanionBuilder =
+    CompanionEventStatesCompanion Function({
+      Value<int> id,
+      required int completedTaskCount,
+      required String autoTriggeredEventIdsJson,
+      required String handledEventIdsJson,
+      required String skippedEventIdsJson,
+      Value<String?> pendingEventId,
+    });
+typedef $$CompanionEventStatesTableUpdateCompanionBuilder =
+    CompanionEventStatesCompanion Function({
+      Value<int> id,
+      Value<int> completedTaskCount,
+      Value<String> autoTriggeredEventIdsJson,
+      Value<String> handledEventIdsJson,
+      Value<String> skippedEventIdsJson,
+      Value<String?> pendingEventId,
+    });
+
+class $$CompanionEventStatesTableFilterComposer
+    extends Composer<_$AppDatabase, $CompanionEventStatesTable> {
+  $$CompanionEventStatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedTaskCount => $composableBuilder(
+    column: $table.completedTaskCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get autoTriggeredEventIdsJson => $composableBuilder(
+    column: $table.autoTriggeredEventIdsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get handledEventIdsJson => $composableBuilder(
+    column: $table.handledEventIdsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get skippedEventIdsJson => $composableBuilder(
+    column: $table.skippedEventIdsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pendingEventId => $composableBuilder(
+    column: $table.pendingEventId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CompanionEventStatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CompanionEventStatesTable> {
+  $$CompanionEventStatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get completedTaskCount => $composableBuilder(
+    column: $table.completedTaskCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get autoTriggeredEventIdsJson => $composableBuilder(
+    column: $table.autoTriggeredEventIdsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get handledEventIdsJson => $composableBuilder(
+    column: $table.handledEventIdsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get skippedEventIdsJson => $composableBuilder(
+    column: $table.skippedEventIdsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pendingEventId => $composableBuilder(
+    column: $table.pendingEventId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CompanionEventStatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CompanionEventStatesTable> {
+  $$CompanionEventStatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get completedTaskCount => $composableBuilder(
+    column: $table.completedTaskCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get autoTriggeredEventIdsJson => $composableBuilder(
+    column: $table.autoTriggeredEventIdsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get handledEventIdsJson => $composableBuilder(
+    column: $table.handledEventIdsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get skippedEventIdsJson => $composableBuilder(
+    column: $table.skippedEventIdsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get pendingEventId => $composableBuilder(
+    column: $table.pendingEventId,
+    builder: (column) => column,
+  );
+}
+
+class $$CompanionEventStatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CompanionEventStatesTable,
+          CompanionEventStateRow,
+          $$CompanionEventStatesTableFilterComposer,
+          $$CompanionEventStatesTableOrderingComposer,
+          $$CompanionEventStatesTableAnnotationComposer,
+          $$CompanionEventStatesTableCreateCompanionBuilder,
+          $$CompanionEventStatesTableUpdateCompanionBuilder,
+          (
+            CompanionEventStateRow,
+            BaseReferences<
+              _$AppDatabase,
+              $CompanionEventStatesTable,
+              CompanionEventStateRow
+            >,
+          ),
+          CompanionEventStateRow,
+          PrefetchHooks Function()
+        > {
+  $$CompanionEventStatesTableTableManager(
+    _$AppDatabase db,
+    $CompanionEventStatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CompanionEventStatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CompanionEventStatesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$CompanionEventStatesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> completedTaskCount = const Value.absent(),
+                Value<String> autoTriggeredEventIdsJson = const Value.absent(),
+                Value<String> handledEventIdsJson = const Value.absent(),
+                Value<String> skippedEventIdsJson = const Value.absent(),
+                Value<String?> pendingEventId = const Value.absent(),
+              }) => CompanionEventStatesCompanion(
+                id: id,
+                completedTaskCount: completedTaskCount,
+                autoTriggeredEventIdsJson: autoTriggeredEventIdsJson,
+                handledEventIdsJson: handledEventIdsJson,
+                skippedEventIdsJson: skippedEventIdsJson,
+                pendingEventId: pendingEventId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int completedTaskCount,
+                required String autoTriggeredEventIdsJson,
+                required String handledEventIdsJson,
+                required String skippedEventIdsJson,
+                Value<String?> pendingEventId = const Value.absent(),
+              }) => CompanionEventStatesCompanion.insert(
+                id: id,
+                completedTaskCount: completedTaskCount,
+                autoTriggeredEventIdsJson: autoTriggeredEventIdsJson,
+                handledEventIdsJson: handledEventIdsJson,
+                skippedEventIdsJson: skippedEventIdsJson,
+                pendingEventId: pendingEventId,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CompanionEventStatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CompanionEventStatesTable,
+      CompanionEventStateRow,
+      $$CompanionEventStatesTableFilterComposer,
+      $$CompanionEventStatesTableOrderingComposer,
+      $$CompanionEventStatesTableAnnotationComposer,
+      $$CompanionEventStatesTableCreateCompanionBuilder,
+      $$CompanionEventStatesTableUpdateCompanionBuilder,
+      (
+        CompanionEventStateRow,
+        BaseReferences<
+          _$AppDatabase,
+          $CompanionEventStatesTable,
+          CompanionEventStateRow
+        >,
+      ),
+      CompanionEventStateRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$HistoryEntriesTableTableManager get historyEntries =>
       $$HistoryEntriesTableTableManager(_db, _db.historyEntries);
+  $$CompanionEventStatesTableTableManager get companionEventStates =>
+      $$CompanionEventStatesTableTableManager(_db, _db.companionEventStates);
 }

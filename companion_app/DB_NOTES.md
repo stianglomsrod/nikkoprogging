@@ -6,6 +6,7 @@ Current implemented local persistence scope:
 
 - Drift + SQLite is used for raw history timeline entries only
 - persisted entry types: attempts, moods, event actions
+- companion event state is persisted (completed count, auto-triggered ids, handled ids, skipped ids, pending event id)
 - daily summaries remain derived through the existing history aggregator
 - no cached summaries yet
 - no week/month/year grouping persistence yet

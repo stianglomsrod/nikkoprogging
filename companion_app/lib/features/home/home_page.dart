@@ -6,6 +6,8 @@ import 'package:companion_app/core/adaptive_engine/task_selector.dart';
 import 'package:companion_app/core/events/companion_event_controller.dart';
 import 'package:companion_app/core/events/companion_event_definitions.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
+import 'package:companion_app/core/events/companion_event_state_repository.dart';
+import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/flow/energisk_chain_controller.dart';
 import 'package:companion_app/core/history/history_entry.dart';
 import 'package:companion_app/core/history/history_repository.dart';
@@ -43,9 +45,16 @@ enum PromptStage {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.historyRepository});
+  const HomePage({
+    super.key,
+    required this.historyRepository,
+    required this.companionEventStateRepository,
+    this.initialCompanionEventState,
+  });
 
   final HistoryRepository historyRepository;
+  final CompanionEventStateRepository companionEventStateRepository;
+  final CompanionEventStateSnapshot? initialCompanionEventState;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -88,6 +97,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _focusAreas = SeedData.focusAreas();
     _allTasks = SeedData.tasks();
+    final initialCompanionEventState = widget.initialCompanionEventState;
+    if (initialCompanionEventState != null) {
+      _companionEvents.restoreFromSnapshot(initialCompanionEventState);
+    }
   }
 
   @override
@@ -193,6 +206,7 @@ class _HomePageState extends State<HomePage> {
         ),
       );
       _companionEvents.onTaskResult(done: done);
+      _persistCompanionEventState();
 
       if (done) {
         _recentFailedTaskIds.remove(task.id);
@@ -318,13 +332,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _consumeDeferredAudioEvents() {
-    _companionEvents.consumeDeferredAudioPendingEvents();
+    while (true) {
+      final pending = _companionEvents.pendingEvent;
+      if (pending == null ||
+          !CompanionEventDefinitions.isDeferredAudioEvent(pending.id)) {
+        return;
+      }
+
+      widget.historyRepository.appendEntry(
+        HistoryEventRecord(
+          eventId: pending.id,
+          action: HistoryEventAction.skipped,
+          timestamp: DateTime.now(),
+        ),
+      );
+
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
+    }
   }
 
   void _skipCompanionNameEvent() {
     setState(() {
       _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -345,6 +377,7 @@ class _HomePageState extends State<HomePage> {
       _companionName = normalizedValue;
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -359,6 +392,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -379,6 +413,7 @@ class _HomePageState extends State<HomePage> {
       _userName = normalizedValue;
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -393,6 +428,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -408,6 +444,7 @@ class _HomePageState extends State<HomePage> {
       _companionSymbol = symbol;
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -422,6 +459,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _recordPendingEventAction(HistoryEventAction.skipped);
       _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -437,6 +475,7 @@ class _HomePageState extends State<HomePage> {
       _backgroundTone = tone;
       _recordPendingEventAction(HistoryEventAction.saved);
       _companionEvents.markPendingEventHandled(skipped: false);
+      _persistCompanionEventState();
       _stage = PromptStage.idle;
       _activeFocusArea = null;
       _currentMood = null;
@@ -467,6 +506,14 @@ class _HomePageState extends State<HomePage> {
         eventId: pending.id,
         action: action,
         timestamp: DateTime.now(),
+      ),
+    );
+  }
+
+  void _persistCompanionEventState() {
+    unawaited(
+      widget.companionEventStateRepository.writeState(
+        _companionEvents.toSnapshot(),
       ),
     );
   }

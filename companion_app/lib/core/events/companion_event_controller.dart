@@ -1,5 +1,6 @@
 import 'package:companion_app/core/events/companion_event.dart';
 import 'package:companion_app/core/events/companion_event_definitions.dart';
+import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 
 class CompanionEventController {
   CompanionEventController({List<CompanionEvent>? eventDefinitions})
@@ -62,6 +63,61 @@ class CompanionEventController {
 
     _pendingEvent = null;
     _evaluatePendingUnlock();
+  }
+
+  void restoreHandledEvent({required String eventId, required bool skipped}) {
+    _autoTriggeredEventIds.add(eventId);
+    _handledEventIds.add(eventId);
+    if (skipped) {
+      _skippedEventIds.add(eventId);
+    }
+
+    if (_pendingEvent?.id == eventId) {
+      _pendingEvent = null;
+    }
+
+    _evaluatePendingUnlock();
+  }
+
+  CompanionEventStateSnapshot toSnapshot() {
+    return CompanionEventStateSnapshot(
+      completedTaskCount: _completedTaskCount,
+      autoTriggeredEventIds: Set<String>.from(_autoTriggeredEventIds),
+      handledEventIds: Set<String>.from(_handledEventIds),
+      skippedEventIds: Set<String>.from(_skippedEventIds),
+      pendingEventId: _pendingEvent?.id,
+    );
+  }
+
+  void restoreFromSnapshot(CompanionEventStateSnapshot snapshot) {
+    _completedTaskCount = snapshot.completedTaskCount;
+
+    _autoTriggeredEventIds
+      ..clear()
+      ..addAll(snapshot.autoTriggeredEventIds);
+
+    _handledEventIds
+      ..clear()
+      ..addAll(snapshot.handledEventIds);
+
+    _skippedEventIds
+      ..clear()
+      ..addAll(snapshot.skippedEventIds);
+
+    _pendingEvent = null;
+    final pendingId = snapshot.pendingEventId;
+    if (pendingId != null) {
+      for (final event in _eventDefinitions) {
+        if (event.id == pendingId) {
+          _pendingEvent = event;
+          break;
+        }
+      }
+    }
+
+    if (_pendingEvent == null) {
+      _evaluatePendingUnlock();
+    }
   }
 
   void consumeDeferredAudioPendingEvents() {

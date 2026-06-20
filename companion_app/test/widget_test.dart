@@ -2,13 +2,33 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:companion_app/app/companion_app.dart';
+import 'package:companion_app/core/events/companion_event_state_repository.dart';
+import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
 
+class _InMemoryCompanionEventStateRepository
+    implements CompanionEventStateRepository {
+  CompanionEventStateSnapshot? _snapshot;
+
+  @override
+  Future<CompanionEventStateSnapshot?> readState() async {
+    return _snapshot;
+  }
+
+  @override
+  Future<void> writeState(CompanionEventStateSnapshot snapshot) async {
+    _snapshot = snapshot;
+  }
+}
+
 CompanionApp _buildApp() {
-  return CompanionApp(historyRepository: InMemoryHistoryRepository());
+  return CompanionApp(
+    historyRepository: InMemoryHistoryRepository(),
+    companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
+  );
 }
 
 void main() {

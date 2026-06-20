@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:companion_app/core/database/tables/companion_event_state.dart';
 import 'package:companion_app/core/database/tables/history_entries.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -8,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [HistoryEntries])
+@DriftDatabase(tables: [HistoryEntries, CompanionEventStates])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
@@ -17,7 +18,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -29,6 +30,11 @@ class AppDatabase extends _$AppDatabase {
       await customStatement(
         'CREATE INDEX idx_history_entries_type ON history_entries(entry_type)',
       );
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from < 2) {
+        await m.createTable(companionEventStates);
+      }
     },
   );
 }

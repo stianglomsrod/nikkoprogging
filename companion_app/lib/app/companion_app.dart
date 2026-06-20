@@ -1,11 +1,20 @@
+import 'package:companion_app/core/events/companion_event_state_repository.dart';
+import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/history/history_repository.dart';
 import 'package:companion_app/features/home/home_page.dart';
 import 'package:flutter/material.dart';
 
 class CompanionApp extends StatelessWidget {
-  const CompanionApp({super.key, required this.historyRepository});
+  const CompanionApp({
+    super.key,
+    required this.historyRepository,
+    required this.companionEventStateRepository,
+    this.initialCompanionEventState,
+  });
 
   final HistoryRepository historyRepository;
+  final CompanionEventStateRepository companionEventStateRepository;
+  final CompanionEventStateSnapshot? initialCompanionEventState;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +76,11 @@ class CompanionApp extends StatelessWidget {
           ),
         ),
       ),
-      home: HomePage(historyRepository: historyRepository),
+      home: HomePage(
+        historyRepository: historyRepository,
+        companionEventStateRepository: companionEventStateRepository,
+        initialCompanionEventState: initialCompanionEventState,
+      ),
     );
   }
 }

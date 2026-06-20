@@ -53,6 +53,7 @@ Current implementation status:
 - History/statistics chunk 4 day detail is now in place: tapping a daily history bar opens a calm detail surface with completed/non-completed attempts, moods, event moments, and activity times.
 - History/statistics persistence slice 1 is now in place: raw history timeline entries are persisted locally with Drift + SQLite through `lib/core/history/drift_history_repository.dart` and `lib/core/database/app_database.dart`.
 - History daily summaries are still derived through the existing aggregator flow (no summary cache yet).
+- Companion events persistence slice 2 is now in place: completed count, triggered/handled/skipped ids, and pending event id are persisted via Drift + SQLite and restored on app start.
 - Companion figure should sit visually centered in the flexible middle area.
 - Companion figure now uses a real image asset instead of the earlier placeholder-only shape widget.
 - Companion figure now uses frame-based asset animation.
