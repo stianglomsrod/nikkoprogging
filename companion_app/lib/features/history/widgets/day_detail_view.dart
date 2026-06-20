@@ -177,7 +177,9 @@ class DayDetailView extends StatelessWidget {
     }
 
     final fallback = fallbackLabel?.trim();
-    if (fallback != null && fallback.isNotEmpty && !fallback.startsWith('event_')) {
+    if (fallback != null &&
+        fallback.isNotEmpty &&
+        !fallback.startsWith('event_')) {
       return fallback;
     }
 
@@ -188,12 +190,16 @@ class DayDetailView extends StatelessWidget {
       return 'Hendelse';
     }
 
-    final words = normalized.split('_').where((part) => part.isNotEmpty).map((part) {
-      if (part.length == 1) {
-        return part.toUpperCase();
-      }
-      return '${part[0].toUpperCase()}${part.substring(1)}';
-    }).join(' ');
+    final words = normalized
+        .split('_')
+        .where((part) => part.isNotEmpty)
+        .map((part) {
+          if (part.length == 1) {
+            return part.toUpperCase();
+          }
+          return '${part[0].toUpperCase()}${part.substring(1)}';
+        })
+        .join(' ');
     return words.isEmpty ? 'Hendelse' : words;
   }
 
