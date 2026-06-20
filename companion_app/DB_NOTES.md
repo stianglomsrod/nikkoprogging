@@ -8,6 +8,7 @@ Current implemented local persistence scope:
 - persisted entry types: attempts, moods, event actions
 - companion event state is persisted (completed count, auto-triggered ids, handled ids, skipped ids, pending event id)
 - companion identity state is persisted (companion name, user name, selected symbol, selected background tone)
+- focus-area settings are persisted (enabled per area, start/end hour per area, modus per area, selected focus area id in settings)
 - daily summaries remain derived through the existing history aggregator
 - no cached summaries yet
 - no week/month/year grouping persistence yet
@@ -30,7 +31,7 @@ Still not implemented:
 
 - no backend yet
 - no auth yet
-- no persistence yet for focus-area settings/modus windows, scheduler state, or global feedback
+- no persistence yet for scheduler runtime state, prototype simulated time, or global feedback
 
 Future persistence note for energisk chain rule:
 

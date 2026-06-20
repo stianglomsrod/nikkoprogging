@@ -3,6 +3,8 @@ import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/events/companion_identity_repository.dart';
 import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
 import 'package:companion_app/core/history/history_repository.dart';
+import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
+import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
 import 'package:companion_app/features/home/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,15 +14,19 @@ class CompanionApp extends StatelessWidget {
     required this.historyRepository,
     required this.companionEventStateRepository,
     required this.companionIdentityRepository,
+    required this.focusAreaSettingsRepository,
     this.initialCompanionEventState,
     this.initialCompanionIdentityState,
+    this.initialFocusAreaSettingsState,
   });
 
   final HistoryRepository historyRepository;
   final CompanionEventStateRepository companionEventStateRepository;
   final CompanionIdentityRepository companionIdentityRepository;
+  final FocusAreaSettingsRepository focusAreaSettingsRepository;
   final CompanionEventStateSnapshot? initialCompanionEventState;
   final CompanionIdentityStateSnapshot? initialCompanionIdentityState;
+  final FocusAreaSettingsStateSnapshot? initialFocusAreaSettingsState;
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +94,8 @@ class CompanionApp extends StatelessWidget {
         initialCompanionEventState: initialCompanionEventState,
         companionIdentityRepository: companionIdentityRepository,
         initialCompanionIdentityState: initialCompanionIdentityState,
+        focusAreaSettingsRepository: focusAreaSettingsRepository,
+        initialFocusAreaSettingsState: initialFocusAreaSettingsState,
       ),
     );
   }

@@ -19,6 +19,8 @@ import 'package:companion_app/core/models/sinnsstemning.dart';
 import 'package:companion_app/core/models/task_item.dart';
 import 'package:companion_app/core/scheduler/scheduler_engine.dart';
 import 'package:companion_app/core/seed_data/seed_data.dart';
+import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
+import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
 import 'package:companion_app/features/history/history_screen.dart';
 import 'package:companion_app/features/home/settings_page.dart';
 import 'package:companion_app/features/home/widgets/background_color_event_view.dart';
@@ -52,15 +54,19 @@ class HomePage extends StatefulWidget {
     required this.historyRepository,
     required this.companionEventStateRepository,
     required this.companionIdentityRepository,
+    required this.focusAreaSettingsRepository,
     this.initialCompanionEventState,
     this.initialCompanionIdentityState,
+    this.initialFocusAreaSettingsState,
   });
 
   final HistoryRepository historyRepository;
   final CompanionEventStateRepository companionEventStateRepository;
   final CompanionIdentityRepository companionIdentityRepository;
+  final FocusAreaSettingsRepository focusAreaSettingsRepository;
   final CompanionEventStateSnapshot? initialCompanionEventState;
   final CompanionIdentityStateSnapshot? initialCompanionIdentityState;
+  final FocusAreaSettingsStateSnapshot? initialFocusAreaSettingsState;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -76,6 +82,7 @@ class _HomePageState extends State<HomePage> {
   final Random _random = Random();
 
   late List<FocusArea> _focusAreas;
+  late String _selectedSettingsAreaId;
   late final List<TaskItem> _allTasks;
 
   final Map<String, int> _promptsUsedPerArea = <String, int>{};
@@ -101,7 +108,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _focusAreas = SeedData.focusAreas();
+    _focusAreas = _hydrateFocusAreasFromSettings(
+      seeds: SeedData.focusAreas(),
+      snapshot: widget.initialFocusAreaSettingsState,
+    );
+    _selectedSettingsAreaId = _resolveSelectedAreaId(
+      areas: _focusAreas,
+      preferred: widget.initialFocusAreaSettingsState?.selectedAreaId,
+    );
     _allTasks = SeedData.tasks();
     final initialCompanionEventState = widget.initialCompanionEventState;
     if (initialCompanionEventState != null) {
@@ -115,6 +129,63 @@ class _HomePageState extends State<HomePage> {
       _companionSymbol = initialCompanionIdentityState.symbol;
       _backgroundTone = initialCompanionIdentityState.backgroundTone;
     }
+  }
+
+  List<FocusArea> _hydrateFocusAreasFromSettings({
+    required List<FocusArea> seeds,
+    FocusAreaSettingsStateSnapshot? snapshot,
+  }) {
+    if (snapshot == null || snapshot.areas.isEmpty) {
+      return seeds;
+    }
+
+    final byId = {
+      for (final area in snapshot.areas) area.id: area,
+    };
+
+    return seeds
+        .map((seed) {
+          final saved = byId[seed.id];
+          if (saved == null) {
+            return seed;
+          }
+          return seed.copyWith(
+            enabled: saved.enabled,
+            startHour: saved.startHour,
+            endHour: saved.endHour,
+            modus: saved.modus,
+          );
+        })
+        .toList(growable: true);
+  }
+
+  String _resolveSelectedAreaId({
+    required List<FocusArea> areas,
+    required String? preferred,
+  }) {
+    if (preferred != null && areas.any((area) => area.id == preferred)) {
+      return preferred;
+    }
+    return areas.first.id;
+  }
+
+  void _persistFocusAreaSettingsState() {
+    widget.focusAreaSettingsRepository.writeState(
+      FocusAreaSettingsStateSnapshot(
+        areas: _focusAreas
+            .map(
+              (area) => FocusAreaSettingState(
+                id: area.id,
+                enabled: area.enabled,
+                startHour: area.startHour,
+                endHour: area.endHour,
+                modus: area.modus,
+              ),
+            )
+            .toList(growable: false),
+        selectedAreaId: _selectedSettingsAreaId,
+      ),
+    );
   }
 
   @override
@@ -620,6 +691,7 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute(
         builder: (_) => SettingsPage(
           focusAreas: _focusAreas,
+          initialSelectedAreaId: _selectedSettingsAreaId,
           simulatedHour: _simulatedHour,
           allowCompanionNameEditing:
               _companionEvents.isEventHandled(
@@ -663,12 +735,17 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _focusAreas = result.focusAreas;
+      _selectedSettingsAreaId = _resolveSelectedAreaId(
+        areas: _focusAreas,
+        preferred: result.selectedAreaId,
+      );
       _simulatedHour = result.simulatedHour;
       _companionName = result.companionName;
       _userName = result.userName;
       _companionSymbol = result.symbol;
       _backgroundTone = result.backgroundTone;
       _persistCompanionIdentityState();
+      _persistFocusAreaSettingsState();
     });
   }
 

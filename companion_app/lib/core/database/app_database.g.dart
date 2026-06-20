@@ -1633,6 +1633,479 @@ class CompanionIdentityStatesCompanion
   }
 }
 
+class $FocusAreaSettingsStatesTable extends FocusAreaSettingsStates
+    with TableInfo<$FocusAreaSettingsStatesTable, FocusAreaSettingsStateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FocusAreaSettingsStatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _enabledMeta = const VerificationMeta(
+    'enabled',
+  );
+  @override
+  late final GeneratedColumn<bool> enabled = GeneratedColumn<bool>(
+    'enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _startHourMeta = const VerificationMeta(
+    'startHour',
+  );
+  @override
+  late final GeneratedColumn<int> startHour = GeneratedColumn<int>(
+    'start_hour',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(8),
+  );
+  static const VerificationMeta _endHourMeta = const VerificationMeta(
+    'endHour',
+  );
+  @override
+  late final GeneratedColumn<int> endHour = GeneratedColumn<int>(
+    'end_hour',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(22),
+  );
+  static const VerificationMeta _modusMeta = const VerificationMeta('modus');
+  @override
+  late final GeneratedColumn<String> modus = GeneratedColumn<String>(
+    'modus',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('avslappet'),
+  );
+  static const VerificationMeta _isSelectedMeta = const VerificationMeta(
+    'isSelected',
+  );
+  @override
+  late final GeneratedColumn<bool> isSelected = GeneratedColumn<bool>(
+    'is_selected',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_selected" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _updatedAtMsMeta = const VerificationMeta(
+    'updatedAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAtMs = GeneratedColumn<int>(
+    'updated_at_ms',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    enabled,
+    startHour,
+    endHour,
+    modus,
+    isSelected,
+    updatedAtMs,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'focus_area_settings_states';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FocusAreaSettingsStateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('enabled')) {
+      context.handle(
+        _enabledMeta,
+        enabled.isAcceptableOrUnknown(data['enabled']!, _enabledMeta),
+      );
+    }
+    if (data.containsKey('start_hour')) {
+      context.handle(
+        _startHourMeta,
+        startHour.isAcceptableOrUnknown(data['start_hour']!, _startHourMeta),
+      );
+    }
+    if (data.containsKey('end_hour')) {
+      context.handle(
+        _endHourMeta,
+        endHour.isAcceptableOrUnknown(data['end_hour']!, _endHourMeta),
+      );
+    }
+    if (data.containsKey('modus')) {
+      context.handle(
+        _modusMeta,
+        modus.isAcceptableOrUnknown(data['modus']!, _modusMeta),
+      );
+    }
+    if (data.containsKey('is_selected')) {
+      context.handle(
+        _isSelectedMeta,
+        isSelected.isAcceptableOrUnknown(data['is_selected']!, _isSelectedMeta),
+      );
+    }
+    if (data.containsKey('updated_at_ms')) {
+      context.handle(
+        _updatedAtMsMeta,
+        updatedAtMs.isAcceptableOrUnknown(
+          data['updated_at_ms']!,
+          _updatedAtMsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FocusAreaSettingsStateRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FocusAreaSettingsStateRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      enabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}enabled'],
+      )!,
+      startHour: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}start_hour'],
+      )!,
+      endHour: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}end_hour'],
+      )!,
+      modus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}modus'],
+      )!,
+      isSelected: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_selected'],
+      )!,
+      updatedAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at_ms'],
+      ),
+    );
+  }
+
+  @override
+  $FocusAreaSettingsStatesTable createAlias(String alias) {
+    return $FocusAreaSettingsStatesTable(attachedDatabase, alias);
+  }
+}
+
+class FocusAreaSettingsStateRow extends DataClass
+    implements Insertable<FocusAreaSettingsStateRow> {
+  final String id;
+  final bool enabled;
+  final int startHour;
+  final int endHour;
+  final String modus;
+  final bool isSelected;
+  final int? updatedAtMs;
+  const FocusAreaSettingsStateRow({
+    required this.id,
+    required this.enabled,
+    required this.startHour,
+    required this.endHour,
+    required this.modus,
+    required this.isSelected,
+    this.updatedAtMs,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['enabled'] = Variable<bool>(enabled);
+    map['start_hour'] = Variable<int>(startHour);
+    map['end_hour'] = Variable<int>(endHour);
+    map['modus'] = Variable<String>(modus);
+    map['is_selected'] = Variable<bool>(isSelected);
+    if (!nullToAbsent || updatedAtMs != null) {
+      map['updated_at_ms'] = Variable<int>(updatedAtMs);
+    }
+    return map;
+  }
+
+  FocusAreaSettingsStatesCompanion toCompanion(bool nullToAbsent) {
+    return FocusAreaSettingsStatesCompanion(
+      id: Value(id),
+      enabled: Value(enabled),
+      startHour: Value(startHour),
+      endHour: Value(endHour),
+      modus: Value(modus),
+      isSelected: Value(isSelected),
+      updatedAtMs: updatedAtMs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAtMs),
+    );
+  }
+
+  factory FocusAreaSettingsStateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FocusAreaSettingsStateRow(
+      id: serializer.fromJson<String>(json['id']),
+      enabled: serializer.fromJson<bool>(json['enabled']),
+      startHour: serializer.fromJson<int>(json['startHour']),
+      endHour: serializer.fromJson<int>(json['endHour']),
+      modus: serializer.fromJson<String>(json['modus']),
+      isSelected: serializer.fromJson<bool>(json['isSelected']),
+      updatedAtMs: serializer.fromJson<int?>(json['updatedAtMs']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'enabled': serializer.toJson<bool>(enabled),
+      'startHour': serializer.toJson<int>(startHour),
+      'endHour': serializer.toJson<int>(endHour),
+      'modus': serializer.toJson<String>(modus),
+      'isSelected': serializer.toJson<bool>(isSelected),
+      'updatedAtMs': serializer.toJson<int?>(updatedAtMs),
+    };
+  }
+
+  FocusAreaSettingsStateRow copyWith({
+    String? id,
+    bool? enabled,
+    int? startHour,
+    int? endHour,
+    String? modus,
+    bool? isSelected,
+    Value<int?> updatedAtMs = const Value.absent(),
+  }) => FocusAreaSettingsStateRow(
+    id: id ?? this.id,
+    enabled: enabled ?? this.enabled,
+    startHour: startHour ?? this.startHour,
+    endHour: endHour ?? this.endHour,
+    modus: modus ?? this.modus,
+    isSelected: isSelected ?? this.isSelected,
+    updatedAtMs: updatedAtMs.present ? updatedAtMs.value : this.updatedAtMs,
+  );
+  FocusAreaSettingsStateRow copyWithCompanion(
+    FocusAreaSettingsStatesCompanion data,
+  ) {
+    return FocusAreaSettingsStateRow(
+      id: data.id.present ? data.id.value : this.id,
+      enabled: data.enabled.present ? data.enabled.value : this.enabled,
+      startHour: data.startHour.present ? data.startHour.value : this.startHour,
+      endHour: data.endHour.present ? data.endHour.value : this.endHour,
+      modus: data.modus.present ? data.modus.value : this.modus,
+      isSelected: data.isSelected.present
+          ? data.isSelected.value
+          : this.isSelected,
+      updatedAtMs: data.updatedAtMs.present
+          ? data.updatedAtMs.value
+          : this.updatedAtMs,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FocusAreaSettingsStateRow(')
+          ..write('id: $id, ')
+          ..write('enabled: $enabled, ')
+          ..write('startHour: $startHour, ')
+          ..write('endHour: $endHour, ')
+          ..write('modus: $modus, ')
+          ..write('isSelected: $isSelected, ')
+          ..write('updatedAtMs: $updatedAtMs')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    enabled,
+    startHour,
+    endHour,
+    modus,
+    isSelected,
+    updatedAtMs,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FocusAreaSettingsStateRow &&
+          other.id == this.id &&
+          other.enabled == this.enabled &&
+          other.startHour == this.startHour &&
+          other.endHour == this.endHour &&
+          other.modus == this.modus &&
+          other.isSelected == this.isSelected &&
+          other.updatedAtMs == this.updatedAtMs);
+}
+
+class FocusAreaSettingsStatesCompanion
+    extends UpdateCompanion<FocusAreaSettingsStateRow> {
+  final Value<String> id;
+  final Value<bool> enabled;
+  final Value<int> startHour;
+  final Value<int> endHour;
+  final Value<String> modus;
+  final Value<bool> isSelected;
+  final Value<int?> updatedAtMs;
+  final Value<int> rowid;
+  const FocusAreaSettingsStatesCompanion({
+    this.id = const Value.absent(),
+    this.enabled = const Value.absent(),
+    this.startHour = const Value.absent(),
+    this.endHour = const Value.absent(),
+    this.modus = const Value.absent(),
+    this.isSelected = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FocusAreaSettingsStatesCompanion.insert({
+    required String id,
+    this.enabled = const Value.absent(),
+    this.startHour = const Value.absent(),
+    this.endHour = const Value.absent(),
+    this.modus = const Value.absent(),
+    this.isSelected = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<FocusAreaSettingsStateRow> custom({
+    Expression<String>? id,
+    Expression<bool>? enabled,
+    Expression<int>? startHour,
+    Expression<int>? endHour,
+    Expression<String>? modus,
+    Expression<bool>? isSelected,
+    Expression<int>? updatedAtMs,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (enabled != null) 'enabled': enabled,
+      if (startHour != null) 'start_hour': startHour,
+      if (endHour != null) 'end_hour': endHour,
+      if (modus != null) 'modus': modus,
+      if (isSelected != null) 'is_selected': isSelected,
+      if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FocusAreaSettingsStatesCompanion copyWith({
+    Value<String>? id,
+    Value<bool>? enabled,
+    Value<int>? startHour,
+    Value<int>? endHour,
+    Value<String>? modus,
+    Value<bool>? isSelected,
+    Value<int?>? updatedAtMs,
+    Value<int>? rowid,
+  }) {
+    return FocusAreaSettingsStatesCompanion(
+      id: id ?? this.id,
+      enabled: enabled ?? this.enabled,
+      startHour: startHour ?? this.startHour,
+      endHour: endHour ?? this.endHour,
+      modus: modus ?? this.modus,
+      isSelected: isSelected ?? this.isSelected,
+      updatedAtMs: updatedAtMs ?? this.updatedAtMs,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (enabled.present) {
+      map['enabled'] = Variable<bool>(enabled.value);
+    }
+    if (startHour.present) {
+      map['start_hour'] = Variable<int>(startHour.value);
+    }
+    if (endHour.present) {
+      map['end_hour'] = Variable<int>(endHour.value);
+    }
+    if (modus.present) {
+      map['modus'] = Variable<String>(modus.value);
+    }
+    if (isSelected.present) {
+      map['is_selected'] = Variable<bool>(isSelected.value);
+    }
+    if (updatedAtMs.present) {
+      map['updated_at_ms'] = Variable<int>(updatedAtMs.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FocusAreaSettingsStatesCompanion(')
+          ..write('id: $id, ')
+          ..write('enabled: $enabled, ')
+          ..write('startHour: $startHour, ')
+          ..write('endHour: $endHour, ')
+          ..write('modus: $modus, ')
+          ..write('isSelected: $isSelected, ')
+          ..write('updatedAtMs: $updatedAtMs, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1641,6 +2114,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $CompanionEventStatesTable(this);
   late final $CompanionIdentityStatesTable companionIdentityStates =
       $CompanionIdentityStatesTable(this);
+  late final $FocusAreaSettingsStatesTable focusAreaSettingsStates =
+      $FocusAreaSettingsStatesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1649,6 +2124,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     historyEntries,
     companionEventStates,
     companionIdentityStates,
+    focusAreaSettingsStates,
   ];
 }
 
@@ -2478,6 +2954,267 @@ typedef $$CompanionIdentityStatesTableProcessedTableManager =
       CompanionIdentityStateRow,
       PrefetchHooks Function()
     >;
+typedef $$FocusAreaSettingsStatesTableCreateCompanionBuilder =
+    FocusAreaSettingsStatesCompanion Function({
+      required String id,
+      Value<bool> enabled,
+      Value<int> startHour,
+      Value<int> endHour,
+      Value<String> modus,
+      Value<bool> isSelected,
+      Value<int?> updatedAtMs,
+      Value<int> rowid,
+    });
+typedef $$FocusAreaSettingsStatesTableUpdateCompanionBuilder =
+    FocusAreaSettingsStatesCompanion Function({
+      Value<String> id,
+      Value<bool> enabled,
+      Value<int> startHour,
+      Value<int> endHour,
+      Value<String> modus,
+      Value<bool> isSelected,
+      Value<int?> updatedAtMs,
+      Value<int> rowid,
+    });
+
+class $$FocusAreaSettingsStatesTableFilterComposer
+    extends Composer<_$AppDatabase, $FocusAreaSettingsStatesTable> {
+  $$FocusAreaSettingsStatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get startHour => $composableBuilder(
+    column: $table.startHour,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get endHour => $composableBuilder(
+    column: $table.endHour,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get modus => $composableBuilder(
+    column: $table.modus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isSelected => $composableBuilder(
+    column: $table.isSelected,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$FocusAreaSettingsStatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $FocusAreaSettingsStatesTable> {
+  $$FocusAreaSettingsStatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get enabled => $composableBuilder(
+    column: $table.enabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get startHour => $composableBuilder(
+    column: $table.startHour,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get endHour => $composableBuilder(
+    column: $table.endHour,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get modus => $composableBuilder(
+    column: $table.modus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isSelected => $composableBuilder(
+    column: $table.isSelected,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FocusAreaSettingsStatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FocusAreaSettingsStatesTable> {
+  $$FocusAreaSettingsStatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get enabled =>
+      $composableBuilder(column: $table.enabled, builder: (column) => column);
+
+  GeneratedColumn<int> get startHour =>
+      $composableBuilder(column: $table.startHour, builder: (column) => column);
+
+  GeneratedColumn<int> get endHour =>
+      $composableBuilder(column: $table.endHour, builder: (column) => column);
+
+  GeneratedColumn<String> get modus =>
+      $composableBuilder(column: $table.modus, builder: (column) => column);
+
+  GeneratedColumn<bool> get isSelected => $composableBuilder(
+    column: $table.isSelected,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => column,
+  );
+}
+
+class $$FocusAreaSettingsStatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FocusAreaSettingsStatesTable,
+          FocusAreaSettingsStateRow,
+          $$FocusAreaSettingsStatesTableFilterComposer,
+          $$FocusAreaSettingsStatesTableOrderingComposer,
+          $$FocusAreaSettingsStatesTableAnnotationComposer,
+          $$FocusAreaSettingsStatesTableCreateCompanionBuilder,
+          $$FocusAreaSettingsStatesTableUpdateCompanionBuilder,
+          (
+            FocusAreaSettingsStateRow,
+            BaseReferences<
+              _$AppDatabase,
+              $FocusAreaSettingsStatesTable,
+              FocusAreaSettingsStateRow
+            >,
+          ),
+          FocusAreaSettingsStateRow,
+          PrefetchHooks Function()
+        > {
+  $$FocusAreaSettingsStatesTableTableManager(
+    _$AppDatabase db,
+    $FocusAreaSettingsStatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FocusAreaSettingsStatesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$FocusAreaSettingsStatesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$FocusAreaSettingsStatesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<bool> enabled = const Value.absent(),
+                Value<int> startHour = const Value.absent(),
+                Value<int> endHour = const Value.absent(),
+                Value<String> modus = const Value.absent(),
+                Value<bool> isSelected = const Value.absent(),
+                Value<int?> updatedAtMs = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FocusAreaSettingsStatesCompanion(
+                id: id,
+                enabled: enabled,
+                startHour: startHour,
+                endHour: endHour,
+                modus: modus,
+                isSelected: isSelected,
+                updatedAtMs: updatedAtMs,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<bool> enabled = const Value.absent(),
+                Value<int> startHour = const Value.absent(),
+                Value<int> endHour = const Value.absent(),
+                Value<String> modus = const Value.absent(),
+                Value<bool> isSelected = const Value.absent(),
+                Value<int?> updatedAtMs = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FocusAreaSettingsStatesCompanion.insert(
+                id: id,
+                enabled: enabled,
+                startHour: startHour,
+                endHour: endHour,
+                modus: modus,
+                isSelected: isSelected,
+                updatedAtMs: updatedAtMs,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$FocusAreaSettingsStatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FocusAreaSettingsStatesTable,
+      FocusAreaSettingsStateRow,
+      $$FocusAreaSettingsStatesTableFilterComposer,
+      $$FocusAreaSettingsStatesTableOrderingComposer,
+      $$FocusAreaSettingsStatesTableAnnotationComposer,
+      $$FocusAreaSettingsStatesTableCreateCompanionBuilder,
+      $$FocusAreaSettingsStatesTableUpdateCompanionBuilder,
+      (
+        FocusAreaSettingsStateRow,
+        BaseReferences<
+          _$AppDatabase,
+          $FocusAreaSettingsStatesTable,
+          FocusAreaSettingsStateRow
+        >,
+      ),
+      FocusAreaSettingsStateRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2490,5 +3227,10 @@ class $AppDatabaseManager {
       $$CompanionIdentityStatesTableTableManager(
         _db,
         _db.companionIdentityStates,
+      );
+  $$FocusAreaSettingsStatesTableTableManager get focusAreaSettingsStates =>
+      $$FocusAreaSettingsStatesTableTableManager(
+        _db,
+        _db.focusAreaSettingsStates,
       );
 }

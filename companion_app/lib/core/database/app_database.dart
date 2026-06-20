@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:companion_app/core/database/tables/companion_event_state.dart';
 import 'package:companion_app/core/database/tables/companion_identity_state.dart';
+import 'package:companion_app/core/database/tables/focus_area_settings_state.dart';
 import 'package:companion_app/core/database/tables/history_entries.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -11,7 +12,12 @@ import 'package:path_provider/path_provider.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [HistoryEntries, CompanionEventStates, CompanionIdentityStates],
+  tables: [
+    HistoryEntries,
+    CompanionEventStates,
+    CompanionIdentityStates,
+    FocusAreaSettingsStates,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
@@ -21,7 +27,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -40,6 +46,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.createTable(companionIdentityStates);
+      }
+      if (from < 4) {
+        await m.createTable(focusAreaSettingsStates);
       }
     },
   );

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 class SettingsResult {
   const SettingsResult({
     required this.focusAreas,
+    required this.selectedAreaId,
     required this.simulatedHour,
     required this.companionName,
     required this.userName,
@@ -20,6 +21,7 @@ class SettingsResult {
   });
 
   final List<FocusArea> focusAreas;
+  final String selectedAreaId;
   final int simulatedHour;
   final String? companionName;
   final String? userName;
@@ -31,6 +33,7 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({
     super.key,
     required this.focusAreas,
+    required this.initialSelectedAreaId,
     required this.simulatedHour,
     required this.allowCompanionNameEditing,
     required this.allowUserNameEditing,
@@ -43,6 +46,7 @@ class SettingsPage extends StatefulWidget {
   });
 
   final List<FocusArea> focusAreas;
+  final String initialSelectedAreaId;
   final int simulatedHour;
   final bool allowCompanionNameEditing;
   final bool allowUserNameEditing;
@@ -80,7 +84,12 @@ class _SettingsPageState extends State<SettingsPage> {
         )
         .toList(growable: true);
     _localHour = widget.simulatedHour;
-    _selectedAreaId = _localFocusAreas.first.id;
+    final hasInitialSelected = _localFocusAreas.any(
+      (area) => area.id == widget.initialSelectedAreaId,
+    );
+    _selectedAreaId = hasInitialSelected
+        ? widget.initialSelectedAreaId
+        : _localFocusAreas.first.id;
     _localCompanionName = widget.initialCompanionName ?? '';
     _localUserName = widget.initialUserName ?? '';
     _localSymbol = widget.initialSymbol;
@@ -96,6 +105,7 @@ class _SettingsPageState extends State<SettingsPage> {
     Navigator.of(context).pop(
       SettingsResult(
         focusAreas: _localFocusAreas,
+        selectedAreaId: _selectedAreaId,
         simulatedHour: _localHour,
         companionName: normalizedCompanionName.isEmpty
             ? null

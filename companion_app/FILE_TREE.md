@@ -20,6 +20,7 @@ companion_app/
 |  |- plans/
 |  |  |- PLAN_COMPANION_EVENTS.md
 |  |  |- PLAN_HISTORY_AND_STATS.md
+|  |  |- PLAN_SETTINGS_PERSISTENCE_EVAL.md
 |- assets/
 |  |- animations/
 |  |  |- companion/
@@ -56,6 +57,7 @@ companion_app/
 |  |  |  |- tables/
 |  |  |     |- companion_event_state.dart
 |  |  |     |- companion_identity_state.dart
+|  |  |     |- focus_area_settings_state.dart
 |  |  |     |- history_entries.dart
 |  |  |- content/
 |  |  |  |- companion_text_library.dart
@@ -92,6 +94,10 @@ companion_app/
 |  |  |- seed_data/
 |  |  |  |- seed_data.dart
 |  |  |  |- task_library.dart
+|  |  |- settings/
+|  |  |  |- drift_focus_area_settings_repository.dart
+|  |  |  |- focus_area_settings_repository.dart
+|  |  |  |- focus_area_settings_state_snapshot.dart
 |  |- features/
 |  |  |- history/
 |  |  |  |- history_screen.dart
@@ -147,6 +153,8 @@ companion_app/
 |  |  |  |- scheduler_engine_test.dart
 |  |  |- adaptive_engine/
 |  |     |- task_selector_test.dart
+|  |  |- settings/
+|  |     |- drift_focus_area_settings_repository_test.dart
 |- android/
 |  |- app/
 |  |  |- build.gradle.kts

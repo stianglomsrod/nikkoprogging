@@ -8,6 +8,8 @@ import 'package:companion_app/core/events/companion_identity_repository.dart';
 import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
 import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
+import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
+import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
 
@@ -41,11 +43,27 @@ class _InMemoryCompanionIdentityRepository
   }
 }
 
+class _InMemoryFocusAreaSettingsRepository
+    implements FocusAreaSettingsRepository {
+  FocusAreaSettingsStateSnapshot? _snapshot;
+
+  @override
+  Future<FocusAreaSettingsStateSnapshot?> readState() async {
+    return _snapshot;
+  }
+
+  @override
+  Future<void> writeState(FocusAreaSettingsStateSnapshot snapshot) async {
+    _snapshot = snapshot;
+  }
+}
+
 CompanionApp _buildApp() {
   return CompanionApp(
     historyRepository: InMemoryHistoryRepository(),
     companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
     companionIdentityRepository: _InMemoryCompanionIdentityRepository(),
+    focusAreaSettingsRepository: _InMemoryFocusAreaSettingsRepository(),
   );
 }
 

@@ -101,13 +101,14 @@ Technical debt log for intentional shortcuts, compromises, and deferred work.
 ### 9) Innstillinger er fortsatt kun in-memory
 
 - Status: Active (intentional)
-- Decision: Endringer i Fokusomrader, Aktivt tidsrom og Modus lagres kun i runtime-minne.
+- Decision: Endringer i Fokusomrader, Aktivt tidsrom og Modus persisteres na lokalt via Drift + SQLite.
 - Decision: Companion-identitet i innstillinger (companion-navn, brukernavn, symbol, bakgrunnstone) persisteres na lokalt via Drift + SQLite.
-- Reason: Ingen persistering i tidlig prototyping.
+- Decision: Simulert prototype-time i innstillinger holdes fortsatt i runtime-minne (dev-state).
+- Reason: Smal persisteringsslice med lav risiko, uten a persistere midlertidig dev-state.
 - Risk:
-  - Fokusomrade-oppsett og modus resettes fortsatt ved app-restart.
+- Simulert prototype-time resettes fortsatt ved app-restart.
 - Future resolution:
-  - Persist innstillinger via repository + valgt lagringslag nar dette prioriteres.
+- Vurder om prototype-time skal persisteres senere eller forbli dev-only.
 
 ### 10) Innholdsbibliotek er fortsatt lokalt og hardkodet
 

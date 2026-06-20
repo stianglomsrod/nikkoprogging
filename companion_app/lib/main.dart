@@ -3,6 +3,7 @@ import 'package:companion_app/core/database/app_database.dart';
 import 'package:companion_app/core/events/drift_companion_identity_repository.dart';
 import 'package:companion_app/core/events/drift_companion_event_state_repository.dart';
 import 'package:companion_app/core/history/drift_history_repository.dart';
+import 'package:companion_app/core/settings/drift_focus_area_settings_repository.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
@@ -21,6 +22,11 @@ Future<void> main() async {
   );
   final initialCompanionIdentityState = await companionIdentityRepository
       .readState();
+  final focusAreaSettingsRepository = DriftFocusAreaSettingsRepository(
+    database,
+  );
+  final initialFocusAreaSettingsState = await focusAreaSettingsRepository
+      .readState();
 
   runApp(
     CompanionApp(
@@ -29,6 +35,8 @@ Future<void> main() async {
       initialCompanionEventState: initialCompanionEventState,
       companionIdentityRepository: companionIdentityRepository,
       initialCompanionIdentityState: initialCompanionIdentityState,
+      focusAreaSettingsRepository: focusAreaSettingsRepository,
+      initialFocusAreaSettingsState: initialFocusAreaSettingsState,
     ),
   );
 }
