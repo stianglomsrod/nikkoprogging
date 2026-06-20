@@ -93,7 +93,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Hendelser'), findsOneWidget);
-    expect(find.textContaining('Symbol valgt (lagret)'), findsOneWidget);
+    expect(find.textContaining('Symbol ble valgt - lagret'), findsOneWidget);
     expect(find.text('Tidspunkter med aktivitet'), findsOneWidget);
   });
 
@@ -143,9 +143,138 @@ void main() {
     );
 
     expect(find.text('Tidspunkter med aktivitet'), findsOneWidget);
-    expect(find.textContaining('13:24 (x3)'), findsOneWidget);
-    expect(find.textContaining('13:38 (x2)'), findsOneWidget);
+    expect(find.textContaining('13:24 (×3)'), findsOneWidget);
+    expect(find.textContaining('13:38 (×2)'), findsOneWidget);
     expect(find.textContaining('13:49'), findsOneWidget);
     expect(find.textContaining('13:50'), findsOneWidget);
+  });
+
+  testWidgets(
+    'groups repeated tasks and moods for calmer day-detail display',
+    (WidgetTester tester) async {
+      final day = DateTime(2026, 6, 23);
+
+      final entries = <HistoryEntry>[
+        HistoryAttemptRecord(
+          taskId: 'task-1',
+          focusAreaId: 'exercise',
+          outcome: HistoryAttemptOutcome.completed,
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 24),
+          taskTitleSnapshot: 'Kjør en sporty økt med intervaller.',
+        ),
+        HistoryAttemptRecord(
+          taskId: 'task-2',
+          focusAreaId: 'exercise',
+          outcome: HistoryAttemptOutcome.completed,
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 30),
+          taskTitleSnapshot: 'Kjør en sporty økt med intervaller.',
+        ),
+        HistoryAttemptRecord(
+          taskId: 'task-3',
+          focusAreaId: 'exercise',
+          outcome: HistoryAttemptOutcome.completed,
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 35),
+          taskTitleSnapshot: 'Kjør en sporty økt med intervaller.',
+        ),
+        HistoryMoodRecord(
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 24),
+        ),
+        HistoryMoodRecord(
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 38),
+        ),
+        HistoryMoodRecord(
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 49),
+        ),
+        HistoryMoodRecord(
+          mood: Sinnsstemning.energisk,
+          timestamp: DateTime(2026, 6, 23, 13, 50),
+        ),
+      ];
+
+      final summary = DayHistorySummary(
+        dayStart: DateTime(2026, 6, 23),
+        completedTaskCount: 3,
+        attemptCount: 3,
+        notCompletedAttemptCount: 0,
+        interruptedAttemptCount: 0,
+        moodEntryCount: 4,
+        moodCounts: const {Sinnsstemning.energisk: 4},
+        eventMarkers: const <HistoryEventMarker>[],
+        activityMoments: const <DateTime>[],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: DayDetailView(day: day, summary: summary, entries: entries),
+        ),
+      );
+
+      expect(
+        find.textContaining('Kjør en sporty økt med intervaller. ×3'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Energisk ×4'), findsOneWidget);
+      expect(find.textContaining('energisk ('), findsNothing);
+    },
+  );
+
+  testWidgets('maps technical event ids and limits long section lists', (
+    WidgetTester tester,
+  ) async {
+    final day = DateTime(2026, 6, 24);
+
+    final entries = <HistoryEntry>[
+      for (int i = 0; i < 9; i++)
+        HistoryAttemptRecord(
+          taskId: 'task-$i',
+          focusAreaId: 'study',
+          outcome: HistoryAttemptOutcome.completed,
+          mood: Sinnsstemning.ok,
+          timestamp: DateTime(2026, 6, 24, 10, i),
+          taskTitleSnapshot: 'Oppgave ${i + 1}',
+        ),
+      HistoryEventRecord(
+        eventId: 'event_user_name',
+        action: HistoryEventAction.saved,
+        timestamp: DateTime(2026, 6, 24, 11, 0),
+        label: 'event_user_name',
+      ),
+      HistoryEventRecord(
+        eventId: 'event_companion_name',
+        action: HistoryEventAction.saved,
+        timestamp: DateTime(2026, 6, 24, 11, 5),
+        label: 'event_companion_name',
+      ),
+    ];
+
+    final summary = DayHistorySummary(
+      dayStart: DateTime(2026, 6, 24),
+      completedTaskCount: 9,
+      attemptCount: 9,
+      notCompletedAttemptCount: 0,
+      interruptedAttemptCount: 0,
+      moodEntryCount: 0,
+      moodCounts: const {},
+      eventMarkers: const <HistoryEventMarker>[],
+      activityMoments: const <DateTime>[],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DayDetailView(day: day, summary: summary, entries: entries),
+      ),
+    );
+
+    expect(find.textContaining('Navnet ditt ble lagret - lagret'), findsOneWidget);
+    expect(find.textContaining('Figuren fikk navn - lagret'), findsOneWidget);
+    expect(find.textContaining('event_user_name'), findsNothing);
+    expect(find.textContaining('event_companion_name'), findsNothing);
+    expect(find.textContaining('+ 2 flere spor denne dagen'), findsOneWidget);
   });
 }
