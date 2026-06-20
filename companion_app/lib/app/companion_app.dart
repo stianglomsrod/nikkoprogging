@@ -3,10 +3,7 @@ import 'package:companion_app/features/home/home_page.dart';
 import 'package:flutter/material.dart';
 
 class CompanionApp extends StatelessWidget {
-  const CompanionApp({
-    super.key,
-    required this.historyRepository,
-  });
+  const CompanionApp({super.key, required this.historyRepository});
 
   final HistoryRepository historyRepository;
 

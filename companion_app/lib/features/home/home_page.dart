@@ -43,10 +43,7 @@ enum PromptStage {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-    required this.historyRepository,
-  });
+  const HomePage({super.key, required this.historyRepository});
 
   final HistoryRepository historyRepository;
 

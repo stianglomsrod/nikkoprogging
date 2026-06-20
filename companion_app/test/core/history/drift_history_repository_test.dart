@@ -39,7 +39,9 @@ void main() {
       final reloadedRepository = DriftHistoryRepository(database);
       await reloadedRepository.initialize();
 
-      final entries = reloadedRepository.readEntriesForDay(DateTime(2026, 6, 20));
+      final entries = reloadedRepository.readEntriesForDay(
+        DateTime(2026, 6, 20),
+      );
       expect(entries, hasLength(3));
 
       final mood = entries[0] as HistoryMoodRecord;

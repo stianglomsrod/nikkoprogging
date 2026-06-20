@@ -19,9 +19,9 @@ class DriftHistoryRepository implements HistoryRepository {
   final List<Future<void>> _pendingWriteOperations = <Future<void>>[];
 
   Future<void> initialize() async {
-    final rows = await (_database.select(_database.historyEntries)
-          ..orderBy([(table) => drift.OrderingTerm.asc(table.timestampMs)]))
-        .get();
+    final rows = await (_database.select(
+      _database.historyEntries,
+    )..orderBy([(table) => drift.OrderingTerm.asc(table.timestampMs)])).get();
 
     _entries
       ..clear()
@@ -34,7 +34,9 @@ class DriftHistoryRepository implements HistoryRepository {
     _entries.sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
     _trackPendingWrite(
-      _database.into(_database.historyEntries).insert(_mapEntryToCompanion(entry)),
+      _database
+          .into(_database.historyEntries)
+          .insert(_mapEntryToCompanion(entry)),
     );
   }
 
