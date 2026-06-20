@@ -19,6 +19,7 @@ companion_app/
 |  |  |- EPIC_GLOBAL_FEEDBACK.md
 |  |- plans/
 |  |  |- PLAN_COMPANION_EVENTS.md
+|  |  |- PLAN_GLOBAL_FEEDBACK_DISCOVERY.md
 |  |  |- PLAN_HISTORY_AND_STATS.md
 |  |  |- PLAN_SETTINGS_PERSISTENCE_EVAL.md
 |- assets/
