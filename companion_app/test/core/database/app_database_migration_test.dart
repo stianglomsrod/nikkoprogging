@@ -32,58 +32,51 @@ void main() {
       await database.close();
     });
 
-    test(
-      'table indexes are created on fresh database',
-      () async {
-        final database = AppDatabase(NativeDatabase.memory());
+    test('table indexes are created on fresh database', () async {
+      final database = AppDatabase(NativeDatabase.memory());
 
-        // Query for index information
-        final indexResults = await database.customSelect(
-          "SELECT name FROM sqlite_master WHERE type='index' AND name LIKE 'idx_%'",
-        ).get();
+      // Query for index information
+      final indexResults = await database
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type='index' AND name LIKE 'idx_%'",
+          )
+          .get();
 
-        // Verify expected indexes were created
-        final indexNames = indexResults.map((row) => row.data['name']).toList();
-        expect(
-          indexNames,
-          containsAll([
-            'idx_history_entries_timestamp',
-            'idx_history_entries_type',
-          ]),
-          reason: 'Indexes for history queries should exist',
-        );
+      // Verify expected indexes were created
+      final indexNames = indexResults.map((row) => row.data['name']).toList();
+      expect(
+        indexNames,
+        containsAll([
+          'idx_history_entries_timestamp',
+          'idx_history_entries_type',
+        ]),
+        reason: 'Indexes for history queries should exist',
+      );
 
-        await database.close();
-      },
-    );
+      await database.close();
+    });
 
-    test(
-      'migration path is consistent across schema versions',
-      () async {
-        // This test verifies the migration strategy handles version transitions
-        final database = AppDatabase(NativeDatabase.memory());
+    test('migration path is consistent across schema versions', () async {
+      // This test verifies the migration strategy handles version transitions
+      final database = AppDatabase(NativeDatabase.memory());
 
-        // Verify migration strategy is defined
-        expect(database.migration, isNotNull);
+      // Verify migration strategy is defined
+      expect(database.migration, isNotNull);
 
-        // Verify schemaVersion matches declared constant
-        expect(database.schemaVersion, equals(3));
+      // Verify schemaVersion matches declared constant
+      expect(database.schemaVersion, equals(3));
 
-        await database.close();
-      },
-    );
+      await database.close();
+    });
 
-    test(
-      'consecutive in-memory instances have separate state',
-      () async {
-        final db1 = AppDatabase(NativeDatabase.memory());
-        final db2 = AppDatabase(NativeDatabase.memory());
+    test('consecutive in-memory instances have separate state', () async {
+      final db1 = AppDatabase(NativeDatabase.memory());
+      final db2 = AppDatabase(NativeDatabase.memory());
 
-        expect(db1.schemaVersion, db2.schemaVersion);
+      expect(db1.schemaVersion, db2.schemaVersion);
 
-        await db1.close();
-        await db2.close();
-      },
-    );
+      await db1.close();
+      await db2.close();
+    });
   });
 }
