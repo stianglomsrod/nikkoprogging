@@ -18,8 +18,9 @@ class DayActivityBar extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final completedCount = summary.completedTaskCount;
 
-    final normalizedCompleted =
-        maxCompletedCount <= 0 ? 0.0 : completedCount / maxCompletedCount;
+    final normalizedCompleted = maxCompletedCount <= 0
+        ? 0.0
+        : completedCount / maxCompletedCount;
 
     final fillHeight = completedCount > 0
         ? 20.0 + (76.0 * normalizedCompleted)
@@ -40,7 +41,9 @@ class DayActivityBar extends StatelessWidget {
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              key: ValueKey('history-bar-fill-${index ?? summary.dayStart.day}'),
+              key: ValueKey(
+                'history-bar-fill-${index ?? summary.dayStart.day}',
+              ),
               width: 20,
               height: fillHeight,
               decoration: BoxDecoration(
