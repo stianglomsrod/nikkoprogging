@@ -411,39 +411,42 @@ void main() {
     );
   });
 
-  testWidgets('bakgrunnsfargeevent kan hoppes over og beholder standard mørk tone', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(const CompanionApp());
+  testWidgets(
+    'bakgrunnsfargeevent kan hoppes over og beholder standard mørk tone',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const CompanionApp());
 
-    await _setAllFocusAreasToSporty(tester);
+      await _setAllFocusAreasToSporty(tester);
 
-    for (int i = 0; i < 12; i++) {
-      await _runSinglePromptAndFinish(
-        tester,
-        moodLabel: 'Energisk',
-        done: true,
-        autoHandleCompanionNameEvent: true,
-        autoHandleUserNameEvent: true,
-        autoHandleSymbolEvent: true,
-        autoHandleBackgroundColorEvent: false,
+      for (int i = 0; i < 12; i++) {
+        await _runSinglePromptAndFinish(
+          tester,
+          moodLabel: 'Energisk',
+          done: true,
+          autoHandleCompanionNameEvent: true,
+          autoHandleUserNameEvent: true,
+          autoHandleSymbolEvent: true,
+          autoHandleBackgroundColorEvent: false,
+        );
+      }
+
+      expect(
+        find.text('Hvilken farge føles best for deg i appen?'),
+        findsOneWidget,
       );
-    }
 
-    expect(
-      find.text('Hvilken farge føles best for deg i appen?'),
-      findsOneWidget,
-    );
+      await tester.tap(
+        find.byKey(const ValueKey('background-color-skip-button')),
+      );
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const ValueKey('background-color-skip-button')));
-    await tester.pumpAndSettle();
-
-    final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
-    expect(
-      scaffold.backgroundColor,
-      CompanionBackgroundTone.defaultDark.scaffoldColor,
-    );
-  });
+      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
+      expect(
+        scaffold.backgroundColor,
+        CompanionBackgroundTone.defaultDark.scaffoldColor,
+      );
+    },
+  );
 
   testWidgets('stemningsknapper vises i rekkefolge Energisk, Ok, Tung', (
     WidgetTester tester,
