@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:companion_app/app/app_config.dart';
 import 'package:companion_app/core/content/companion_text_library.dart';
 import 'package:companion_app/core/adaptive_engine/task_selector.dart';
 import 'package:companion_app/core/events/companion_event_controller.dart';
@@ -53,6 +54,7 @@ enum PromptStage {
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
+    required this.appConfig,
     required this.historyRepository,
     required this.feedbackRepository,
     required this.companionEventStateRepository,
@@ -63,6 +65,7 @@ class HomePage extends StatefulWidget {
     this.initialFocusAreaSettingsState,
   });
 
+  final AppConfig appConfig;
   final HistoryRepository historyRepository;
   final FeedbackRepository feedbackRepository;
   final CompanionEventStateRepository companionEventStateRepository;
@@ -695,6 +698,7 @@ class _HomePageState extends State<HomePage> {
           focusAreas: _focusAreas,
           initialSelectedAreaId: _selectedSettingsAreaId,
           simulatedHour: _simulatedHour,
+          showPrototypeTimeControls: widget.appConfig.showPrototypeTimeControls,
           allowCompanionNameEditing:
               _companionEvents.isEventHandled(
                 CompanionEventDefinitions.companionNameId,
@@ -880,7 +884,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBottomActionState() {
     if (_stage == PromptStage.idle) {
-      return IdleStateView(onSimulate: _simulateNextPrompt);
+      final actionLabel = widget.appConfig.showPrototypeControls
+          ? 'Simuler neste prompt'
+          : 'Neste forslag';
+      return IdleStateView(
+        onSimulate: _simulateNextPrompt,
+        actionLabel: actionLabel,
+      );
     }
 
     if (_stage == PromptStage.mood) {

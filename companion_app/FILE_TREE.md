@@ -51,6 +51,7 @@ companion_app/
 |- lib/
 |  |- main.dart
 |  |- app/
+|  |  |- app_config.dart
 |  |  |- companion_app.dart
 |  |- core/
 |  |  |- database/

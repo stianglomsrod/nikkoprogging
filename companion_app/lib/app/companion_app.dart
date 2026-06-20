@@ -1,3 +1,4 @@
+import 'package:companion_app/app/app_config.dart';
 import 'package:companion_app/core/events/companion_event_state_repository.dart';
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/events/companion_identity_repository.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 class CompanionApp extends StatelessWidget {
   const CompanionApp({
     super.key,
+    required this.appConfig,
     required this.historyRepository,
     required this.feedbackRepository,
     required this.companionEventStateRepository,
@@ -22,6 +24,7 @@ class CompanionApp extends StatelessWidget {
     this.initialFocusAreaSettingsState,
   });
 
+  final AppConfig appConfig;
   final HistoryRepository historyRepository;
   final FeedbackRepository feedbackRepository;
   final CompanionEventStateRepository companionEventStateRepository;
@@ -92,6 +95,7 @@ class CompanionApp extends StatelessWidget {
         ),
       ),
       home: HomePage(
+        appConfig: appConfig,
         historyRepository: historyRepository,
         feedbackRepository: feedbackRepository,
         companionEventStateRepository: companionEventStateRepository,

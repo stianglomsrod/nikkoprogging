@@ -1,4 +1,5 @@
 import 'package:companion_app/app/companion_app.dart';
+import 'package:companion_app/app/app_config.dart';
 import 'package:companion_app/core/database/app_database.dart';
 import 'package:companion_app/core/events/drift_companion_identity_repository.dart';
 import 'package:companion_app/core/events/drift_companion_event_state_repository.dart';
@@ -9,6 +10,12 @@ import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  const rawMode = String.fromEnvironment(
+    'APP_MODE',
+    defaultValue: 'development',
+  );
+  final appConfig = AppConfig.fromEnvironment(rawMode);
 
   final database = AppDatabase.openAtDefaultLocation();
   final historyRepository = DriftHistoryRepository(database);
@@ -32,6 +39,7 @@ Future<void> main() async {
 
   runApp(
     CompanionApp(
+      appConfig: appConfig,
       historyRepository: historyRepository,
       feedbackRepository: feedbackRepository,
       companionEventStateRepository: companionEventStateRepository,

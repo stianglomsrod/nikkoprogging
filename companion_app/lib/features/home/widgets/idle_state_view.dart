@@ -2,9 +2,14 @@ import 'package:companion_app/features/home/widgets/bottom_action_area.dart';
 import 'package:flutter/material.dart';
 
 class IdleStateView extends StatelessWidget {
-  const IdleStateView({super.key, required this.onSimulate});
+  const IdleStateView({
+    super.key,
+    required this.onSimulate,
+    required this.actionLabel,
+  });
 
   final VoidCallback onSimulate;
+  final String actionLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +18,7 @@ class IdleStateView extends StatelessWidget {
       children: [
         FilledButton(
           onPressed: onSimulate,
-          child: const Text('Simuler neste prompt'),
+          child: Text(actionLabel),
         ),
       ],
     );

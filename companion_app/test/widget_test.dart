@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
+import 'package:companion_app/app/app_config.dart';
 import 'package:companion_app/app/companion_app.dart';
 import 'package:companion_app/core/events/companion_event_state_repository.dart';
 import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
@@ -87,8 +88,12 @@ class _InMemoryFeedbackRepository implements FeedbackRepository {
   }
 }
 
-CompanionApp _buildApp({FeedbackRepository? feedbackRepository}) {
+CompanionApp _buildApp({
+  FeedbackRepository? feedbackRepository,
+  AppConfig appConfig = AppConfig.development,
+}) {
   return CompanionApp(
+    appConfig: appConfig,
     historyRepository: InMemoryHistoryRepository(),
     feedbackRepository: feedbackRepository ?? _InMemoryFeedbackRepository(),
     companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
@@ -105,6 +110,42 @@ void main() {
     expect(find.text('Simuler neste prompt'), findsOneWidget);
     expect(find.byTooltip('Tilbakemelding'), findsOneWidget);
     expect(find.byTooltip('Innstillinger'), findsOneWidget);
+  });
+
+  testWidgets('tester-mode skjuler simuler-label men beholder flytknapp', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp(appConfig: AppConfig.tester));
+
+    expect(find.text('Simuler neste prompt'), findsNothing);
+    expect(find.text('Neste forslag'), findsOneWidget);
+
+    await tester.tap(find.text('Neste forslag'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Energisk'), findsOneWidget);
+  });
+
+  testWidgets('tester-mode skjuler prototype-tid i innstillinger', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp(appConfig: AppConfig.tester));
+
+    await tester.tap(find.byTooltip('Innstillinger'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Prototype-tid'), findsNothing);
+  });
+
+  testWidgets('development-mode viser prototype-tid i innstillinger', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp(appConfig: AppConfig.development));
+
+    await tester.tap(find.byTooltip('Innstillinger'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Prototype-tid'), findsOneWidget);
   });
 
   testWidgets('feedbackmodal validerer tom melding', (

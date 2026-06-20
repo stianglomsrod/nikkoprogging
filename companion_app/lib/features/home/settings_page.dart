@@ -35,6 +35,7 @@ class SettingsPage extends StatefulWidget {
     required this.focusAreas,
     required this.initialSelectedAreaId,
     required this.simulatedHour,
+    required this.showPrototypeTimeControls,
     required this.allowCompanionNameEditing,
     required this.allowUserNameEditing,
     required this.allowSymbolEditing,
@@ -48,6 +49,7 @@ class SettingsPage extends StatefulWidget {
   final List<FocusArea> focusAreas;
   final String initialSelectedAreaId;
   final int simulatedHour;
+  final bool showPrototypeTimeControls;
   final bool allowCompanionNameEditing;
   final bool allowUserNameEditing;
   final bool allowSymbolEditing;
@@ -174,16 +176,18 @@ class _SettingsPageState extends State<SettingsPage> {
               );
             },
           ),
-          const SizedBox(height: 20),
-          PrototypeTimePanel(
-            hourLabel: _hourLabel(_localHour),
-            value: _localHour,
-            onChanged: (value) {
-              setState(() {
-                _localHour = value;
-              });
-            },
-          ),
+          if (widget.showPrototypeTimeControls) ...[
+            const SizedBox(height: 20),
+            PrototypeTimePanel(
+              hourLabel: _hourLabel(_localHour),
+              value: _localHour,
+              onChanged: (value) {
+                setState(() {
+                  _localHour = value;
+                });
+              },
+            ),
+          ],
           if (widget.allowCompanionNameEditing) ...[
             const SizedBox(height: 20),
             CompanionNameSettingsPanel(

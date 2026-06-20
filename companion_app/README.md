@@ -23,6 +23,30 @@ Early prototype / flow-validation.
   - focus-area settings
 - No backend/auth/notifications/TTS yet.
 
+## App Modes (Development vs Tester Preview)
+
+The app now supports a small mode toggle via `APP_MODE`.
+
+- `development` (default):
+  - shows prototype controls (for fast local iteration)
+  - shows prototype-time panel in settings
+- `tester`:
+  - hides prototype wording/control labels
+  - hides prototype-time panel in settings
+
+Commands:
+
+- Run development mode (default):
+  - `flutter run`
+- Run explicit development mode:
+  - `flutter run --dart-define=APP_MODE=development`
+- Run tester preview mode:
+  - `flutter run --dart-define=APP_MODE=tester`
+- Build tester preview APK:
+  - `flutter build apk --release --dart-define=APP_MODE=tester`
+- Build tester preview App Bundle:
+  - `flutter build appbundle --release --dart-define=APP_MODE=tester`
+
 ## Persistence Snapshot
 
 | Domain                                | Status       | Storage         |
@@ -33,7 +57,7 @@ Early prototype / flow-validation.
 | Focus-area settings                   | Persisted    | Drift + SQLite  |
 | Simulated prototype time              | Runtime-only | In-memory       |
 | Scheduler runtime counters/state      | Runtime-only | In-memory       |
-| Global feedback                       | Deferred     | Not implemented |
+| Global feedback                       | Persisted    | Drift + SQLite  |
 
 ## Agent Reporting Rule
 
