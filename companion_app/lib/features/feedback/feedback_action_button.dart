@@ -75,7 +75,9 @@ class FeedbackActionButton extends StatelessWidget {
       var boundaryContext = key.currentContext;
       var boundary =
           boundaryContext?.findRenderObject() as RenderRepaintBoundary?;
-      if (boundaryContext == null || !boundaryContext.mounted || boundary == null) {
+      if (boundaryContext == null ||
+          !boundaryContext.mounted ||
+          boundary == null) {
         return null;
       }
       var pixelRatio = View.of(boundaryContext).devicePixelRatio;
