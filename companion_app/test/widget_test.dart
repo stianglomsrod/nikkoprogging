@@ -117,73 +117,77 @@ void main() {
     expect(find.byTooltip('Søvnfunksjon'), findsNothing);
   });
 
-  testWidgets('tester-mode skjuler manuell promptknapp og starter flyt automatisk', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(
-      _buildApp(
-        appConfig: AppConfig.tester.copyWith(currentHourOverride: 18),
-      ),
-    );
-    await tester.pump();
-
-    expect(find.text('Simuler neste prompt'), findsNothing);
-    expect(find.text('Neste forslag'), findsNothing);
-
-    expect(find.text('Energisk'), findsOneWidget);
-  });
-
-  testWidgets('tester-mode respekterer study-vindu og viser ingen oppgave kl 16', (
-    WidgetTester tester,
-  ) async {
-    const studyOnlyState = FocusAreaSettingsStateSnapshot(
-      areas: <FocusAreaSettingState>[
-        FocusAreaSettingState(
-          id: 'household',
-          enabled: false,
-          startHour: 16,
-          endHour: 21,
-          modus: Modus.stabil,
+  testWidgets(
+    'tester-mode skjuler manuell promptknapp og starter flyt automatisk',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          appConfig: AppConfig.tester.copyWith(currentHourOverride: 18),
         ),
-        FocusAreaSettingState(
-          id: 'study',
-          enabled: true,
-          startHour: 18,
-          endHour: 20,
-          modus: Modus.avslappet,
-        ),
-        FocusAreaSettingState(
-          id: 'exercise',
-          enabled: false,
-          startHour: 15,
-          endHour: 19,
-          modus: Modus.sporty,
-        ),
-        FocusAreaSettingState(
-          id: 'reminders',
-          enabled: false,
-          startHour: 8,
-          endHour: 22,
-          modus: Modus.avslappet,
-        ),
-      ],
-      selectedAreaId: 'study',
-    );
+      );
+      await tester.pump();
 
-    await tester.pumpWidget(
-      _buildApp(
-        appConfig: AppConfig.tester.copyWith(currentHourOverride: 16),
-        initialFocusAreaSettingsState: studyOnlyState,
-      ),
-    );
-    await tester.pump();
+      expect(find.text('Simuler neste prompt'), findsNothing);
+      expect(find.text('Neste forslag'), findsNothing);
 
-    expect(find.text('Energisk'), findsNothing);
-    expect(
-      find.text('Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.'),
-      findsOneWidget,
-    );
-  });
+      expect(find.text('Energisk'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'tester-mode respekterer study-vindu og viser ingen oppgave kl 16',
+    (WidgetTester tester) async {
+      const studyOnlyState = FocusAreaSettingsStateSnapshot(
+        areas: <FocusAreaSettingState>[
+          FocusAreaSettingState(
+            id: 'household',
+            enabled: false,
+            startHour: 16,
+            endHour: 21,
+            modus: Modus.stabil,
+          ),
+          FocusAreaSettingState(
+            id: 'study',
+            enabled: true,
+            startHour: 18,
+            endHour: 20,
+            modus: Modus.avslappet,
+          ),
+          FocusAreaSettingState(
+            id: 'exercise',
+            enabled: false,
+            startHour: 15,
+            endHour: 19,
+            modus: Modus.sporty,
+          ),
+          FocusAreaSettingState(
+            id: 'reminders',
+            enabled: false,
+            startHour: 8,
+            endHour: 22,
+            modus: Modus.avslappet,
+          ),
+        ],
+        selectedAreaId: 'study',
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          appConfig: AppConfig.tester.copyWith(currentHourOverride: 16),
+          initialFocusAreaSettingsState: studyOnlyState,
+        ),
+      );
+      await tester.pump();
+
+      expect(find.text('Energisk'), findsNothing);
+      expect(
+        find.text(
+          'Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.',
+        ),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('tester-mode skjuler prototype-tid i innstillinger', (
     WidgetTester tester,
@@ -342,7 +346,10 @@ void main() {
       find.byKey(const ValueKey('sleep-feature-check-now-button')),
       findsOneWidget,
     );
-    expect(find.byKey(const ValueKey('sleep-feature-later-button')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sleep-feature-later-button')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const ValueKey('sleep-feature-later-button')));
     await tester.pumpAndSettle();

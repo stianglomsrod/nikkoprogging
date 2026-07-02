@@ -33,9 +33,10 @@ class _SleepSoundFeatureSheetState extends State<SleepSoundFeatureSheet> {
   void initState() {
     super.initState();
     _selectedSound = widget.initialSound;
-    _selectedDurationMinutes = _durationOptions.contains(widget.initialDurationMinutes)
+    _selectedDurationMinutes =
+        _durationOptions.contains(widget.initialDurationMinutes)
         ? widget.initialDurationMinutes
-      : 15;
+        : 15;
   }
 
   @override

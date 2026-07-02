@@ -1,10 +1,7 @@
 import 'package:companion_app/core/models/modus.dart';
 
 class ActiveTimeWindow {
-  const ActiveTimeWindow({
-    required this.startHour,
-    required this.endHour,
-  });
+  const ActiveTimeWindow({required this.startHour, required this.endHour});
 
   final int startHour;
   final int endHour;
@@ -57,11 +54,13 @@ class FocusArea {
     Modus? modus,
     List<ActiveTimeWindow>? activeWindows,
   }) {
-    final nextWindows = activeWindows ?? _mergePrimaryWindow(
-      activeWindows: this.activeWindows,
-      startHour: startHour,
-      endHour: endHour,
-    );
+    final nextWindows =
+        activeWindows ??
+        _mergePrimaryWindow(
+          activeWindows: this.activeWindows,
+          startHour: startHour,
+          endHour: endHour,
+        );
 
     return FocusArea(
       id: id,

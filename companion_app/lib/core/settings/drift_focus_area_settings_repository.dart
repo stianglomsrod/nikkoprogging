@@ -67,25 +67,23 @@ class DriftFocusAreaSettingsRepository implements FocusAreaSettingsRepository {
         batch.insertAll(
           _database.focusAreaSettingsStates,
           snapshot.areas
-              .map(
-                (area) {
-                  final primaryWindow = area.activeWindows.first;
-                  return FocusAreaSettingsStatesCompanion.insert(
-                    id: area.id,
-                    enabled: drift.Value(area.enabled),
-                    startHour: drift.Value(primaryWindow.startHour),
-                    endHour: drift.Value(primaryWindow.endHour),
-                    activeWindowsJson: drift.Value(
-                      _encodeActiveWindows(area.activeWindows),
-                    ),
-                    modus: drift.Value(area.modus.name),
-                    isSelected: drift.Value(area.id == selectedAreaId),
-                    updatedAtMs: drift.Value(
-                      DateTime.now().millisecondsSinceEpoch,
-                    ),
-                  );
-                },
-              )
+              .map((area) {
+                final primaryWindow = area.activeWindows.first;
+                return FocusAreaSettingsStatesCompanion.insert(
+                  id: area.id,
+                  enabled: drift.Value(area.enabled),
+                  startHour: drift.Value(primaryWindow.startHour),
+                  endHour: drift.Value(primaryWindow.endHour),
+                  activeWindowsJson: drift.Value(
+                    _encodeActiveWindows(area.activeWindows),
+                  ),
+                  modus: drift.Value(area.modus.name),
+                  isSelected: drift.Value(area.id == selectedAreaId),
+                  updatedAtMs: drift.Value(
+                    DateTime.now().millisecondsSinceEpoch,
+                  ),
+                );
+              })
               .toList(growable: false),
         );
       });
@@ -104,10 +102,7 @@ class DriftFocusAreaSettingsRepository implements FocusAreaSettingsRepository {
   String _encodeActiveWindows(List<ActiveTimeWindow> windows) {
     return jsonEncode([
       for (final window in windows)
-        <String, int>{
-          'startHour': window.startHour,
-          'endHour': window.endHour,
-        },
+        <String, int>{'startHour': window.startHour, 'endHour': window.endHour},
     ]);
   }
 

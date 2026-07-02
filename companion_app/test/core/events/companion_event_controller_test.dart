@@ -204,7 +204,10 @@ void main() {
       controller.markPendingEventHandled(skipped: false); // 3
       controller.markPendingEventHandled(skipped: false); // 6
 
-      expect(controller.pendingEvent?.id, CompanionEventDefinitions.sleepSoundId);
+      expect(
+        controller.pendingEvent?.id,
+        CompanionEventDefinitions.sleepSoundId,
+      );
       controller.markPendingEventHandled(skipped: false);
       expect(
         controller.pendingEvent?.id,

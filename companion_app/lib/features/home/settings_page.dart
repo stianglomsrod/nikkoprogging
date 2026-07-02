@@ -264,10 +264,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ? const ActiveTimeWindow(startHour: 8, endHour: 22)
           : resized.last;
       resized.add(
-        ActiveTimeWindow(
-          startHour: source.startHour,
-          endHour: source.endHour,
-        ),
+        ActiveTimeWindow(startHour: source.startHour, endHour: source.endHour),
       );
     }
     if (resized.length > count) {
