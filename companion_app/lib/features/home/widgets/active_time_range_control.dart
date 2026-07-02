@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ActiveTimeRangeControl extends StatelessWidget {
   const ActiveTimeRangeControl({
     super.key,
+    this.title = 'Aktivt tidsrom',
     required this.startHour,
     required this.endHour,
     required this.rangeLabel,
@@ -11,6 +12,7 @@ class ActiveTimeRangeControl extends StatelessWidget {
     required this.onChanged,
   });
 
+  final String title;
   final int startHour;
   final int endHour;
   final String rangeLabel;
@@ -23,7 +25,7 @@ class ActiveTimeRangeControl extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Aktivt tidsrom'),
+        Text(title),
         const SizedBox(height: 6),
         Text(rangeLabel),
         RangeSlider(

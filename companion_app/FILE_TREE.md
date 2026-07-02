@@ -171,6 +171,10 @@ companion_app/
 |  |     |- drift_focus_area_settings_repository_test.dart
 |- android/
 |  |- app/
+|  |  |- src/
+|  |  |  |- development/res/values/strings.xml
+|  |  |  |- preview/res/values/strings.xml
+|  |  |  |- main/res/values/strings.xml
 |  |  |- build.gradle.kts
 |  |  |- src/
 |  |     |- main/

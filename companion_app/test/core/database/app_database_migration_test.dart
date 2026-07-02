@@ -14,9 +14,9 @@ void main() {
   });
 
   group('AppDatabase migrations', () {
-    test('schema version is 5 in current build', () async {
+    test('schema version is 7 in current build', () async {
       final database = AppDatabase(NativeDatabase.memory());
-      expect(database.schemaVersion, 5);
+      expect(database.schemaVersion, 7);
       await database.close();
     });
 
@@ -65,7 +65,7 @@ void main() {
       expect(database.migration, isNotNull);
 
       // Verify schemaVersion matches declared constant
-      expect(database.schemaVersion, equals(5));
+      expect(database.schemaVersion, equals(7));
 
       await database.close();
     });

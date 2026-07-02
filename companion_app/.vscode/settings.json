@@ -1,3 +1,4 @@
 {
-  "cmake.sourceDirectory": "C:/Users/Gamer/Documents/Progging/nikkoprogging/companion_app/linux"
+  "cmake.sourceDirectory": "C:/Users/Gamer/Documents/Progging/nikkoprogging/companion_app/linux",
+  "java.compile.nullAnalysis.mode": "automatic"
 }

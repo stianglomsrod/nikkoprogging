@@ -24,6 +24,7 @@ class DriftCompanionIdentityRepository implements CompanionIdentityRepository {
     return CompanionIdentityStateSnapshot(
       companionName: row.companionName,
       userName: row.userName,
+      sleepSound: _sleepSoundFromName(row.sleepSound),
       symbol: _symbolFromName(row.selectedSymbol),
       backgroundTone: _backgroundToneFromName(row.backgroundTone),
     );
@@ -38,6 +39,7 @@ class DriftCompanionIdentityRepository implements CompanionIdentityRepository {
             id: drift.Value(_singletonId),
             companionName: drift.Value(snapshot.companionName),
             userName: drift.Value(snapshot.userName),
+            sleepSound: drift.Value(snapshot.sleepSound.name),
             selectedSymbol: drift.Value(snapshot.symbol.name),
             backgroundTone: drift.Value(snapshot.backgroundTone.name),
             updatedAtMs: drift.Value(DateTime.now().millisecondsSinceEpoch),
@@ -52,6 +54,15 @@ class DriftCompanionIdentityRepository implements CompanionIdentityRepository {
       }
     }
     return CompanionSymbolOption.none;
+  }
+
+  CompanionSleepSoundOption _sleepSoundFromName(String value) {
+    for (final option in CompanionSleepSoundOption.values) {
+      if (option.name == value) {
+        return option;
+      }
+    }
+    return CompanionSleepSoundOption.none;
   }
 
   CompanionBackgroundTone _backgroundToneFromName(String value) {

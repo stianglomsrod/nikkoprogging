@@ -1242,6 +1242,18 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _sleepSoundMeta = const VerificationMeta(
+    'sleepSound',
+  );
+  @override
+  late final GeneratedColumn<String> sleepSound = GeneratedColumn<String>(
+    'sleep_sound',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('none'),
+  );
   static const VerificationMeta _selectedSymbolMeta = const VerificationMeta(
     'selectedSymbol',
   );
@@ -1283,6 +1295,7 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
     id,
     companionName,
     userName,
+    sleepSound,
     selectedSymbol,
     backgroundTone,
     updatedAtMs,
@@ -1315,6 +1328,12 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
       context.handle(
         _userNameMeta,
         userName.isAcceptableOrUnknown(data['user_name']!, _userNameMeta),
+      );
+    }
+    if (data.containsKey('sleep_sound')) {
+      context.handle(
+        _sleepSoundMeta,
+        sleepSound.isAcceptableOrUnknown(data['sleep_sound']!, _sleepSoundMeta),
       );
     }
     if (data.containsKey('selected_symbol')) {
@@ -1368,6 +1387,10 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
         DriftSqlType.string,
         data['${effectivePrefix}user_name'],
       ),
+      sleepSound: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sleep_sound'],
+      )!,
       selectedSymbol: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}selected_symbol'],
@@ -1394,6 +1417,7 @@ class CompanionIdentityStateRow extends DataClass
   final int id;
   final String? companionName;
   final String? userName;
+  final String sleepSound;
   final String selectedSymbol;
   final String backgroundTone;
   final int updatedAtMs;
@@ -1401,6 +1425,7 @@ class CompanionIdentityStateRow extends DataClass
     required this.id,
     this.companionName,
     this.userName,
+    required this.sleepSound,
     required this.selectedSymbol,
     required this.backgroundTone,
     required this.updatedAtMs,
@@ -1415,6 +1440,7 @@ class CompanionIdentityStateRow extends DataClass
     if (!nullToAbsent || userName != null) {
       map['user_name'] = Variable<String>(userName);
     }
+    map['sleep_sound'] = Variable<String>(sleepSound);
     map['selected_symbol'] = Variable<String>(selectedSymbol);
     map['background_tone'] = Variable<String>(backgroundTone);
     map['updated_at_ms'] = Variable<int>(updatedAtMs);
@@ -1430,6 +1456,7 @@ class CompanionIdentityStateRow extends DataClass
       userName: userName == null && nullToAbsent
           ? const Value.absent()
           : Value(userName),
+      sleepSound: Value(sleepSound),
       selectedSymbol: Value(selectedSymbol),
       backgroundTone: Value(backgroundTone),
       updatedAtMs: Value(updatedAtMs),
@@ -1445,6 +1472,7 @@ class CompanionIdentityStateRow extends DataClass
       id: serializer.fromJson<int>(json['id']),
       companionName: serializer.fromJson<String?>(json['companionName']),
       userName: serializer.fromJson<String?>(json['userName']),
+      sleepSound: serializer.fromJson<String>(json['sleepSound']),
       selectedSymbol: serializer.fromJson<String>(json['selectedSymbol']),
       backgroundTone: serializer.fromJson<String>(json['backgroundTone']),
       updatedAtMs: serializer.fromJson<int>(json['updatedAtMs']),
@@ -1457,6 +1485,7 @@ class CompanionIdentityStateRow extends DataClass
       'id': serializer.toJson<int>(id),
       'companionName': serializer.toJson<String?>(companionName),
       'userName': serializer.toJson<String?>(userName),
+      'sleepSound': serializer.toJson<String>(sleepSound),
       'selectedSymbol': serializer.toJson<String>(selectedSymbol),
       'backgroundTone': serializer.toJson<String>(backgroundTone),
       'updatedAtMs': serializer.toJson<int>(updatedAtMs),
@@ -1467,6 +1496,7 @@ class CompanionIdentityStateRow extends DataClass
     int? id,
     Value<String?> companionName = const Value.absent(),
     Value<String?> userName = const Value.absent(),
+    String? sleepSound,
     String? selectedSymbol,
     String? backgroundTone,
     int? updatedAtMs,
@@ -1476,6 +1506,7 @@ class CompanionIdentityStateRow extends DataClass
         ? companionName.value
         : this.companionName,
     userName: userName.present ? userName.value : this.userName,
+    sleepSound: sleepSound ?? this.sleepSound,
     selectedSymbol: selectedSymbol ?? this.selectedSymbol,
     backgroundTone: backgroundTone ?? this.backgroundTone,
     updatedAtMs: updatedAtMs ?? this.updatedAtMs,
@@ -1489,6 +1520,9 @@ class CompanionIdentityStateRow extends DataClass
           ? data.companionName.value
           : this.companionName,
       userName: data.userName.present ? data.userName.value : this.userName,
+      sleepSound: data.sleepSound.present
+          ? data.sleepSound.value
+          : this.sleepSound,
       selectedSymbol: data.selectedSymbol.present
           ? data.selectedSymbol.value
           : this.selectedSymbol,
@@ -1507,6 +1541,7 @@ class CompanionIdentityStateRow extends DataClass
           ..write('id: $id, ')
           ..write('companionName: $companionName, ')
           ..write('userName: $userName, ')
+          ..write('sleepSound: $sleepSound, ')
           ..write('selectedSymbol: $selectedSymbol, ')
           ..write('backgroundTone: $backgroundTone, ')
           ..write('updatedAtMs: $updatedAtMs')
@@ -1519,6 +1554,7 @@ class CompanionIdentityStateRow extends DataClass
     id,
     companionName,
     userName,
+    sleepSound,
     selectedSymbol,
     backgroundTone,
     updatedAtMs,
@@ -1530,6 +1566,7 @@ class CompanionIdentityStateRow extends DataClass
           other.id == this.id &&
           other.companionName == this.companionName &&
           other.userName == this.userName &&
+          other.sleepSound == this.sleepSound &&
           other.selectedSymbol == this.selectedSymbol &&
           other.backgroundTone == this.backgroundTone &&
           other.updatedAtMs == this.updatedAtMs);
@@ -1540,6 +1577,7 @@ class CompanionIdentityStatesCompanion
   final Value<int> id;
   final Value<String?> companionName;
   final Value<String?> userName;
+  final Value<String> sleepSound;
   final Value<String> selectedSymbol;
   final Value<String> backgroundTone;
   final Value<int> updatedAtMs;
@@ -1547,6 +1585,7 @@ class CompanionIdentityStatesCompanion
     this.id = const Value.absent(),
     this.companionName = const Value.absent(),
     this.userName = const Value.absent(),
+    this.sleepSound = const Value.absent(),
     this.selectedSymbol = const Value.absent(),
     this.backgroundTone = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
@@ -1555,6 +1594,7 @@ class CompanionIdentityStatesCompanion
     this.id = const Value.absent(),
     this.companionName = const Value.absent(),
     this.userName = const Value.absent(),
+    this.sleepSound = const Value.absent(),
     this.selectedSymbol = const Value.absent(),
     this.backgroundTone = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
@@ -1563,6 +1603,7 @@ class CompanionIdentityStatesCompanion
     Expression<int>? id,
     Expression<String>? companionName,
     Expression<String>? userName,
+    Expression<String>? sleepSound,
     Expression<String>? selectedSymbol,
     Expression<String>? backgroundTone,
     Expression<int>? updatedAtMs,
@@ -1571,6 +1612,7 @@ class CompanionIdentityStatesCompanion
       if (id != null) 'id': id,
       if (companionName != null) 'companion_name': companionName,
       if (userName != null) 'user_name': userName,
+      if (sleepSound != null) 'sleep_sound': sleepSound,
       if (selectedSymbol != null) 'selected_symbol': selectedSymbol,
       if (backgroundTone != null) 'background_tone': backgroundTone,
       if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
@@ -1581,6 +1623,7 @@ class CompanionIdentityStatesCompanion
     Value<int>? id,
     Value<String?>? companionName,
     Value<String?>? userName,
+    Value<String>? sleepSound,
     Value<String>? selectedSymbol,
     Value<String>? backgroundTone,
     Value<int>? updatedAtMs,
@@ -1589,6 +1632,7 @@ class CompanionIdentityStatesCompanion
       id: id ?? this.id,
       companionName: companionName ?? this.companionName,
       userName: userName ?? this.userName,
+      sleepSound: sleepSound ?? this.sleepSound,
       selectedSymbol: selectedSymbol ?? this.selectedSymbol,
       backgroundTone: backgroundTone ?? this.backgroundTone,
       updatedAtMs: updatedAtMs ?? this.updatedAtMs,
@@ -1606,6 +1650,9 @@ class CompanionIdentityStatesCompanion
     }
     if (userName.present) {
       map['user_name'] = Variable<String>(userName.value);
+    }
+    if (sleepSound.present) {
+      map['sleep_sound'] = Variable<String>(sleepSound.value);
     }
     if (selectedSymbol.present) {
       map['selected_symbol'] = Variable<String>(selectedSymbol.value);
@@ -1625,6 +1672,7 @@ class CompanionIdentityStatesCompanion
           ..write('id: $id, ')
           ..write('companionName: $companionName, ')
           ..write('userName: $userName, ')
+          ..write('sleepSound: $sleepSound, ')
           ..write('selectedSymbol: $selectedSymbol, ')
           ..write('backgroundTone: $backgroundTone, ')
           ..write('updatedAtMs: $updatedAtMs')
@@ -1687,6 +1735,18 @@ class $FocusAreaSettingsStatesTable extends FocusAreaSettingsStates
     requiredDuringInsert: false,
     defaultValue: const Constant(22),
   );
+  static const VerificationMeta _activeWindowsJsonMeta = const VerificationMeta(
+    'activeWindowsJson',
+  );
+  @override
+  late final GeneratedColumn<String> activeWindowsJson =
+      GeneratedColumn<String>(
+        'active_windows_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _modusMeta = const VerificationMeta('modus');
   @override
   late final GeneratedColumn<String> modus = GeneratedColumn<String>(
@@ -1729,6 +1789,7 @@ class $FocusAreaSettingsStatesTable extends FocusAreaSettingsStates
     enabled,
     startHour,
     endHour,
+    activeWindowsJson,
     modus,
     isSelected,
     updatedAtMs,
@@ -1766,6 +1827,15 @@ class $FocusAreaSettingsStatesTable extends FocusAreaSettingsStates
       context.handle(
         _endHourMeta,
         endHour.isAcceptableOrUnknown(data['end_hour']!, _endHourMeta),
+      );
+    }
+    if (data.containsKey('active_windows_json')) {
+      context.handle(
+        _activeWindowsJsonMeta,
+        activeWindowsJson.isAcceptableOrUnknown(
+          data['active_windows_json']!,
+          _activeWindowsJsonMeta,
+        ),
       );
     }
     if (data.containsKey('modus')) {
@@ -1817,6 +1887,10 @@ class $FocusAreaSettingsStatesTable extends FocusAreaSettingsStates
         DriftSqlType.int,
         data['${effectivePrefix}end_hour'],
       )!,
+      activeWindowsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}active_windows_json'],
+      ),
       modus: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}modus'],
@@ -1844,6 +1918,7 @@ class FocusAreaSettingsStateRow extends DataClass
   final bool enabled;
   final int startHour;
   final int endHour;
+  final String? activeWindowsJson;
   final String modus;
   final bool isSelected;
   final int? updatedAtMs;
@@ -1852,6 +1927,7 @@ class FocusAreaSettingsStateRow extends DataClass
     required this.enabled,
     required this.startHour,
     required this.endHour,
+    this.activeWindowsJson,
     required this.modus,
     required this.isSelected,
     this.updatedAtMs,
@@ -1863,6 +1939,9 @@ class FocusAreaSettingsStateRow extends DataClass
     map['enabled'] = Variable<bool>(enabled);
     map['start_hour'] = Variable<int>(startHour);
     map['end_hour'] = Variable<int>(endHour);
+    if (!nullToAbsent || activeWindowsJson != null) {
+      map['active_windows_json'] = Variable<String>(activeWindowsJson);
+    }
     map['modus'] = Variable<String>(modus);
     map['is_selected'] = Variable<bool>(isSelected);
     if (!nullToAbsent || updatedAtMs != null) {
@@ -1877,6 +1956,9 @@ class FocusAreaSettingsStateRow extends DataClass
       enabled: Value(enabled),
       startHour: Value(startHour),
       endHour: Value(endHour),
+      activeWindowsJson: activeWindowsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(activeWindowsJson),
       modus: Value(modus),
       isSelected: Value(isSelected),
       updatedAtMs: updatedAtMs == null && nullToAbsent
@@ -1895,6 +1977,9 @@ class FocusAreaSettingsStateRow extends DataClass
       enabled: serializer.fromJson<bool>(json['enabled']),
       startHour: serializer.fromJson<int>(json['startHour']),
       endHour: serializer.fromJson<int>(json['endHour']),
+      activeWindowsJson: serializer.fromJson<String?>(
+        json['activeWindowsJson'],
+      ),
       modus: serializer.fromJson<String>(json['modus']),
       isSelected: serializer.fromJson<bool>(json['isSelected']),
       updatedAtMs: serializer.fromJson<int?>(json['updatedAtMs']),
@@ -1908,6 +1993,7 @@ class FocusAreaSettingsStateRow extends DataClass
       'enabled': serializer.toJson<bool>(enabled),
       'startHour': serializer.toJson<int>(startHour),
       'endHour': serializer.toJson<int>(endHour),
+      'activeWindowsJson': serializer.toJson<String?>(activeWindowsJson),
       'modus': serializer.toJson<String>(modus),
       'isSelected': serializer.toJson<bool>(isSelected),
       'updatedAtMs': serializer.toJson<int?>(updatedAtMs),
@@ -1919,6 +2005,7 @@ class FocusAreaSettingsStateRow extends DataClass
     bool? enabled,
     int? startHour,
     int? endHour,
+    Value<String?> activeWindowsJson = const Value.absent(),
     String? modus,
     bool? isSelected,
     Value<int?> updatedAtMs = const Value.absent(),
@@ -1927,6 +2014,9 @@ class FocusAreaSettingsStateRow extends DataClass
     enabled: enabled ?? this.enabled,
     startHour: startHour ?? this.startHour,
     endHour: endHour ?? this.endHour,
+    activeWindowsJson: activeWindowsJson.present
+        ? activeWindowsJson.value
+        : this.activeWindowsJson,
     modus: modus ?? this.modus,
     isSelected: isSelected ?? this.isSelected,
     updatedAtMs: updatedAtMs.present ? updatedAtMs.value : this.updatedAtMs,
@@ -1939,6 +2029,9 @@ class FocusAreaSettingsStateRow extends DataClass
       enabled: data.enabled.present ? data.enabled.value : this.enabled,
       startHour: data.startHour.present ? data.startHour.value : this.startHour,
       endHour: data.endHour.present ? data.endHour.value : this.endHour,
+      activeWindowsJson: data.activeWindowsJson.present
+          ? data.activeWindowsJson.value
+          : this.activeWindowsJson,
       modus: data.modus.present ? data.modus.value : this.modus,
       isSelected: data.isSelected.present
           ? data.isSelected.value
@@ -1956,6 +2049,7 @@ class FocusAreaSettingsStateRow extends DataClass
           ..write('enabled: $enabled, ')
           ..write('startHour: $startHour, ')
           ..write('endHour: $endHour, ')
+          ..write('activeWindowsJson: $activeWindowsJson, ')
           ..write('modus: $modus, ')
           ..write('isSelected: $isSelected, ')
           ..write('updatedAtMs: $updatedAtMs')
@@ -1969,6 +2063,7 @@ class FocusAreaSettingsStateRow extends DataClass
     enabled,
     startHour,
     endHour,
+    activeWindowsJson,
     modus,
     isSelected,
     updatedAtMs,
@@ -1981,6 +2076,7 @@ class FocusAreaSettingsStateRow extends DataClass
           other.enabled == this.enabled &&
           other.startHour == this.startHour &&
           other.endHour == this.endHour &&
+          other.activeWindowsJson == this.activeWindowsJson &&
           other.modus == this.modus &&
           other.isSelected == this.isSelected &&
           other.updatedAtMs == this.updatedAtMs);
@@ -1992,6 +2088,7 @@ class FocusAreaSettingsStatesCompanion
   final Value<bool> enabled;
   final Value<int> startHour;
   final Value<int> endHour;
+  final Value<String?> activeWindowsJson;
   final Value<String> modus;
   final Value<bool> isSelected;
   final Value<int?> updatedAtMs;
@@ -2001,6 +2098,7 @@ class FocusAreaSettingsStatesCompanion
     this.enabled = const Value.absent(),
     this.startHour = const Value.absent(),
     this.endHour = const Value.absent(),
+    this.activeWindowsJson = const Value.absent(),
     this.modus = const Value.absent(),
     this.isSelected = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
@@ -2011,6 +2109,7 @@ class FocusAreaSettingsStatesCompanion
     this.enabled = const Value.absent(),
     this.startHour = const Value.absent(),
     this.endHour = const Value.absent(),
+    this.activeWindowsJson = const Value.absent(),
     this.modus = const Value.absent(),
     this.isSelected = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
@@ -2021,6 +2120,7 @@ class FocusAreaSettingsStatesCompanion
     Expression<bool>? enabled,
     Expression<int>? startHour,
     Expression<int>? endHour,
+    Expression<String>? activeWindowsJson,
     Expression<String>? modus,
     Expression<bool>? isSelected,
     Expression<int>? updatedAtMs,
@@ -2031,6 +2131,7 @@ class FocusAreaSettingsStatesCompanion
       if (enabled != null) 'enabled': enabled,
       if (startHour != null) 'start_hour': startHour,
       if (endHour != null) 'end_hour': endHour,
+      if (activeWindowsJson != null) 'active_windows_json': activeWindowsJson,
       if (modus != null) 'modus': modus,
       if (isSelected != null) 'is_selected': isSelected,
       if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
@@ -2043,6 +2144,7 @@ class FocusAreaSettingsStatesCompanion
     Value<bool>? enabled,
     Value<int>? startHour,
     Value<int>? endHour,
+    Value<String?>? activeWindowsJson,
     Value<String>? modus,
     Value<bool>? isSelected,
     Value<int?>? updatedAtMs,
@@ -2053,6 +2155,7 @@ class FocusAreaSettingsStatesCompanion
       enabled: enabled ?? this.enabled,
       startHour: startHour ?? this.startHour,
       endHour: endHour ?? this.endHour,
+      activeWindowsJson: activeWindowsJson ?? this.activeWindowsJson,
       modus: modus ?? this.modus,
       isSelected: isSelected ?? this.isSelected,
       updatedAtMs: updatedAtMs ?? this.updatedAtMs,
@@ -2074,6 +2177,9 @@ class FocusAreaSettingsStatesCompanion
     }
     if (endHour.present) {
       map['end_hour'] = Variable<int>(endHour.value);
+    }
+    if (activeWindowsJson.present) {
+      map['active_windows_json'] = Variable<String>(activeWindowsJson.value);
     }
     if (modus.present) {
       map['modus'] = Variable<String>(modus.value);
@@ -2097,6 +2203,7 @@ class FocusAreaSettingsStatesCompanion
           ..write('enabled: $enabled, ')
           ..write('startHour: $startHour, ')
           ..write('endHour: $endHour, ')
+          ..write('activeWindowsJson: $activeWindowsJson, ')
           ..write('modus: $modus, ')
           ..write('isSelected: $isSelected, ')
           ..write('updatedAtMs: $updatedAtMs, ')
@@ -3212,6 +3319,7 @@ typedef $$CompanionIdentityStatesTableCreateCompanionBuilder =
       Value<int> id,
       Value<String?> companionName,
       Value<String?> userName,
+      Value<String> sleepSound,
       Value<String> selectedSymbol,
       Value<String> backgroundTone,
       Value<int> updatedAtMs,
@@ -3221,6 +3329,7 @@ typedef $$CompanionIdentityStatesTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String?> companionName,
       Value<String?> userName,
+      Value<String> sleepSound,
       Value<String> selectedSymbol,
       Value<String> backgroundTone,
       Value<int> updatedAtMs,
@@ -3247,6 +3356,11 @@ class $$CompanionIdentityStatesTableFilterComposer
 
   ColumnFilters<String> get userName => $composableBuilder(
     column: $table.userName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sleepSound => $composableBuilder(
+    column: $table.sleepSound,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3290,6 +3404,11 @@ class $$CompanionIdentityStatesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sleepSound => $composableBuilder(
+    column: $table.sleepSound,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get selectedSymbol => $composableBuilder(
     column: $table.selectedSymbol,
     builder: (column) => ColumnOrderings(column),
@@ -3325,6 +3444,11 @@ class $$CompanionIdentityStatesTableAnnotationComposer
 
   GeneratedColumn<String> get userName =>
       $composableBuilder(column: $table.userName, builder: (column) => column);
+
+  GeneratedColumn<String> get sleepSound => $composableBuilder(
+    column: $table.sleepSound,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get selectedSymbol => $composableBuilder(
     column: $table.selectedSymbol,
@@ -3391,6 +3515,7 @@ class $$CompanionIdentityStatesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String?> companionName = const Value.absent(),
                 Value<String?> userName = const Value.absent(),
+                Value<String> sleepSound = const Value.absent(),
                 Value<String> selectedSymbol = const Value.absent(),
                 Value<String> backgroundTone = const Value.absent(),
                 Value<int> updatedAtMs = const Value.absent(),
@@ -3398,6 +3523,7 @@ class $$CompanionIdentityStatesTableTableManager
                 id: id,
                 companionName: companionName,
                 userName: userName,
+                sleepSound: sleepSound,
                 selectedSymbol: selectedSymbol,
                 backgroundTone: backgroundTone,
                 updatedAtMs: updatedAtMs,
@@ -3407,6 +3533,7 @@ class $$CompanionIdentityStatesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String?> companionName = const Value.absent(),
                 Value<String?> userName = const Value.absent(),
+                Value<String> sleepSound = const Value.absent(),
                 Value<String> selectedSymbol = const Value.absent(),
                 Value<String> backgroundTone = const Value.absent(),
                 Value<int> updatedAtMs = const Value.absent(),
@@ -3414,6 +3541,7 @@ class $$CompanionIdentityStatesTableTableManager
                 id: id,
                 companionName: companionName,
                 userName: userName,
+                sleepSound: sleepSound,
                 selectedSymbol: selectedSymbol,
                 backgroundTone: backgroundTone,
                 updatedAtMs: updatedAtMs,
@@ -3453,6 +3581,7 @@ typedef $$FocusAreaSettingsStatesTableCreateCompanionBuilder =
       Value<bool> enabled,
       Value<int> startHour,
       Value<int> endHour,
+      Value<String?> activeWindowsJson,
       Value<String> modus,
       Value<bool> isSelected,
       Value<int?> updatedAtMs,
@@ -3464,6 +3593,7 @@ typedef $$FocusAreaSettingsStatesTableUpdateCompanionBuilder =
       Value<bool> enabled,
       Value<int> startHour,
       Value<int> endHour,
+      Value<String?> activeWindowsJson,
       Value<String> modus,
       Value<bool> isSelected,
       Value<int?> updatedAtMs,
@@ -3496,6 +3626,11 @@ class $$FocusAreaSettingsStatesTableFilterComposer
 
   ColumnFilters<int> get endHour => $composableBuilder(
     column: $table.endHour,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get activeWindowsJson => $composableBuilder(
+    column: $table.activeWindowsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3544,6 +3679,11 @@ class $$FocusAreaSettingsStatesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get activeWindowsJson => $composableBuilder(
+    column: $table.activeWindowsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get modus => $composableBuilder(
     column: $table.modus,
     builder: (column) => ColumnOrderings(column),
@@ -3580,6 +3720,11 @@ class $$FocusAreaSettingsStatesTableAnnotationComposer
 
   GeneratedColumn<int> get endHour =>
       $composableBuilder(column: $table.endHour, builder: (column) => column);
+
+  GeneratedColumn<String> get activeWindowsJson => $composableBuilder(
+    column: $table.activeWindowsJson,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get modus =>
       $composableBuilder(column: $table.modus, builder: (column) => column);
@@ -3645,6 +3790,7 @@ class $$FocusAreaSettingsStatesTableTableManager
                 Value<bool> enabled = const Value.absent(),
                 Value<int> startHour = const Value.absent(),
                 Value<int> endHour = const Value.absent(),
+                Value<String?> activeWindowsJson = const Value.absent(),
                 Value<String> modus = const Value.absent(),
                 Value<bool> isSelected = const Value.absent(),
                 Value<int?> updatedAtMs = const Value.absent(),
@@ -3654,6 +3800,7 @@ class $$FocusAreaSettingsStatesTableTableManager
                 enabled: enabled,
                 startHour: startHour,
                 endHour: endHour,
+                activeWindowsJson: activeWindowsJson,
                 modus: modus,
                 isSelected: isSelected,
                 updatedAtMs: updatedAtMs,
@@ -3665,6 +3812,7 @@ class $$FocusAreaSettingsStatesTableTableManager
                 Value<bool> enabled = const Value.absent(),
                 Value<int> startHour = const Value.absent(),
                 Value<int> endHour = const Value.absent(),
+                Value<String?> activeWindowsJson = const Value.absent(),
                 Value<String> modus = const Value.absent(),
                 Value<bool> isSelected = const Value.absent(),
                 Value<int?> updatedAtMs = const Value.absent(),
@@ -3674,6 +3822,7 @@ class $$FocusAreaSettingsStatesTableTableManager
                 enabled: enabled,
                 startHour: startHour,
                 endHour: endHour,
+                activeWindowsJson: activeWindowsJson,
                 modus: modus,
                 isSelected: isSelected,
                 updatedAtMs: updatedAtMs,

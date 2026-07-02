@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:companion_app/app/app_config.dart';
 import 'package:companion_app/core/content/companion_text_library.dart';
 import 'package:companion_app/core/adaptive_engine/task_selector.dart';
@@ -35,10 +36,13 @@ import 'package:companion_app/features/home/widgets/home_layout_shell.dart';
 import 'package:companion_app/features/home/widgets/idle_state_view.dart';
 import 'package:companion_app/features/home/widgets/mood_state_view.dart';
 import 'package:companion_app/features/home/widgets/result_state_view.dart';
+import 'package:companion_app/features/home/widgets/sleep_sound_event_view.dart';
+import 'package:companion_app/features/home/widgets/sleep_sound_feature_sheet.dart';
 import 'package:companion_app/features/home/widgets/symbol_event_view.dart';
 import 'package:companion_app/features/home/widgets/task_state_view.dart';
 import 'package:companion_app/features/home/widgets/user_name_event_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum PromptStage {
   idle,
@@ -47,6 +51,7 @@ enum PromptStage {
   result,
   companionNameEvent,
   userNameEvent,
+  sleepSoundEvent,
   symbolEvent,
   backgroundColorEvent,
 }
@@ -79,12 +84,14 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static const Duration _happyAnimationDuration = Duration(milliseconds: 2200);
+  static const Duration _autoPromptPollInterval = Duration(minutes: 1);
 
   final SchedulerEngine _scheduler = SchedulerEngine();
   final TaskSelector _selector = TaskSelector();
   final CompanionEventController _companionEvents = CompanionEventController();
+  final AudioPlayer _sleepSoundPlayer = AudioPlayer();
   final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
 
@@ -104,6 +111,8 @@ class _HomePageState extends State<HomePage> {
   TaskItem? _currentTask;
   String? _companionName;
   String? _userName;
+  CompanionSleepSoundOption _sleepSound = CompanionSleepSoundOption.none;
+  int _sleepSoundDurationMinutes = 15;
   CompanionSymbolOption _companionSymbol = CompanionSymbolOption.none;
   CompanionBackgroundTone _backgroundTone = CompanionBackgroundTone.defaultDark;
   String? _statusMessage;
@@ -111,10 +120,14 @@ class _HomePageState extends State<HomePage> {
   CompanionAnimationState _companionAnimationState =
       CompanionAnimationState.idle;
   Timer? _happyResetTimer;
+  Timer? _autoPromptTimer;
+  Timer? _sleepSoundStopTimer;
+  DateTime? _sleepSoundStopAt;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _focusAreas = _hydrateFocusAreasFromSettings(
       seeds: SeedData.focusAreas(),
       snapshot: widget.initialFocusAreaSettingsState,
@@ -133,8 +146,21 @@ class _HomePageState extends State<HomePage> {
     if (initialCompanionIdentityState != null) {
       _companionName = initialCompanionIdentityState.companionName;
       _userName = initialCompanionIdentityState.userName;
+      _sleepSound = initialCompanionIdentityState.sleepSound;
       _companionSymbol = initialCompanionIdentityState.symbol;
       _backgroundTone = initialCompanionIdentityState.backgroundTone;
+    }
+
+    unawaited(_sleepSoundPlayer.setReleaseMode(ReleaseMode.loop));
+
+    if (widget.appConfig.autoPromptWhenIdle) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        _evaluateAutomaticPrompt(forceStatusRefresh: true);
+        _startAutoPromptLoop();
+      });
     }
   }
 
@@ -158,6 +184,7 @@ class _HomePageState extends State<HomePage> {
             enabled: saved.enabled,
             startHour: saved.startHour,
             endHour: saved.endHour,
+            activeWindows: saved.activeWindows,
             modus: saved.modus,
           );
         })
@@ -184,6 +211,7 @@ class _HomePageState extends State<HomePage> {
                 enabled: area.enabled,
                 startHour: area.startHour,
                 endHour: area.endHour,
+                activeWindows: area.activeWindows,
                 modus: area.modus,
               ),
             )
@@ -195,8 +223,91 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _happyResetTimer?.cancel();
+    _autoPromptTimer?.cancel();
+    _sleepSoundStopTimer?.cancel();
+    unawaited(_sleepSoundPlayer.dispose());
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _resyncSleepSoundStopTimer();
+    }
+  }
+
+  int _currentSchedulerHour() {
+    final override = widget.appConfig.currentHourOverride;
+    if (override != null) {
+      return override;
+    }
+    if (widget.appConfig.showPrototypeTimeControls) {
+      return _simulatedHour;
+    }
+    return DateTime.now().hour;
+  }
+
+  void _startAutoPromptLoop() {
+    _autoPromptTimer?.cancel();
+    _autoPromptTimer = Timer.periodic(_autoPromptPollInterval, (_) {
+      if (!mounted) {
+        return;
+      }
+      _evaluateAutomaticPrompt();
+    });
+  }
+
+  void _scheduleAutomaticPromptEvaluation({bool forceStatusRefresh = false}) {
+    if (!widget.appConfig.autoPromptWhenIdle) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _evaluateAutomaticPrompt(forceStatusRefresh: forceStatusRefresh);
+    });
+  }
+
+  void _evaluateAutomaticPrompt({bool forceStatusRefresh = false}) {
+    if (!widget.appConfig.autoPromptWhenIdle || _stage != PromptStage.idle) {
+      return;
+    }
+
+    final area = _scheduler.selectEligibleFocusArea(
+      focusAreas: _focusAreas,
+      promptsUsed: _promptsUsedPerArea,
+      currentHour: _currentSchedulerHour(),
+    );
+
+    if (area == null) {
+      if (!forceStatusRefresh && _statusMessage != null) {
+        return;
+      }
+      setState(() {
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage =
+            'Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.';
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
+    setState(() {
+      _activeFocusArea = area;
+      _promptsUsedPerArea[area.id] = (_promptsUsedPerArea[area.id] ?? 0) + 1;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _stage = PromptStage.mood;
+      _setCompanionToDefaultAnimation();
+    });
   }
 
   void _simulateNextPrompt() {
@@ -207,7 +318,7 @@ class _HomePageState extends State<HomePage> {
       final area = _scheduler.selectEligibleFocusArea(
         focusAreas: _focusAreas,
         promptsUsed: _promptsUsedPerArea,
-        currentHour: _simulatedHour,
+        currentHour: _currentSchedulerHour(),
       );
 
       if (area == null) {
@@ -411,6 +522,11 @@ class _HomePageState extends State<HomePage> {
         CompanionEventDefinitions.userNameId;
   }
 
+  bool _hasPendingSleepSoundEvent() {
+    return _companionEvents.pendingEvent?.id ==
+        CompanionEventDefinitions.sleepSoundId;
+  }
+
   bool _hasPendingSymbolEvent() {
     return _companionEvents.pendingEvent?.id ==
         CompanionEventDefinitions.symbolId;
@@ -455,6 +571,8 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation();
   }
 
   void _saveCompanionName(String value) {
@@ -477,6 +595,10 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   void _skipUserNameEvent() {
@@ -492,6 +614,176 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
+  }
+
+  Future<void> _previewSleepSound(CompanionSleepSoundOption option) async {
+    final assetPath = option.assetPath;
+    if (assetPath == null) {
+      return;
+    }
+
+    await _safeStopSleepSoundPlayer();
+    await _safePlaySleepSoundAsset(assetPath);
+  }
+
+  Future<void> _stopSleepSoundPreview() {
+    return _safeStopSleepSoundPlayer();
+  }
+
+  Future<void> _safePlaySleepSoundAsset(String assetPath) async {
+    try {
+      await _sleepSoundPlayer.setReleaseMode(ReleaseMode.loop);
+      await _sleepSoundPlayer.play(AssetSource(assetPath));
+    } on MissingPluginException {
+      // Audio plugins are not available in widget tests.
+    }
+  }
+
+  Future<void> _safeStopSleepSoundPlayer() async {
+    try {
+      await _sleepSoundPlayer.stop();
+    } on MissingPluginException {
+      // Audio plugins are not available in widget tests.
+    }
+  }
+
+  void _applySleepFeatureSelection(
+    CompanionSleepSoundOption sound,
+    int durationMinutes,
+  ) {
+    setState(() {
+      _sleepSound = sound;
+      _sleepSoundDurationMinutes = durationMinutes;
+      _persistCompanionIdentityState();
+    });
+
+    unawaited(
+      _startTimedSleepSoundSession(
+        sound: sound,
+        duration: Duration(minutes: durationMinutes),
+      ),
+    );
+  }
+
+  Future<void> _startTimedSleepSoundSession({
+    required CompanionSleepSoundOption sound,
+    required Duration duration,
+  }) async {
+    _sleepSoundStopTimer?.cancel();
+    _sleepSoundStopTimer = null;
+    _sleepSoundStopAt = null;
+
+    await _safeStopSleepSoundPlayer();
+
+    final assetPath = sound.assetPath;
+    if (assetPath == null) {
+      return;
+    }
+
+    await _safePlaySleepSoundAsset(assetPath);
+
+    final stopAt = DateTime.now().add(duration);
+    _sleepSoundStopAt = stopAt;
+    _sleepSoundStopTimer = Timer(duration, () {
+      unawaited(_stopTimedSleepSoundSession());
+    });
+  }
+
+  Future<void> _stopTimedSleepSoundSession() async {
+    _sleepSoundStopTimer?.cancel();
+    _sleepSoundStopTimer = null;
+    _sleepSoundStopAt = null;
+    await _safeStopSleepSoundPlayer();
+  }
+
+  void _resyncSleepSoundStopTimer() {
+    final stopAt = _sleepSoundStopAt;
+    if (stopAt == null) {
+      return;
+    }
+
+    final remaining = stopAt.difference(DateTime.now());
+    if (remaining <= Duration.zero) {
+      unawaited(_stopTimedSleepSoundSession());
+      return;
+    }
+
+    _sleepSoundStopTimer?.cancel();
+    _sleepSoundStopTimer = Timer(remaining, () {
+      unawaited(_stopTimedSleepSoundSession());
+    });
+  }
+
+  bool _isSleepFeatureUnlocked() {
+    return _companionEvents.isEventHandled(
+      CompanionEventDefinitions.sleepSoundId,
+    );
+  }
+
+  Future<void> _openSleepFeatureSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return SleepSoundFeatureSheet(
+          initialSound: _sleepSound,
+          initialDurationMinutes: _sleepSoundDurationMinutes,
+          onPreview: (option) {
+            unawaited(_previewSleepSound(option));
+          },
+          onStopPreview: () {
+            unawaited(_stopSleepSoundPreview());
+          },
+          onSave: (sound, durationMinutes) {
+            _applySleepFeatureSelection(sound, durationMinutes);
+          },
+        );
+      },
+    );
+
+    unawaited(_stopSleepSoundPreview());
+  }
+
+  Future<void> _openSleepFeatureFromEvent() async {
+    setState(() {
+      _recordPendingEventAction(HistoryEventAction.saved);
+      _companionEvents.markPendingEventHandled(skipped: false);
+      _persistCompanionEventState();
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+
+    _consumeDeferredAudioEvents();
+    await _openSleepFeatureSheet();
+    if (!mounted) {
+      return;
+    }
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
+  }
+
+  void _checkSleepFeatureLater() {
+    setState(() {
+      _recordPendingEventAction(HistoryEventAction.skipped);
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+
+    _consumeDeferredAudioEvents();
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   void _saveUserName(String value) {
@@ -514,6 +806,8 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   void _skipSymbolEvent() {
@@ -529,6 +823,8 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   void _saveSymbol(CompanionSymbolOption symbol) {
@@ -546,6 +842,8 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   void _skipBackgroundColorEvent() {
@@ -561,6 +859,8 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   void _saveBackgroundTone(CompanionBackgroundTone tone) {
@@ -578,6 +878,8 @@ class _HomePageState extends State<HomePage> {
       _resultMessage = null;
       _setCompanionToDefaultAnimation();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   String _headerTitle() {
@@ -618,6 +920,7 @@ class _HomePageState extends State<HomePage> {
         CompanionIdentityStateSnapshot(
           companionName: _companionName,
           userName: _userName,
+          sleepSound: _sleepSound,
           symbol: _companionSymbol,
           backgroundTone: _backgroundTone,
         ),
@@ -631,6 +934,19 @@ class _HomePageState extends State<HomePage> {
     if (_stage == PromptStage.result && _hasPendingCompanionNameEvent()) {
       setState(() {
         _stage = PromptStage.companionNameEvent;
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage = null;
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
+    if (_stage == PromptStage.result && _hasPendingSleepSoundEvent()) {
+      setState(() {
+        _stage = PromptStage.sleepSoundEvent;
         _activeFocusArea = null;
         _currentMood = null;
         _currentTask = null;
@@ -713,6 +1029,7 @@ class _HomePageState extends State<HomePage> {
               _companionEvents.isEventAutoTriggered(
                 CompanionEventDefinitions.userNameId,
               ),
+          initialSleepSound: _sleepSound,
           allowSymbolEditing:
               _companionEvents.isEventHandled(
                 CompanionEventDefinitions.symbolId,
@@ -748,11 +1065,14 @@ class _HomePageState extends State<HomePage> {
       _simulatedHour = result.simulatedHour;
       _companionName = result.companionName;
       _userName = result.userName;
+      _sleepSound = result.sleepSound;
       _companionSymbol = result.symbol;
       _backgroundTone = result.backgroundTone;
       _persistCompanionIdentityState();
       _persistFocusAreaSettingsState();
     });
+
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
   Future<void> _openHistory() async {
@@ -799,6 +1119,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: _isSleepFeatureUnlocked()
+            ? IconButton(
+                key: const ValueKey('sleep-feature-icon-button'),
+                onPressed: _openSleepFeatureSheet,
+                icon: const Icon(Icons.nightlight_round),
+                tooltip: 'Søvnfunksjon',
+              )
+            : null,
         centerTitle: true,
         title: Text(_headerTitle()),
         actions: [
@@ -871,6 +1199,10 @@ class _HomePageState extends State<HomePage> {
       return ['Hva heter du?'];
     }
 
+    if (_stage == PromptStage.sleepSoundEvent) {
+      return ['Du har fått en ny funksjon'];
+    }
+
     if (_stage == PromptStage.symbolEvent) {
       return ['Vil du velge et lite symbol som kan være en del av meg?'];
     }
@@ -884,12 +1216,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBottomActionState() {
     if (_stage == PromptStage.idle) {
-      final actionLabel = widget.appConfig.showPrototypeControls
-          ? 'Simuler neste prompt'
-          : 'Neste forslag';
+      if (!widget.appConfig.showPrototypeControls) {
+        return const SizedBox.shrink();
+      }
       return IdleStateView(
         onSimulate: _simulateNextPrompt,
-        actionLabel: actionLabel,
+        actionLabel: 'Simuler neste prompt',
       );
     }
 
@@ -917,6 +1249,15 @@ class _HomePageState extends State<HomePage> {
       return UserNameEventView(
         onSave: _saveUserName,
         onSkip: _skipUserNameEvent,
+      );
+    }
+
+    if (_stage == PromptStage.sleepSoundEvent) {
+      return SleepSoundEventView(
+        onCheckNow: () {
+          unawaited(_openSleepFeatureFromEvent());
+        },
+        onLater: _checkSleepFeatureLater,
       );
     }
 

@@ -9,7 +9,6 @@ class CompanionEventDefinitions {
   static const backgroundColorId = 'event_background_color';
 
   static const deferredAudioEventIds = <String>{
-    sleepSoundId,
     backgroundMusicId,
   };
 

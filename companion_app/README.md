@@ -39,13 +39,13 @@ Commands:
 - Run development mode (default):
   - `flutter run`
 - Run explicit development mode:
-  - `flutter run --dart-define=APP_MODE=development`
+  - `flutter run --flavor development --dart-define=APP_MODE=development`
 - Run tester preview mode:
-  - `flutter run --dart-define=APP_MODE=tester`
+  - `flutter run --flavor preview --dart-define=APP_MODE=tester`
 - Build tester preview APK:
-  - `flutter build apk --release --dart-define=APP_MODE=tester`
+  - `flutter build apk --flavor preview --release --dart-define=APP_MODE=tester`
 - Build tester preview App Bundle:
-  - `flutter build appbundle --release --dart-define=APP_MODE=tester`
+  - `flutter build appbundle --flavor preview --release --dart-define=APP_MODE=tester`
 
 ## Persistence Snapshot
 

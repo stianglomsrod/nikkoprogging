@@ -16,6 +16,7 @@ class SettingsResult {
     required this.simulatedHour,
     required this.companionName,
     required this.userName,
+    required this.sleepSound,
     required this.symbol,
     required this.backgroundTone,
   });
@@ -25,6 +26,7 @@ class SettingsResult {
   final int simulatedHour;
   final String? companionName;
   final String? userName;
+  final CompanionSleepSoundOption sleepSound;
   final CompanionSymbolOption symbol;
   final CompanionBackgroundTone backgroundTone;
 }
@@ -38,6 +40,7 @@ class SettingsPage extends StatefulWidget {
     required this.showPrototypeTimeControls,
     required this.allowCompanionNameEditing,
     required this.allowUserNameEditing,
+    required this.initialSleepSound,
     required this.allowSymbolEditing,
     required this.allowBackgroundToneEditing,
     required this.initialSymbol,
@@ -52,6 +55,7 @@ class SettingsPage extends StatefulWidget {
   final bool showPrototypeTimeControls;
   final bool allowCompanionNameEditing;
   final bool allowUserNameEditing;
+  final CompanionSleepSoundOption initialSleepSound;
   final bool allowSymbolEditing;
   final bool allowBackgroundToneEditing;
   final String? initialCompanionName;
@@ -69,6 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late String _selectedAreaId;
   late String _localCompanionName;
   late String _localUserName;
+  late CompanionSleepSoundOption _localSleepSound;
   late CompanionSymbolOption _localSymbol;
   late CompanionBackgroundTone _localBackgroundTone;
 
@@ -81,6 +86,7 @@ class _SettingsPageState extends State<SettingsPage> {
             enabled: area.enabled,
             startHour: area.startHour,
             endHour: area.endHour,
+            activeWindows: area.activeWindows,
             modus: area.modus,
           ),
         )
@@ -94,6 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
         : _localFocusAreas.first.id;
     _localCompanionName = widget.initialCompanionName ?? '';
     _localUserName = widget.initialUserName ?? '';
+    _localSleepSound = widget.initialSleepSound;
     _localSymbol = widget.initialSymbol;
     _localBackgroundTone = widget.initialBackgroundTone;
   }
@@ -113,6 +120,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ? null
             : normalizedCompanionName,
         userName: normalizedUserName.isEmpty ? null : normalizedUserName,
+        sleepSound: _localSleepSound,
         symbol: _localSymbol,
         backgroundTone: _localBackgroundTone,
       ),
@@ -154,9 +162,6 @@ class _SettingsPageState extends State<SettingsPage> {
           const SizedBox(height: 24),
           FocusAreaSettingsPanel(
             area: area,
-            rangeLabel: _rangeLabel(area.startHour, area.endHour),
-            startHourLabel: _hourLabel(area.startHour),
-            endHourLabel: _hourLabel(area.endHour),
             onEnabledChanged: (value) {
               _updateArea(
                 area.id,
@@ -166,13 +171,27 @@ class _SettingsPageState extends State<SettingsPage> {
             onModusChanged: (mode) {
               _updateArea(area.id, (current) => current.copyWith(modus: mode));
             },
-            onRangeChanged: (values) {
+            onWindowCountChanged: (count) {
+              _updateArea(
+                area.id,
+                (current) => current.copyWith(
+                  activeWindows: _resizeWindows(current.activeWindows, count),
+                ),
+              );
+            },
+            onRangeChanged: (index, values) {
               final start = values.start.round().clamp(0, 23);
               final rawEnd = values.end.round().clamp(1, 24);
               final end = rawEnd <= start ? start + 1 : rawEnd;
               _updateArea(
                 area.id,
-                (current) => current.copyWith(startHour: start, endHour: end),
+                (current) => current.copyWith(
+                  activeWindows: _replaceWindow(
+                    current.activeWindows,
+                    index,
+                    ActiveTimeWindow(startHour: start, endHour: end),
+                  ),
+                ),
               );
             },
           ),
@@ -235,7 +254,35 @@ class _SettingsPageState extends State<SettingsPage> {
 
   String _hourLabel(int hour) => '${hour.toString().padLeft(2, '0')}:00';
 
-  String _rangeLabel(int start, int end) {
-    return '${_hourLabel(start)} - ${_hourLabel(end)}';
+  List<ActiveTimeWindow> _resizeWindows(
+    List<ActiveTimeWindow> windows,
+    int count,
+  ) {
+    final resized = List<ActiveTimeWindow>.from(windows, growable: true);
+    while (resized.length < count) {
+      final source = resized.isEmpty
+          ? const ActiveTimeWindow(startHour: 8, endHour: 22)
+          : resized.last;
+      resized.add(
+        ActiveTimeWindow(
+          startHour: source.startHour,
+          endHour: source.endHour,
+        ),
+      );
+    }
+    if (resized.length > count) {
+      resized.removeRange(count, resized.length);
+    }
+    return resized;
+  }
+
+  List<ActiveTimeWindow> _replaceWindow(
+    List<ActiveTimeWindow> windows,
+    int index,
+    ActiveTimeWindow window,
+  ) {
+    final updated = List<ActiveTimeWindow>.from(windows, growable: true);
+    updated[index] = window;
+    return updated;
   }
 }

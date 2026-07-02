@@ -17,31 +17,35 @@ class CompanionFigure extends StatefulWidget {
 }
 
 class _CompanionFigureState extends State<CompanionFigure> {
-  static const _frameStep = Duration(milliseconds: 480);
+  static const _frameStep = Duration(milliseconds: 420);
 
   static const Map<CompanionAnimationState, List<String>> _animationFrames = {
     CompanionAnimationState.idle: [
-      'assets/animations/companion/idle/frame_01.png',
-      'assets/animations/companion/idle/frame_02.png',
-      'assets/animations/companion/idle/frame_03.png',
-      'assets/animations/companion/idle/frame_04.png',
-      'assets/animations/companion/idle/frame_05.png',
-      'assets/animations/companion/idle/frame_06.png',
+      'assets/B1 - Breath.png',
+      'assets/B2 - Breath.png',
+      'assets/B1 - Breath.png',
+      'assets/C1 - Blink.png',
+      'assets/C2 - Blink.png',
+      'assets/C3 - Blink.png',
+      'assets/C2 - Blink.png',
+      'assets/C1 - Blink.png',
     ],
     CompanionAnimationState.happy: [
-      'assets/animations/companion/happy/frame_01.png',
-      'assets/animations/companion/happy/frame_02.png',
-      'assets/animations/companion/happy/frame_03.png',
-      'assets/animations/companion/happy/frame_04.png',
-      'assets/animations/companion/happy/frame_05.png',
-      'assets/animations/companion/happy/frame_06.png',
+      'assets/D1 - Smile.png',
+      'assets/D2 - Smile.png',
+      'assets/D3 - Smile.png',
+      'assets/D2 - Smile.png',
+      'assets/C1 - Blink.png',
+      'assets/C2 - Blink.png',
+      'assets/C3 - Blink.png',
+      'assets/C2 - Blink.png',
+      'assets/C1 - Blink.png',
     ],
     CompanionAnimationState.sleep: [
-      'assets/animations/companion/sleep/frame_01.png',
-      'assets/animations/companion/sleep/frame_02.png',
-      'assets/animations/companion/sleep/frame_03.png',
-      'assets/animations/companion/sleep/frame_04.png',
-      'assets/animations/companion/sleep/frame_05.png',
+      'assets/B1 - Breath.png',
+      'assets/B2 - Breath.png',
+      'assets/B1 - Breath.png',
+      'assets/B2 - Breath.png',
     ],
   };
 

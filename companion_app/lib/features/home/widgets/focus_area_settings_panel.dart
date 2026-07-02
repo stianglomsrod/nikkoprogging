@@ -8,21 +8,17 @@ class FocusAreaSettingsPanel extends StatelessWidget {
   const FocusAreaSettingsPanel({
     super.key,
     required this.area,
-    required this.rangeLabel,
-    required this.startHourLabel,
-    required this.endHourLabel,
     required this.onEnabledChanged,
     required this.onModusChanged,
+    required this.onWindowCountChanged,
     required this.onRangeChanged,
   });
 
   final FocusArea area;
-  final String rangeLabel;
-  final String startHourLabel;
-  final String endHourLabel;
   final ValueChanged<bool> onEnabledChanged;
   final ValueChanged<Modus> onModusChanged;
-  final ValueChanged<RangeValues> onRangeChanged;
+  final ValueChanged<int> onWindowCountChanged;
+  final void Function(int index, RangeValues values) onRangeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +44,52 @@ class FocusAreaSettingsPanel extends StatelessWidget {
               onSelected: onModusChanged,
             ),
             const SizedBox(height: 20),
-            ActiveTimeRangeControl(
-              startHour: area.startHour,
-              endHour: area.endHour,
-              rangeLabel: rangeLabel,
-              startHourLabel: startHourLabel,
-              endHourLabel: endHourLabel,
-              onChanged: onRangeChanged,
+            Row(
+              children: [
+                const Text('Aktive tidsrom'),
+                const Spacer(),
+                SegmentedButton<int>(
+                  segments: const [
+                    ButtonSegment<int>(value: 1, label: Text('1')),
+                    ButtonSegment<int>(value: 2, label: Text('2')),
+                  ],
+                  selected: <int>{area.activeWindows.length.clamp(1, 2)},
+                  onSelectionChanged: (selection) {
+                    if (selection.isEmpty) {
+                      return;
+                    }
+                    onWindowCountChanged(selection.first);
+                  },
+                ),
+              ],
             ),
+            const SizedBox(height: 12),
+            for (int index = 0; index < area.activeWindows.length; index++) ...[
+              if (index > 0) const SizedBox(height: 14),
+              ActiveTimeRangeControl(
+                title: area.activeWindows.length == 1
+                    ? 'Aktivt tidsrom'
+                    : 'Aktivt tidsrom ${index + 1}',
+                startHour: area.activeWindows[index].startHour,
+                endHour: area.activeWindows[index].endHour,
+                rangeLabel: _rangeLabel(
+                  area.activeWindows[index].startHour,
+                  area.activeWindows[index].endHour,
+                ),
+                startHourLabel: _hourLabel(area.activeWindows[index].startHour),
+                endHourLabel: _hourLabel(area.activeWindows[index].endHour),
+                onChanged: (values) => onRangeChanged(index, values),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  String _hourLabel(int hour) => '${hour.toString().padLeft(2, '0')}:00';
+
+  String _rangeLabel(int start, int end) {
+    return '${_hourLabel(start)} - ${_hourLabel(end)}';
   }
 }

@@ -1,11 +1,21 @@
 import 'package:companion_app/core/database/app_database.dart';
+import 'package:companion_app/core/models/focus_area.dart';
 import 'package:companion_app/core/models/modus.dart';
 import 'package:companion_app/core/settings/drift_focus_area_settings_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  setUpAll(() {
+    drift.driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+  });
+
+  tearDownAll(() {
+    drift.driftRuntimeOptions.dontWarnAboutMultipleDatabases = false;
+  });
+
   group('DriftFocusAreaSettingsRepository', () {
     test('returns null on fresh database', () async {
       final database = AppDatabase(NativeDatabase.memory());
@@ -37,6 +47,10 @@ void main() {
               enabled: true,
               startHour: 18,
               endHour: 22,
+              activeWindows: [
+                ActiveTimeWindow(startHour: 18, endHour: 20),
+                ActiveTimeWindow(startHour: 21, endHour: 22),
+              ],
               modus: Modus.sporty,
             ),
           ],
@@ -61,7 +75,12 @@ void main() {
 
       expect(study.enabled, isTrue);
       expect(study.startHour, 18);
-      expect(study.endHour, 22);
+      expect(study.endHour, 20);
+      expect(study.activeWindows, hasLength(2));
+      expect(study.activeWindows.first.startHour, 18);
+      expect(study.activeWindows.first.endHour, 20);
+      expect(study.activeWindows.last.startHour, 21);
+      expect(study.activeWindows.last.endHour, 22);
       expect(study.modus, Modus.sporty);
 
       await database.close();

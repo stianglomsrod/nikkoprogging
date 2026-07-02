@@ -11,6 +11,8 @@ import 'package:companion_app/core/feedback/feedback_item.dart';
 import 'package:companion_app/core/feedback/feedback_repository.dart';
 import 'package:companion_app/core/history/in_memory_history_repository.dart';
 import 'package:companion_app/core/events/companion_identity.dart';
+import 'package:companion_app/core/models/focus_area.dart';
+import 'package:companion_app/core/models/modus.dart';
 import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
@@ -91,6 +93,7 @@ class _InMemoryFeedbackRepository implements FeedbackRepository {
 CompanionApp _buildApp({
   FeedbackRepository? feedbackRepository,
   AppConfig appConfig = AppConfig.development,
+  FocusAreaSettingsStateSnapshot? initialFocusAreaSettingsState,
 }) {
   return CompanionApp(
     appConfig: appConfig,
@@ -99,6 +102,7 @@ CompanionApp _buildApp({
     companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
     companionIdentityRepository: _InMemoryCompanionIdentityRepository(),
     focusAreaSettingsRepository: _InMemoryFocusAreaSettingsRepository(),
+    initialFocusAreaSettingsState: initialFocusAreaSettingsState,
   );
 }
 
@@ -110,20 +114,75 @@ void main() {
     expect(find.text('Simuler neste prompt'), findsOneWidget);
     expect(find.byTooltip('Tilbakemelding'), findsOneWidget);
     expect(find.byTooltip('Innstillinger'), findsOneWidget);
+    expect(find.byTooltip('Søvnfunksjon'), findsNothing);
   });
 
-  testWidgets('tester-mode skjuler simuler-label men beholder flytknapp', (
+  testWidgets('tester-mode skjuler manuell promptknapp og starter flyt automatisk', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(_buildApp(appConfig: AppConfig.tester));
+    await tester.pumpWidget(
+      _buildApp(
+        appConfig: AppConfig.tester.copyWith(currentHourOverride: 18),
+      ),
+    );
+    await tester.pump();
 
     expect(find.text('Simuler neste prompt'), findsNothing);
-    expect(find.text('Neste forslag'), findsOneWidget);
-
-    await tester.tap(find.text('Neste forslag'));
-    await tester.pumpAndSettle();
+    expect(find.text('Neste forslag'), findsNothing);
 
     expect(find.text('Energisk'), findsOneWidget);
+  });
+
+  testWidgets('tester-mode respekterer study-vindu og viser ingen oppgave kl 16', (
+    WidgetTester tester,
+  ) async {
+    const studyOnlyState = FocusAreaSettingsStateSnapshot(
+      areas: <FocusAreaSettingState>[
+        FocusAreaSettingState(
+          id: 'household',
+          enabled: false,
+          startHour: 16,
+          endHour: 21,
+          modus: Modus.stabil,
+        ),
+        FocusAreaSettingState(
+          id: 'study',
+          enabled: true,
+          startHour: 18,
+          endHour: 20,
+          modus: Modus.avslappet,
+        ),
+        FocusAreaSettingState(
+          id: 'exercise',
+          enabled: false,
+          startHour: 15,
+          endHour: 19,
+          modus: Modus.sporty,
+        ),
+        FocusAreaSettingState(
+          id: 'reminders',
+          enabled: false,
+          startHour: 8,
+          endHour: 22,
+          modus: Modus.avslappet,
+        ),
+      ],
+      selectedAreaId: 'study',
+    );
+
+    await tester.pumpWidget(
+      _buildApp(
+        appConfig: AppConfig.tester.copyWith(currentHourOverride: 16),
+        initialFocusAreaSettingsState: studyOnlyState,
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Energisk'), findsNothing);
+    expect(
+      find.text('Hei. Fint å se deg. Jeg har ingen oppgaver til deg akkurat nå.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('tester-mode skjuler prototype-tid i innstillinger', (
@@ -145,7 +204,67 @@ void main() {
     await tester.tap(find.byTooltip('Innstillinger'));
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(
+      find.text('Prototype-tid'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
     expect(find.text('Prototype-tid'), findsOneWidget);
+  });
+
+  testWidgets('innstillinger viser to tidsrom nar fokusomrade har to vinduer', (
+    WidgetTester tester,
+  ) async {
+    const settingsState = FocusAreaSettingsStateSnapshot(
+      areas: <FocusAreaSettingState>[
+        FocusAreaSettingState(
+          id: 'household',
+          enabled: true,
+          startHour: 16,
+          endHour: 18,
+          activeWindows: <ActiveTimeWindow>[
+            ActiveTimeWindow(startHour: 16, endHour: 18),
+            ActiveTimeWindow(startHour: 20, endHour: 21),
+          ],
+          modus: Modus.stabil,
+        ),
+        FocusAreaSettingState(
+          id: 'study',
+          enabled: true,
+          startHour: 18,
+          endHour: 20,
+          modus: Modus.avslappet,
+        ),
+        FocusAreaSettingState(
+          id: 'exercise',
+          enabled: true,
+          startHour: 15,
+          endHour: 19,
+          modus: Modus.sporty,
+        ),
+        FocusAreaSettingState(
+          id: 'reminders',
+          enabled: true,
+          startHour: 8,
+          endHour: 22,
+          modus: Modus.avslappet,
+        ),
+      ],
+      selectedAreaId: 'household',
+    );
+
+    await tester.pumpWidget(
+      _buildApp(initialFocusAreaSettingsState: settingsState),
+    );
+
+    await tester.tap(find.byTooltip('Innstillinger'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Aktivt tidsrom 1'), findsOneWidget);
+    expect(find.text('Aktivt tidsrom 2'), findsOneWidget);
+    expect(find.byType(RangeSlider), findsNWidgets(2));
   });
 
   testWidgets('feedbackmodal validerer tom melding', (
@@ -193,6 +312,56 @@ void main() {
       'Appen hopper litt nar jeg gar tilbake.',
     );
     expect(feedbackRepository.items.first.screenContext, 'home');
+  });
+
+  testWidgets('sovnfunksjon låses opp etter ni fullforte og kan konfigureres', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp());
+
+    await _setAllFocusAreasToSporty(tester);
+
+    for (int i = 0; i < 8; i++) {
+      await _runSinglePromptAndFinish(
+        tester,
+        moodLabel: 'Ok',
+        done: true,
+        autoHandleSleepSoundEvent: true,
+      );
+    }
+
+    await _runSinglePromptAndFinish(
+      tester,
+      moodLabel: 'Ok',
+      done: true,
+      autoHandleSleepSoundEvent: false,
+    );
+
+    expect(find.text('Du har fått en ny funksjon'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('sleep-feature-check-now-button')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('sleep-feature-later-button')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('sleep-feature-later-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Du har fått en ny funksjon'), findsNothing);
+    expect(find.byTooltip('Søvnfunksjon'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Søvnfunksjon'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('sleep-feature-sheet')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('sleep-duration-option-20')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('sleep-sound-option-waves')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('sleep-feature-save-button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('sleep-feature-sheet')), findsNothing);
   });
 
   testWidgets('feedbackhistorikk viser lagrede innspill og detalj', (
@@ -298,7 +467,7 @@ void main() {
     expect(provider, isA<AssetImage>());
     expect(
       (provider as AssetImage).assetName,
-      startsWith('assets/animations/companion/idle/frame_'),
+      equals('assets/B1 - Breath.png'),
     );
     expect(
       _currentCompanionAnimationState(tester),
@@ -948,6 +1117,7 @@ Future<void> _runSinglePromptAndFinish(
   required bool done,
   bool autoHandleCompanionNameEvent = true,
   bool autoHandleUserNameEvent = true,
+  bool autoHandleSleepSoundEvent = true,
   bool autoHandleSymbolEvent = true,
   bool autoHandleBackgroundColorEvent = true,
 }) async {
@@ -979,6 +1149,15 @@ Future<void> _runSinglePromptAndFinish(
           .evaluate()
           .isNotEmpty) {
     await tester.tap(find.byKey(const ValueKey('user-name-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (autoHandleSleepSoundEvent &&
+      find
+          .byKey(const ValueKey('sleep-feature-later-button'))
+          .evaluate()
+          .isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('sleep-feature-later-button')));
     await tester.pumpAndSettle();
   }
 
@@ -1014,6 +1193,14 @@ Future<void> _dismissPendingIdentityEvents(WidgetTester tester) async {
       .evaluate()
       .isNotEmpty) {
     await tester.tap(find.byKey(const ValueKey('user-name-skip-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (find
+      .byKey(const ValueKey('sleep-feature-later-button'))
+      .evaluate()
+      .isNotEmpty) {
+    await tester.tap(find.byKey(const ValueKey('sleep-feature-later-button')));
     await tester.pumpAndSettle();
   }
 

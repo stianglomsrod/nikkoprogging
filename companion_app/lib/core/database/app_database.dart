@@ -29,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -59,6 +59,18 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(feedbackItems);
         await customStatement(
           'CREATE INDEX idx_feedback_items_created_at_ms ON feedback_items(created_at_ms)',
+        );
+      }
+      if (from < 6) {
+        await m.addColumn(
+          focusAreaSettingsStates,
+          focusAreaSettingsStates.activeWindowsJson,
+        );
+      }
+      if (from < 7) {
+        await m.addColumn(
+          companionIdentityStates,
+          companionIdentityStates.sleepSound,
         );
       }
     },

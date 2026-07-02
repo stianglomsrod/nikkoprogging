@@ -1,5 +1,55 @@
 import 'package:flutter/material.dart';
 
+enum CompanionSleepSoundOption {
+  none,
+  waves,
+  birds,
+  whiteNoise,
+  rain,
+  pinkNoise,
+  campfire,
+}
+
+extension CompanionSleepSoundOptionX on CompanionSleepSoundOption {
+  String get label {
+    switch (this) {
+      case CompanionSleepSoundOption.none:
+        return 'stille';
+      case CompanionSleepSoundOption.waves:
+        return 'bølger';
+      case CompanionSleepSoundOption.birds:
+        return 'fugler';
+      case CompanionSleepSoundOption.whiteNoise:
+        return 'hvitstøy';
+      case CompanionSleepSoundOption.rain:
+        return 'regn';
+      case CompanionSleepSoundOption.pinkNoise:
+        return 'rosa støy';
+      case CompanionSleepSoundOption.campfire:
+        return 'bål';
+    }
+  }
+
+  String? get assetPath {
+    switch (this) {
+      case CompanionSleepSoundOption.none:
+        return null;
+      case CompanionSleepSoundOption.waves:
+        return 'sounds/Bølger.mp3';
+      case CompanionSleepSoundOption.birds:
+        return 'sounds/Fugler.mp3';
+      case CompanionSleepSoundOption.whiteNoise:
+        return 'sounds/Hvitstøy.mp3';
+      case CompanionSleepSoundOption.rain:
+        return 'sounds/Rein.mp3';
+      case CompanionSleepSoundOption.pinkNoise:
+        return 'sounds/Rosa støy.mp3';
+      case CompanionSleepSoundOption.campfire:
+        return 'sounds/Bål.mp3';
+    }
+  }
+}
+
 enum CompanionSymbolOption { none, star, moon, leaf, heart, cloud, drop }
 
 extension CompanionSymbolOptionX on CompanionSymbolOption {

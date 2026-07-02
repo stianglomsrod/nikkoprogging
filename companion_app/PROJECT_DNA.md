@@ -102,6 +102,7 @@ Current implementation status:
 ### Per-focus-area configuration
 
 - Each focus area has its own active time window.
+- Each focus area can now have multiple active time windows.
 - Each focus area has its own `Modus`.
 - There is no single global day tempo.
 
@@ -112,6 +113,8 @@ Current implementation status:
 - `sporty` = 3 tasks/prompts
 
 Multiple focus areas may be active at the same time and their windows may overlap.
+
+Within one focus area, more than one active time window may also be configured.
 
 Example:
 
