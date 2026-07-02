@@ -1003,11 +1003,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        playerPanel,
-        const SizedBox(height: 8),
-        child,
-      ],
+      children: [playerPanel, const SizedBox(height: 8), child],
     );
   }
 
@@ -1567,7 +1563,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         );
       }
     } else if (_stage == PromptStage.mood) {
-      child = MoodStateView(onSelectMood: _selectMood, labelBuilder: _moodLabel);
+      child = MoodStateView(
+        onSelectMood: _selectMood,
+        labelBuilder: _moodLabel,
+      );
     } else if (_stage == PromptStage.task) {
       child = TaskStateView(
         hasTask: _currentTask != null,

@@ -6,7 +6,7 @@ class CompanionIdentityStates extends Table {
   TextColumn get companionName => text().nullable()();
   TextColumn get userName => text().nullable()();
   TextColumn get sleepSound => text().withDefault(const Constant('none'))();
-    TextColumn get backgroundMusic =>
+  TextColumn get backgroundMusic =>
       text().withDefault(const Constant('none'))();
   TextColumn get selectedSymbol => text().withDefault(const Constant('none'))();
   TextColumn get backgroundTone =>

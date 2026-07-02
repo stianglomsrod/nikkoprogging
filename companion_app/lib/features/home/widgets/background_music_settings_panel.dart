@@ -20,7 +20,8 @@ class BackgroundMusicSettingsPanel extends StatefulWidget {
       _BackgroundMusicSettingsPanelState();
 }
 
-class _BackgroundMusicSettingsPanelState extends State<BackgroundMusicSettingsPanel> {
+class _BackgroundMusicSettingsPanelState
+    extends State<BackgroundMusicSettingsPanel> {
   bool _isPreviewPlaying = false;
 
   @override
@@ -79,7 +80,9 @@ class _BackgroundMusicSettingsPanelState extends State<BackgroundMusicSettingsPa
               children: [
                 for (final option in CompanionBackgroundMusicOption.values)
                   ChoiceChip(
-                    key: ValueKey('settings-background-music-option-${option.name}'),
+                    key: ValueKey(
+                      'settings-background-music-option-${option.name}',
+                    ),
                     label: Text(option.label),
                     selected: widget.selected == option,
                     onSelected: (_) => _onSelected(option),

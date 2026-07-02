@@ -50,13 +50,7 @@ extension CompanionSleepSoundOptionX on CompanionSleepSoundOption {
   }
 }
 
-enum CompanionBackgroundMusicOption {
-  none,
-  paradiset,
-  space,
-  avslappet,
-  jazz,
-}
+enum CompanionBackgroundMusicOption { none, paradiset, space, avslappet, jazz }
 
 extension CompanionBackgroundMusicOptionX on CompanionBackgroundMusicOption {
   String get label {
