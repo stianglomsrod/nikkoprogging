@@ -1,5 +1,7 @@
 import 'package:companion_app/core/events/companion_identity.dart';
+import 'package:companion_app/core/feedback/feedback_repository.dart';
 import 'package:companion_app/core/models/focus_area.dart';
+import 'package:companion_app/features/feedback/feedback_action_button.dart';
 import 'package:companion_app/features/home/widgets/background_music_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/background_tone_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/companion_name_settings_panel.dart';
@@ -37,6 +39,7 @@ class SettingsResult {
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
     super.key,
+    required this.feedbackRepository,
     required this.focusAreas,
     required this.initialSelectedAreaId,
     required this.simulatedHour,
@@ -52,10 +55,12 @@ class SettingsPage extends StatefulWidget {
     required this.allowBackgroundToneEditing,
     required this.initialSymbol,
     required this.initialBackgroundTone,
+    this.feedbackScreenshotCapture,
     this.initialCompanionName,
     this.initialUserName,
   });
 
+  final FeedbackRepository feedbackRepository;
   final List<FocusArea> focusAreas;
   final String initialSelectedAreaId;
   final int simulatedHour;
@@ -73,12 +78,14 @@ class SettingsPage extends StatefulWidget {
   final String? initialUserName;
   final CompanionSymbolOption initialSymbol;
   final CompanionBackgroundTone initialBackgroundTone;
+  final FeedbackScreenshotCapture? feedbackScreenshotCapture;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final GlobalKey _feedbackCaptureKey = GlobalKey();
   late List<FocusArea> _localFocusAreas;
   late int _localHour;
   late String _selectedAreaId;
@@ -158,123 +165,135 @@ class _SettingsPageState extends State<SettingsPage> {
         centerTitle: true,
         title: const Text('Innstillinger'),
         actions: [
+          FeedbackActionButton(
+            feedbackRepository: widget.feedbackRepository,
+            captureKey: _feedbackCaptureKey,
+            captureScreenshot: widget.feedbackScreenshotCapture,
+            screenContext: 'settings',
+          ),
           TextButton(onPressed: _saveAndClose, child: const Text('Lagre')),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          FocusAreaCircleSelector(
-            focusAreas: _localFocusAreas,
-            selectedAreaId: _selectedAreaId,
-            onSelectArea: (areaId) {
-              setState(() {
-                _selectedAreaId = areaId;
-              });
-            },
-          ),
-          const SizedBox(height: 24),
-          FocusAreaSettingsPanel(
-            area: area,
-            onEnabledChanged: (value) {
-              _updateArea(
-                area.id,
-                (current) => current.copyWith(enabled: value),
-              );
-            },
-            onModusChanged: (mode) {
-              _updateArea(area.id, (current) => current.copyWith(modus: mode));
-            },
-            onWindowCountChanged: (count) {
-              _updateArea(
-                area.id,
-                (current) => current.copyWith(
-                  activeWindows: _resizeWindows(current.activeWindows, count),
-                ),
-              );
-            },
-            onRangeChanged: (index, values) {
-              final start = values.start.round().clamp(0, 23);
-              final rawEnd = values.end.round().clamp(1, 24);
-              final end = rawEnd <= start ? start + 1 : rawEnd;
-              _updateArea(
-                area.id,
-                (current) => current.copyWith(
-                  activeWindows: _replaceWindow(
-                    current.activeWindows,
-                    index,
-                    ActiveTimeWindow(startHour: start, endHour: end),
+      body: RepaintBoundary(
+        key: _feedbackCaptureKey,
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            FocusAreaCircleSelector(
+              focusAreas: _localFocusAreas,
+              selectedAreaId: _selectedAreaId,
+              onSelectArea: (areaId) {
+                setState(() {
+                  _selectedAreaId = areaId;
+                });
+              },
+            ),
+            const SizedBox(height: 24),
+            FocusAreaSettingsPanel(
+              area: area,
+              onEnabledChanged: (value) {
+                _updateArea(
+                  area.id,
+                  (current) => current.copyWith(enabled: value),
+                );
+              },
+              onModusChanged: (mode) {
+                _updateArea(
+                  area.id,
+                  (current) => current.copyWith(modus: mode),
+                );
+              },
+              onWindowCountChanged: (count) {
+                _updateArea(
+                  area.id,
+                  (current) => current.copyWith(
+                    activeWindows: _resizeWindows(current.activeWindows, count),
                   ),
-                ),
-              );
-            },
-          ),
-          if (widget.showPrototypeTimeControls) ...[
-            const SizedBox(height: 20),
-            PrototypeTimePanel(
-              hourLabel: _hourLabel(_localHour),
-              value: _localHour,
-              onChanged: (value) {
-                setState(() {
-                  _localHour = value;
-                });
+                );
+              },
+              onRangeChanged: (index, values) {
+                final start = values.start.round().clamp(0, 23);
+                final rawEnd = values.end.round().clamp(1, 24);
+                final end = rawEnd <= start ? start + 1 : rawEnd;
+                _updateArea(
+                  area.id,
+                  (current) => current.copyWith(
+                    activeWindows: _replaceWindow(
+                      current.activeWindows,
+                      index,
+                      ActiveTimeWindow(startHour: start, endHour: end),
+                    ),
+                  ),
+                );
               },
             ),
+            if (widget.showPrototypeTimeControls) ...[
+              const SizedBox(height: 20),
+              PrototypeTimePanel(
+                hourLabel: _hourLabel(_localHour),
+                value: _localHour,
+                onChanged: (value) {
+                  setState(() {
+                    _localHour = value;
+                  });
+                },
+              ),
+            ],
+            if (widget.allowCompanionNameEditing) ...[
+              const SizedBox(height: 20),
+              CompanionNameSettingsPanel(
+                initialName: _localCompanionName,
+                onChanged: (value) {
+                  _localCompanionName = value;
+                },
+              ),
+            ],
+            if (widget.allowUserNameEditing) ...[
+              const SizedBox(height: 20),
+              UserNameSettingsPanel(
+                initialName: _localUserName,
+                onChanged: (value) {
+                  _localUserName = value;
+                },
+              ),
+            ],
+            if (widget.allowSymbolEditing) ...[
+              const SizedBox(height: 20),
+              SymbolSettingsPanel(
+                selected: _localSymbol,
+                onChanged: (value) {
+                  setState(() {
+                    _localSymbol = value;
+                  });
+                },
+              ),
+            ],
+            if (widget.allowBackgroundMusicEditing) ...[
+              const SizedBox(height: 20),
+              BackgroundMusicSettingsPanel(
+                selected: _localBackgroundMusic,
+                onChanged: (value) {
+                  setState(() {
+                    _localBackgroundMusic = value;
+                  });
+                },
+                onPreview: widget.onPreviewBackgroundMusic,
+                onStopPreview: widget.onStopPreviewBackgroundMusic,
+              ),
+            ],
+            if (widget.allowBackgroundToneEditing) ...[
+              const SizedBox(height: 20),
+              BackgroundToneSettingsPanel(
+                selected: _localBackgroundTone,
+                onChanged: (value) {
+                  setState(() {
+                    _localBackgroundTone = value;
+                  });
+                },
+              ),
+            ],
           ],
-          if (widget.allowCompanionNameEditing) ...[
-            const SizedBox(height: 20),
-            CompanionNameSettingsPanel(
-              initialName: _localCompanionName,
-              onChanged: (value) {
-                _localCompanionName = value;
-              },
-            ),
-          ],
-          if (widget.allowUserNameEditing) ...[
-            const SizedBox(height: 20),
-            UserNameSettingsPanel(
-              initialName: _localUserName,
-              onChanged: (value) {
-                _localUserName = value;
-              },
-            ),
-          ],
-          if (widget.allowSymbolEditing) ...[
-            const SizedBox(height: 20),
-            SymbolSettingsPanel(
-              selected: _localSymbol,
-              onChanged: (value) {
-                setState(() {
-                  _localSymbol = value;
-                });
-              },
-            ),
-          ],
-          if (widget.allowBackgroundMusicEditing) ...[
-            const SizedBox(height: 20),
-            BackgroundMusicSettingsPanel(
-              selected: _localBackgroundMusic,
-              onChanged: (value) {
-                setState(() {
-                  _localBackgroundMusic = value;
-                });
-              },
-              onPreview: widget.onPreviewBackgroundMusic,
-              onStopPreview: widget.onStopPreviewBackgroundMusic,
-            ),
-          ],
-          if (widget.allowBackgroundToneEditing) ...[
-            const SizedBox(height: 20),
-            BackgroundToneSettingsPanel(
-              selected: _localBackgroundTone,
-              onChanged: (value) {
-                setState(() {
-                  _localBackgroundTone = value;
-                });
-              },
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }

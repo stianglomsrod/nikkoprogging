@@ -10,15 +10,18 @@ class FeedbackSheet extends StatefulWidget {
     super.key,
     required this.feedbackRepository,
     this.screenContext,
+    this.screenshotPath,
   });
 
   final FeedbackRepository feedbackRepository;
   final String? screenContext;
+  final String? screenshotPath;
 
   static Future<bool> show({
     required BuildContext context,
     required FeedbackRepository feedbackRepository,
     String? screenContext,
+    String? screenshotPath,
   }) async {
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -27,6 +30,7 @@ class FeedbackSheet extends StatefulWidget {
       builder: (_) => FeedbackSheet(
         feedbackRepository: feedbackRepository,
         screenContext: screenContext,
+        screenshotPath: screenshotPath,
       ),
     );
 
@@ -81,6 +85,7 @@ class _FeedbackSheetState extends State<FeedbackSheet> {
           type: _selectedType,
           message: message,
           screenContext: widget.screenContext,
+          screenshotPath: widget.screenshotPath,
         ),
       );
 

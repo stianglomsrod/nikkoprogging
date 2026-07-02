@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +19,7 @@ import 'package:companion_app/core/settings/focus_area_settings_repository.dart'
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
 import 'package:companion_app/features/home/widgets/dialogue_box.dart';
+import 'package:path/path.dart' as p;
 
 class _InMemoryCompanionEventStateRepository
     implements CompanionEventStateRepository {
@@ -94,6 +97,7 @@ CompanionApp _buildApp({
   FeedbackRepository? feedbackRepository,
   AppConfig appConfig = AppConfig.development,
   FocusAreaSettingsStateSnapshot? initialFocusAreaSettingsState,
+  Future<String?> Function()? feedbackScreenshotCapture,
 }) {
   return CompanionApp(
     appConfig: appConfig,
@@ -102,8 +106,86 @@ CompanionApp _buildApp({
     companionEventStateRepository: _InMemoryCompanionEventStateRepository(),
     companionIdentityRepository: _InMemoryCompanionIdentityRepository(),
     focusAreaSettingsRepository: _InMemoryFocusAreaSettingsRepository(),
+    feedbackScreenshotCapture: feedbackScreenshotCapture ?? (() async => null),
     initialFocusAreaSettingsState: initialFocusAreaSettingsState,
   );
+}
+
+Future<String> _createTestScreenshotFile() async {
+  final directory = await Directory.systemTemp.createTemp('feedback_test_');
+  final file = File(p.join(directory.path, 'screenshot.png'));
+  await file.writeAsBytes(const <int>[
+    137,
+    80,
+    78,
+    71,
+    13,
+    10,
+    26,
+    10,
+    0,
+    0,
+    0,
+    13,
+    73,
+    72,
+    68,
+    82,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1,
+    8,
+    6,
+    0,
+    0,
+    0,
+    31,
+    21,
+    196,
+    137,
+    0,
+    0,
+    0,
+    13,
+    73,
+    68,
+    65,
+    84,
+    120,
+    156,
+    99,
+    248,
+    255,
+    255,
+    63,
+    0,
+    5,
+    254,
+    2,
+    254,
+    167,
+    53,
+    129,
+    132,
+    0,
+    0,
+    0,
+    0,
+    73,
+    69,
+    78,
+    68,
+    174,
+    66,
+    96,
+    130,
+  ], flush: true);
+  return file.path;
 }
 
 void main() {
@@ -375,6 +457,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final feedbackRepository = _InMemoryFeedbackRepository();
+    final screenshotPath = await _createTestScreenshotFile();
     await feedbackRepository.append(
       const FeedbackItem(
         id: 'fb_a',
@@ -385,12 +468,13 @@ void main() {
       ),
     );
     await feedbackRepository.append(
-      const FeedbackItem(
+      FeedbackItem(
         id: 'fb_b',
         createdAtMs: 200,
         type: FeedbackType.suggestion,
         message: 'Kunne hatt litt tydeligere overskrifter.',
         screenContext: 'home',
+        screenshotPath: screenshotPath,
       ),
     );
 
@@ -410,7 +494,8 @@ void main() {
     );
 
     await tester.tap(find.byKey(const ValueKey('feedback-history-item-fb_b')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
 
     expect(find.text('Tilbakemelding'), findsOneWidget);
     expect(
@@ -430,10 +515,95 @@ void main() {
       findsOneWidget,
     );
     expect(
+      find.byKey(const ValueKey('feedback-detail-screenshot-title')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('feedback-detail-screenshot-image')),
+      findsOneWidget,
+    );
+    expect(
       find.text('Kunne hatt litt tydeligere overskrifter.'),
       findsOneWidget,
     );
     expect(find.textContaining('Fra: Hjem'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('feedback-detail-screenshot-fallback')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('feedback lagrer screenshotPath nar capture lykkes', (
+    WidgetTester tester,
+  ) async {
+    final feedbackRepository = _InMemoryFeedbackRepository();
+
+    await tester.pumpWidget(
+      _buildApp(
+        feedbackRepository: feedbackRepository,
+        feedbackScreenshotCapture: () async => 'C:/captures/app.png',
+      ),
+    );
+
+    await tester.tap(find.byTooltip('Tilbakemelding'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('feedback-message-input')),
+      'Her er en liten observasjon.',
+    );
+    await tester.tap(find.byKey(const ValueKey('feedback-send-button')));
+    await tester.pumpAndSettle();
+
+    expect(feedbackRepository.items, hasLength(1));
+    expect(
+      feedbackRepository.items.single.screenshotPath,
+      'C:/captures/app.png',
+    );
+  });
+
+  testWidgets('feedbackdetalj viser fallback nar skjermbilde mangler', (
+    WidgetTester tester,
+  ) async {
+    final feedbackRepository = _InMemoryFeedbackRepository();
+    await feedbackRepository.append(
+      const FeedbackItem(
+        id: 'fb_missing',
+        createdAtMs: 300,
+        type: FeedbackType.bug,
+        message: 'Skjermbildet finnes ikke lenger.',
+        screenContext: 'home',
+        screenshotPath: 'C:/missing/screenshot.png',
+      ),
+    );
+
+    await tester.pumpWidget(_buildApp(feedbackRepository: feedbackRepository));
+
+    await tester.tap(find.byTooltip('Tilbakemelding'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('feedback-history-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('feedback-history-item-fb_missing')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('feedback-detail-screenshot-fallback')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('ikke tilgjengelig lenger'), findsOneWidget);
+  });
+
+  testWidgets('feedbackknappen er tilgjengelig ogsa i historikkvisning', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(_buildApp());
+
+    await tester.tap(find.byTooltip('Historikk'));
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Tilbakemelding'), findsOneWidget);
   });
 
   testWidgets('feedbackhistorikk viser rolig tomtilstand nar ingen finnes', (

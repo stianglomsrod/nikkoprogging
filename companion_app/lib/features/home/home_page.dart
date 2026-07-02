@@ -24,8 +24,8 @@ import 'package:companion_app/core/scheduler/scheduler_engine.dart';
 import 'package:companion_app/core/seed_data/seed_data.dart';
 import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
+import 'package:companion_app/features/feedback/feedback_action_button.dart';
 import 'package:companion_app/features/history/history_screen.dart';
-import 'package:companion_app/features/feedback/feedback_sheet.dart';
 import 'package:companion_app/features/home/settings_page.dart';
 import 'package:companion_app/features/home/widgets/background_music_event_view.dart';
 import 'package:companion_app/features/home/widgets/background_color_event_view.dart';
@@ -67,6 +67,7 @@ class HomePage extends StatefulWidget {
     required this.companionEventStateRepository,
     required this.companionIdentityRepository,
     required this.focusAreaSettingsRepository,
+    this.feedbackScreenshotCapture,
     this.initialCompanionEventState,
     this.initialCompanionIdentityState,
     this.initialFocusAreaSettingsState,
@@ -78,6 +79,7 @@ class HomePage extends StatefulWidget {
   final CompanionEventStateRepository companionEventStateRepository;
   final CompanionIdentityRepository companionIdentityRepository;
   final FocusAreaSettingsRepository focusAreaSettingsRepository;
+  final FeedbackScreenshotCapture? feedbackScreenshotCapture;
   final CompanionEventStateSnapshot? initialCompanionEventState;
   final CompanionIdentityStateSnapshot? initialCompanionIdentityState;
   final FocusAreaSettingsStateSnapshot? initialFocusAreaSettingsState;
@@ -97,6 +99,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
   final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
+  final GlobalKey _feedbackCaptureKey = GlobalKey();
 
   late List<FocusArea> _focusAreas;
   late String _selectedSettingsAreaId;
@@ -1324,6 +1327,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     final result = await Navigator.of(context).push<SettingsResult>(
       MaterialPageRoute(
         builder: (_) => SettingsPage(
+          feedbackRepository: widget.feedbackRepository,
           focusAreas: _focusAreas,
           initialSelectedAreaId: _selectedSettingsAreaId,
           simulatedHour: _simulatedHour,
@@ -1375,6 +1379,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           initialUserName: _userName,
           initialSymbol: _companionSymbol,
           initialBackgroundTone: _backgroundTone,
+          feedbackScreenshotCapture: widget.feedbackScreenshotCapture,
         ),
       ),
     );
@@ -1408,25 +1413,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Future<void> _openHistory() async {
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) =>
-            HistoryScreen(historyRepository: widget.historyRepository),
+        builder: (_) => HistoryScreen(
+          historyRepository: widget.historyRepository,
+          feedbackRepository: widget.feedbackRepository,
+          feedbackScreenshotCapture: widget.feedbackScreenshotCapture,
+        ),
       ),
-    );
-  }
-
-  Future<void> _openFeedback() async {
-    final didSubmit = await FeedbackSheet.show(
-      context: context,
-      feedbackRepository: widget.feedbackRepository,
-      screenContext: 'home',
-    );
-
-    if (!mounted || !didSubmit) {
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Takk. Tilbakemeldingen er lagret.')),
     );
   }
 
@@ -1467,10 +1459,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             icon: const Icon(Icons.bar_chart_outlined),
             tooltip: 'Historikk',
           ),
-          IconButton(
-            onPressed: _openFeedback,
-            icon: const Icon(Icons.feedback_outlined),
-            tooltip: 'Tilbakemelding',
+          FeedbackActionButton(
+            feedbackRepository: widget.feedbackRepository,
+            captureKey: _feedbackCaptureKey,
+            captureScreenshot: widget.feedbackScreenshotCapture,
+            screenContext: 'home',
           ),
           IconButton(
             onPressed: _openSettings,
@@ -1480,18 +1473,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ],
       ),
       backgroundColor: _backgroundTone.scaffoldColor,
-      body: HomeLayoutShell(
-        dialogue: DialogueBox(text: _dialogueLines().join(' ')),
-        figure: _stage == PromptStage.result
-            ? GestureDetector(
-                onTap: _resetToIdle,
-                behavior: HitTestBehavior.translucent,
-                child: CompanionFigure(
-                  animationState: _companionAnimationState,
-                ),
-              )
-            : CompanionFigure(animationState: _companionAnimationState),
-        bottomActions: BottomActionArea(child: _buildBottomActionState()),
+      body: RepaintBoundary(
+        key: _feedbackCaptureKey,
+        child: HomeLayoutShell(
+          dialogue: DialogueBox(text: _dialogueLines().join(' ')),
+          figure: _stage == PromptStage.result
+              ? GestureDetector(
+                  onTap: _resetToIdle,
+                  behavior: HitTestBehavior.translucent,
+                  child: CompanionFigure(
+                    animationState: _companionAnimationState,
+                  ),
+                )
+              : CompanionFigure(animationState: _companionAnimationState),
+          bottomActions: BottomActionArea(child: _buildBottomActionState()),
+        ),
       ),
     );
   }

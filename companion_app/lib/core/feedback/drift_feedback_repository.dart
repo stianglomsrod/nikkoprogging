@@ -20,6 +20,7 @@ class DriftFeedbackRepository implements FeedbackRepository {
             message: item.message,
             appVersion: drift.Value(item.appVersion),
             screenContext: drift.Value(item.screenContext),
+            screenshotPath: drift.Value(item.screenshotPath),
             updatedAtMs: drift.Value(DateTime.now().millisecondsSinceEpoch),
           ),
         );
@@ -55,6 +56,7 @@ class DriftFeedbackRepository implements FeedbackRepository {
       message: row.message,
       appVersion: row.appVersion,
       screenContext: row.screenContext,
+      screenshotPath: row.screenshotPath,
     );
   }
 

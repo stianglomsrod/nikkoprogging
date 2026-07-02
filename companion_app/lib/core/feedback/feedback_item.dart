@@ -8,6 +8,7 @@ class FeedbackItem {
     required this.message,
     this.appVersion,
     this.screenContext,
+    this.screenshotPath,
   });
 
   final String id;
@@ -16,4 +17,5 @@ class FeedbackItem {
   final String message;
   final String? appVersion;
   final String? screenContext;
+  final String? screenshotPath;
 }

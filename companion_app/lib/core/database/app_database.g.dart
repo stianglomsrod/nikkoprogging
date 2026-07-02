@@ -2334,6 +2334,17 @@ class $FeedbackItemsTable extends FeedbackItems
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _screenshotPathMeta = const VerificationMeta(
+    'screenshotPath',
+  );
+  @override
+  late final GeneratedColumn<String> screenshotPath = GeneratedColumn<String>(
+    'screenshot_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _updatedAtMsMeta = const VerificationMeta(
     'updatedAtMs',
   );
@@ -2353,6 +2364,7 @@ class $FeedbackItemsTable extends FeedbackItems
     message,
     appVersion,
     screenContext,
+    screenshotPath,
     updatedAtMs,
   ];
   @override
@@ -2417,6 +2429,15 @@ class $FeedbackItemsTable extends FeedbackItems
         ),
       );
     }
+    if (data.containsKey('screenshot_path')) {
+      context.handle(
+        _screenshotPathMeta,
+        screenshotPath.isAcceptableOrUnknown(
+          data['screenshot_path']!,
+          _screenshotPathMeta,
+        ),
+      );
+    }
     if (data.containsKey('updated_at_ms')) {
       context.handle(
         _updatedAtMsMeta,
@@ -2459,6 +2480,10 @@ class $FeedbackItemsTable extends FeedbackItems
         DriftSqlType.string,
         data['${effectivePrefix}screen_context'],
       ),
+      screenshotPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}screenshot_path'],
+      ),
       updatedAtMs: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}updated_at_ms'],
@@ -2479,6 +2504,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
   final String message;
   final String? appVersion;
   final String? screenContext;
+  final String? screenshotPath;
   final int? updatedAtMs;
   const FeedbackItemRow({
     required this.id,
@@ -2487,6 +2513,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
     required this.message,
     this.appVersion,
     this.screenContext,
+    this.screenshotPath,
     this.updatedAtMs,
   });
   @override
@@ -2501,6 +2528,9 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
     }
     if (!nullToAbsent || screenContext != null) {
       map['screen_context'] = Variable<String>(screenContext);
+    }
+    if (!nullToAbsent || screenshotPath != null) {
+      map['screenshot_path'] = Variable<String>(screenshotPath);
     }
     if (!nullToAbsent || updatedAtMs != null) {
       map['updated_at_ms'] = Variable<int>(updatedAtMs);
@@ -2520,6 +2550,9 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
       screenContext: screenContext == null && nullToAbsent
           ? const Value.absent()
           : Value(screenContext),
+      screenshotPath: screenshotPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(screenshotPath),
       updatedAtMs: updatedAtMs == null && nullToAbsent
           ? const Value.absent()
           : Value(updatedAtMs),
@@ -2538,6 +2571,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
       message: serializer.fromJson<String>(json['message']),
       appVersion: serializer.fromJson<String?>(json['appVersion']),
       screenContext: serializer.fromJson<String?>(json['screenContext']),
+      screenshotPath: serializer.fromJson<String?>(json['screenshotPath']),
       updatedAtMs: serializer.fromJson<int?>(json['updatedAtMs']),
     );
   }
@@ -2551,6 +2585,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
       'message': serializer.toJson<String>(message),
       'appVersion': serializer.toJson<String?>(appVersion),
       'screenContext': serializer.toJson<String?>(screenContext),
+      'screenshotPath': serializer.toJson<String?>(screenshotPath),
       'updatedAtMs': serializer.toJson<int?>(updatedAtMs),
     };
   }
@@ -2562,6 +2597,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
     String? message,
     Value<String?> appVersion = const Value.absent(),
     Value<String?> screenContext = const Value.absent(),
+    Value<String?> screenshotPath = const Value.absent(),
     Value<int?> updatedAtMs = const Value.absent(),
   }) => FeedbackItemRow(
     id: id ?? this.id,
@@ -2572,6 +2608,9 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
     screenContext: screenContext.present
         ? screenContext.value
         : this.screenContext,
+    screenshotPath: screenshotPath.present
+        ? screenshotPath.value
+        : this.screenshotPath,
     updatedAtMs: updatedAtMs.present ? updatedAtMs.value : this.updatedAtMs,
   );
   FeedbackItemRow copyWithCompanion(FeedbackItemsCompanion data) {
@@ -2590,6 +2629,9 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
       screenContext: data.screenContext.present
           ? data.screenContext.value
           : this.screenContext,
+      screenshotPath: data.screenshotPath.present
+          ? data.screenshotPath.value
+          : this.screenshotPath,
       updatedAtMs: data.updatedAtMs.present
           ? data.updatedAtMs.value
           : this.updatedAtMs,
@@ -2605,6 +2647,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
           ..write('message: $message, ')
           ..write('appVersion: $appVersion, ')
           ..write('screenContext: $screenContext, ')
+          ..write('screenshotPath: $screenshotPath, ')
           ..write('updatedAtMs: $updatedAtMs')
           ..write(')'))
         .toString();
@@ -2618,6 +2661,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
     message,
     appVersion,
     screenContext,
+    screenshotPath,
     updatedAtMs,
   );
   @override
@@ -2630,6 +2674,7 @@ class FeedbackItemRow extends DataClass implements Insertable<FeedbackItemRow> {
           other.message == this.message &&
           other.appVersion == this.appVersion &&
           other.screenContext == this.screenContext &&
+          other.screenshotPath == this.screenshotPath &&
           other.updatedAtMs == this.updatedAtMs);
 }
 
@@ -2640,6 +2685,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
   final Value<String> message;
   final Value<String?> appVersion;
   final Value<String?> screenContext;
+  final Value<String?> screenshotPath;
   final Value<int?> updatedAtMs;
   final Value<int> rowid;
   const FeedbackItemsCompanion({
@@ -2649,6 +2695,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
     this.message = const Value.absent(),
     this.appVersion = const Value.absent(),
     this.screenContext = const Value.absent(),
+    this.screenshotPath = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -2659,6 +2706,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
     required String message,
     this.appVersion = const Value.absent(),
     this.screenContext = const Value.absent(),
+    this.screenshotPath = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -2672,6 +2720,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
     Expression<String>? message,
     Expression<String>? appVersion,
     Expression<String>? screenContext,
+    Expression<String>? screenshotPath,
     Expression<int>? updatedAtMs,
     Expression<int>? rowid,
   }) {
@@ -2682,6 +2731,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
       if (message != null) 'message': message,
       if (appVersion != null) 'app_version': appVersion,
       if (screenContext != null) 'screen_context': screenContext,
+      if (screenshotPath != null) 'screenshot_path': screenshotPath,
       if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
       if (rowid != null) 'rowid': rowid,
     });
@@ -2694,6 +2744,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
     Value<String>? message,
     Value<String?>? appVersion,
     Value<String?>? screenContext,
+    Value<String?>? screenshotPath,
     Value<int?>? updatedAtMs,
     Value<int>? rowid,
   }) {
@@ -2704,6 +2755,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
       message: message ?? this.message,
       appVersion: appVersion ?? this.appVersion,
       screenContext: screenContext ?? this.screenContext,
+      screenshotPath: screenshotPath ?? this.screenshotPath,
       updatedAtMs: updatedAtMs ?? this.updatedAtMs,
       rowid: rowid ?? this.rowid,
     );
@@ -2730,6 +2782,9 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
     if (screenContext.present) {
       map['screen_context'] = Variable<String>(screenContext.value);
     }
+    if (screenshotPath.present) {
+      map['screenshot_path'] = Variable<String>(screenshotPath.value);
+    }
     if (updatedAtMs.present) {
       map['updated_at_ms'] = Variable<int>(updatedAtMs.value);
     }
@@ -2748,6 +2803,7 @@ class FeedbackItemsCompanion extends UpdateCompanion<FeedbackItemRow> {
           ..write('message: $message, ')
           ..write('appVersion: $appVersion, ')
           ..write('screenContext: $screenContext, ')
+          ..write('screenshotPath: $screenshotPath, ')
           ..write('updatedAtMs: $updatedAtMs, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -3937,6 +3993,7 @@ typedef $$FeedbackItemsTableCreateCompanionBuilder =
       required String message,
       Value<String?> appVersion,
       Value<String?> screenContext,
+      Value<String?> screenshotPath,
       Value<int?> updatedAtMs,
       Value<int> rowid,
     });
@@ -3948,6 +4005,7 @@ typedef $$FeedbackItemsTableUpdateCompanionBuilder =
       Value<String> message,
       Value<String?> appVersion,
       Value<String?> screenContext,
+      Value<String?> screenshotPath,
       Value<int?> updatedAtMs,
       Value<int> rowid,
     });
@@ -3988,6 +4046,11 @@ class $$FeedbackItemsTableFilterComposer
 
   ColumnFilters<String> get screenContext => $composableBuilder(
     column: $table.screenContext,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get screenshotPath => $composableBuilder(
+    column: $table.screenshotPath,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4036,6 +4099,11 @@ class $$FeedbackItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get screenshotPath => $composableBuilder(
+    column: $table.screenshotPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get updatedAtMs => $composableBuilder(
     column: $table.updatedAtMs,
     builder: (column) => ColumnOrderings(column),
@@ -4074,6 +4142,11 @@ class $$FeedbackItemsTableAnnotationComposer
 
   GeneratedColumn<String> get screenContext => $composableBuilder(
     column: $table.screenContext,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get screenshotPath => $composableBuilder(
+    column: $table.screenshotPath,
     builder: (column) => column,
   );
 
@@ -4120,6 +4193,7 @@ class $$FeedbackItemsTableTableManager
                 Value<String> message = const Value.absent(),
                 Value<String?> appVersion = const Value.absent(),
                 Value<String?> screenContext = const Value.absent(),
+                Value<String?> screenshotPath = const Value.absent(),
                 Value<int?> updatedAtMs = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => FeedbackItemsCompanion(
@@ -4129,6 +4203,7 @@ class $$FeedbackItemsTableTableManager
                 message: message,
                 appVersion: appVersion,
                 screenContext: screenContext,
+                screenshotPath: screenshotPath,
                 updatedAtMs: updatedAtMs,
                 rowid: rowid,
               ),
@@ -4140,6 +4215,7 @@ class $$FeedbackItemsTableTableManager
                 required String message,
                 Value<String?> appVersion = const Value.absent(),
                 Value<String?> screenContext = const Value.absent(),
+                Value<String?> screenshotPath = const Value.absent(),
                 Value<int?> updatedAtMs = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => FeedbackItemsCompanion.insert(
@@ -4149,6 +4225,7 @@ class $$FeedbackItemsTableTableManager
                 message: message,
                 appVersion: appVersion,
                 screenContext: screenContext,
+                screenshotPath: screenshotPath,
                 updatedAtMs: updatedAtMs,
                 rowid: rowid,
               ),

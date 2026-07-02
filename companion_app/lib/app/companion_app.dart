@@ -4,6 +4,7 @@ import 'package:companion_app/core/events/companion_event_state_snapshot.dart';
 import 'package:companion_app/core/events/companion_identity_repository.dart';
 import 'package:companion_app/core/events/companion_identity_state_snapshot.dart';
 import 'package:companion_app/core/feedback/feedback_repository.dart';
+import 'package:companion_app/features/feedback/feedback_action_button.dart';
 import 'package:companion_app/core/history/history_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_repository.dart';
 import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.dart';
@@ -19,6 +20,7 @@ class CompanionApp extends StatelessWidget {
     required this.companionEventStateRepository,
     required this.companionIdentityRepository,
     required this.focusAreaSettingsRepository,
+    this.feedbackScreenshotCapture,
     this.initialCompanionEventState,
     this.initialCompanionIdentityState,
     this.initialFocusAreaSettingsState,
@@ -30,6 +32,7 @@ class CompanionApp extends StatelessWidget {
   final CompanionEventStateRepository companionEventStateRepository;
   final CompanionIdentityRepository companionIdentityRepository;
   final FocusAreaSettingsRepository focusAreaSettingsRepository;
+  final FeedbackScreenshotCapture? feedbackScreenshotCapture;
   final CompanionEventStateSnapshot? initialCompanionEventState;
   final CompanionIdentityStateSnapshot? initialCompanionIdentityState;
   final FocusAreaSettingsStateSnapshot? initialFocusAreaSettingsState;
@@ -98,6 +101,7 @@ class CompanionApp extends StatelessWidget {
         appConfig: appConfig,
         historyRepository: historyRepository,
         feedbackRepository: feedbackRepository,
+        feedbackScreenshotCapture: feedbackScreenshotCapture,
         companionEventStateRepository: companionEventStateRepository,
         initialCompanionEventState: initialCompanionEventState,
         companionIdentityRepository: companionIdentityRepository,

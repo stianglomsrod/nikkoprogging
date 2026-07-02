@@ -1,5 +1,6 @@
 import 'package:companion_app/core/feedback/feedback_item.dart';
 import 'package:companion_app/core/feedback/feedback_repository.dart';
+import 'package:companion_app/features/feedback/feedback_action_button.dart';
 import 'package:companion_app/features/feedback/feedback_history_detail_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -10,60 +11,77 @@ class FeedbackHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final feedbackCaptureKey = GlobalKey();
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Tilbakemeldinger')),
-      body: FutureBuilder<List<FeedbackItem>>(
-        future: feedbackRepository.readAll(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      appBar: AppBar(
+        title: const Text('Tilbakemeldinger'),
+        actions: [
+          FeedbackActionButton(
+            feedbackRepository: feedbackRepository,
+            captureKey: feedbackCaptureKey,
+            screenContext: 'feedback_history',
+          ),
+        ],
+      ),
+      body: RepaintBoundary(
+        key: feedbackCaptureKey,
+        child: FutureBuilder<List<FeedbackItem>>(
+          future: feedbackRepository.readAll(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  'Historikken er ikke tilgjengelig akkurat na. Prove gjerne igjen om litt.',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }
-
-          final items = snapshot.data ?? const <FeedbackItem>[];
-          if (items.isEmpty) {
-            return const _FeedbackHistoryEmptyState();
-          }
-
-          return ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: items.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return Card(
-                child: ListTile(
-                  key: ValueKey('feedback-history-item-${item.id}'),
-                  title: Text(_typeLabel(item.type)),
-                  subtitle: Text(
-                    item.message,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+            if (snapshot.hasError) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Text(
+                    'Historikken er ikke tilgjengelig akkurat na. Prove gjerne igjen om litt.',
+                    textAlign: TextAlign.center,
                   ),
-                  trailing: Text(_formatShortDate(item.createdAtMs)),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => FeedbackHistoryDetailScreen(item: item),
-                      ),
-                    );
-                  },
                 ),
               );
-            },
-          );
-        },
+            }
+
+            final items = snapshot.data ?? const <FeedbackItem>[];
+            if (items.isEmpty) {
+              return const _FeedbackHistoryEmptyState();
+            }
+
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              itemCount: items.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Card(
+                  child: ListTile(
+                    key: ValueKey('feedback-history-item-${item.id}'),
+                    title: Text(_typeLabel(item.type)),
+                    subtitle: Text(
+                      item.message,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: Text(_formatShortDate(item.createdAtMs)),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => FeedbackHistoryDetailScreen(
+                            item: item,
+                            feedbackRepository: feedbackRepository,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

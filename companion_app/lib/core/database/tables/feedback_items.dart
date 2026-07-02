@@ -10,6 +10,7 @@ class FeedbackItems extends Table {
 
   TextColumn get appVersion => text().nullable()();
   TextColumn get screenContext => text().nullable()();
+  TextColumn get screenshotPath => text().nullable()();
 
   IntColumn get updatedAtMs => integer().nullable()();
 

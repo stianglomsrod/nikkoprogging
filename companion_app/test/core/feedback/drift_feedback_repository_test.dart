@@ -28,6 +28,7 @@ void main() {
           message: 'Skjermen blinker i overgang.',
           appVersion: '1.0.0+1',
           screenContext: 'home',
+          screenshotPath: 'C:/temp/screenshot.png',
         ),
       );
 
@@ -39,6 +40,7 @@ void main() {
       expect(item.message, 'Skjermen blinker i overgang.');
       expect(item.appVersion, '1.0.0+1');
       expect(item.screenContext, 'home');
+      expect(item.screenshotPath, 'C:/temp/screenshot.png');
 
       await database.close();
     });
