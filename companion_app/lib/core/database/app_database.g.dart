@@ -1254,6 +1254,18 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
     requiredDuringInsert: false,
     defaultValue: const Constant('none'),
   );
+  static const VerificationMeta _backgroundMusicMeta = const VerificationMeta(
+    'backgroundMusic',
+  );
+  @override
+  late final GeneratedColumn<String> backgroundMusic = GeneratedColumn<String>(
+    'background_music',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('none'),
+  );
   static const VerificationMeta _selectedSymbolMeta = const VerificationMeta(
     'selectedSymbol',
   );
@@ -1296,6 +1308,7 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
     companionName,
     userName,
     sleepSound,
+    backgroundMusic,
     selectedSymbol,
     backgroundTone,
     updatedAtMs,
@@ -1334,6 +1347,15 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
       context.handle(
         _sleepSoundMeta,
         sleepSound.isAcceptableOrUnknown(data['sleep_sound']!, _sleepSoundMeta),
+      );
+    }
+    if (data.containsKey('background_music')) {
+      context.handle(
+        _backgroundMusicMeta,
+        backgroundMusic.isAcceptableOrUnknown(
+          data['background_music']!,
+          _backgroundMusicMeta,
+        ),
       );
     }
     if (data.containsKey('selected_symbol')) {
@@ -1391,6 +1413,10 @@ class $CompanionIdentityStatesTable extends CompanionIdentityStates
         DriftSqlType.string,
         data['${effectivePrefix}sleep_sound'],
       )!,
+      backgroundMusic: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}background_music'],
+      )!,
       selectedSymbol: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}selected_symbol'],
@@ -1418,6 +1444,7 @@ class CompanionIdentityStateRow extends DataClass
   final String? companionName;
   final String? userName;
   final String sleepSound;
+  final String backgroundMusic;
   final String selectedSymbol;
   final String backgroundTone;
   final int updatedAtMs;
@@ -1426,6 +1453,7 @@ class CompanionIdentityStateRow extends DataClass
     this.companionName,
     this.userName,
     required this.sleepSound,
+    required this.backgroundMusic,
     required this.selectedSymbol,
     required this.backgroundTone,
     required this.updatedAtMs,
@@ -1441,6 +1469,7 @@ class CompanionIdentityStateRow extends DataClass
       map['user_name'] = Variable<String>(userName);
     }
     map['sleep_sound'] = Variable<String>(sleepSound);
+    map['background_music'] = Variable<String>(backgroundMusic);
     map['selected_symbol'] = Variable<String>(selectedSymbol);
     map['background_tone'] = Variable<String>(backgroundTone);
     map['updated_at_ms'] = Variable<int>(updatedAtMs);
@@ -1457,6 +1486,7 @@ class CompanionIdentityStateRow extends DataClass
           ? const Value.absent()
           : Value(userName),
       sleepSound: Value(sleepSound),
+      backgroundMusic: Value(backgroundMusic),
       selectedSymbol: Value(selectedSymbol),
       backgroundTone: Value(backgroundTone),
       updatedAtMs: Value(updatedAtMs),
@@ -1473,6 +1503,7 @@ class CompanionIdentityStateRow extends DataClass
       companionName: serializer.fromJson<String?>(json['companionName']),
       userName: serializer.fromJson<String?>(json['userName']),
       sleepSound: serializer.fromJson<String>(json['sleepSound']),
+      backgroundMusic: serializer.fromJson<String>(json['backgroundMusic']),
       selectedSymbol: serializer.fromJson<String>(json['selectedSymbol']),
       backgroundTone: serializer.fromJson<String>(json['backgroundTone']),
       updatedAtMs: serializer.fromJson<int>(json['updatedAtMs']),
@@ -1486,6 +1517,7 @@ class CompanionIdentityStateRow extends DataClass
       'companionName': serializer.toJson<String?>(companionName),
       'userName': serializer.toJson<String?>(userName),
       'sleepSound': serializer.toJson<String>(sleepSound),
+      'backgroundMusic': serializer.toJson<String>(backgroundMusic),
       'selectedSymbol': serializer.toJson<String>(selectedSymbol),
       'backgroundTone': serializer.toJson<String>(backgroundTone),
       'updatedAtMs': serializer.toJson<int>(updatedAtMs),
@@ -1497,6 +1529,7 @@ class CompanionIdentityStateRow extends DataClass
     Value<String?> companionName = const Value.absent(),
     Value<String?> userName = const Value.absent(),
     String? sleepSound,
+    String? backgroundMusic,
     String? selectedSymbol,
     String? backgroundTone,
     int? updatedAtMs,
@@ -1507,6 +1540,7 @@ class CompanionIdentityStateRow extends DataClass
         : this.companionName,
     userName: userName.present ? userName.value : this.userName,
     sleepSound: sleepSound ?? this.sleepSound,
+    backgroundMusic: backgroundMusic ?? this.backgroundMusic,
     selectedSymbol: selectedSymbol ?? this.selectedSymbol,
     backgroundTone: backgroundTone ?? this.backgroundTone,
     updatedAtMs: updatedAtMs ?? this.updatedAtMs,
@@ -1523,6 +1557,9 @@ class CompanionIdentityStateRow extends DataClass
       sleepSound: data.sleepSound.present
           ? data.sleepSound.value
           : this.sleepSound,
+      backgroundMusic: data.backgroundMusic.present
+          ? data.backgroundMusic.value
+          : this.backgroundMusic,
       selectedSymbol: data.selectedSymbol.present
           ? data.selectedSymbol.value
           : this.selectedSymbol,
@@ -1542,6 +1579,7 @@ class CompanionIdentityStateRow extends DataClass
           ..write('companionName: $companionName, ')
           ..write('userName: $userName, ')
           ..write('sleepSound: $sleepSound, ')
+          ..write('backgroundMusic: $backgroundMusic, ')
           ..write('selectedSymbol: $selectedSymbol, ')
           ..write('backgroundTone: $backgroundTone, ')
           ..write('updatedAtMs: $updatedAtMs')
@@ -1555,6 +1593,7 @@ class CompanionIdentityStateRow extends DataClass
     companionName,
     userName,
     sleepSound,
+    backgroundMusic,
     selectedSymbol,
     backgroundTone,
     updatedAtMs,
@@ -1567,6 +1606,7 @@ class CompanionIdentityStateRow extends DataClass
           other.companionName == this.companionName &&
           other.userName == this.userName &&
           other.sleepSound == this.sleepSound &&
+          other.backgroundMusic == this.backgroundMusic &&
           other.selectedSymbol == this.selectedSymbol &&
           other.backgroundTone == this.backgroundTone &&
           other.updatedAtMs == this.updatedAtMs);
@@ -1578,6 +1618,7 @@ class CompanionIdentityStatesCompanion
   final Value<String?> companionName;
   final Value<String?> userName;
   final Value<String> sleepSound;
+  final Value<String> backgroundMusic;
   final Value<String> selectedSymbol;
   final Value<String> backgroundTone;
   final Value<int> updatedAtMs;
@@ -1586,6 +1627,7 @@ class CompanionIdentityStatesCompanion
     this.companionName = const Value.absent(),
     this.userName = const Value.absent(),
     this.sleepSound = const Value.absent(),
+    this.backgroundMusic = const Value.absent(),
     this.selectedSymbol = const Value.absent(),
     this.backgroundTone = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
@@ -1595,6 +1637,7 @@ class CompanionIdentityStatesCompanion
     this.companionName = const Value.absent(),
     this.userName = const Value.absent(),
     this.sleepSound = const Value.absent(),
+    this.backgroundMusic = const Value.absent(),
     this.selectedSymbol = const Value.absent(),
     this.backgroundTone = const Value.absent(),
     this.updatedAtMs = const Value.absent(),
@@ -1604,6 +1647,7 @@ class CompanionIdentityStatesCompanion
     Expression<String>? companionName,
     Expression<String>? userName,
     Expression<String>? sleepSound,
+    Expression<String>? backgroundMusic,
     Expression<String>? selectedSymbol,
     Expression<String>? backgroundTone,
     Expression<int>? updatedAtMs,
@@ -1613,6 +1657,7 @@ class CompanionIdentityStatesCompanion
       if (companionName != null) 'companion_name': companionName,
       if (userName != null) 'user_name': userName,
       if (sleepSound != null) 'sleep_sound': sleepSound,
+      if (backgroundMusic != null) 'background_music': backgroundMusic,
       if (selectedSymbol != null) 'selected_symbol': selectedSymbol,
       if (backgroundTone != null) 'background_tone': backgroundTone,
       if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
@@ -1624,6 +1669,7 @@ class CompanionIdentityStatesCompanion
     Value<String?>? companionName,
     Value<String?>? userName,
     Value<String>? sleepSound,
+    Value<String>? backgroundMusic,
     Value<String>? selectedSymbol,
     Value<String>? backgroundTone,
     Value<int>? updatedAtMs,
@@ -1633,6 +1679,7 @@ class CompanionIdentityStatesCompanion
       companionName: companionName ?? this.companionName,
       userName: userName ?? this.userName,
       sleepSound: sleepSound ?? this.sleepSound,
+      backgroundMusic: backgroundMusic ?? this.backgroundMusic,
       selectedSymbol: selectedSymbol ?? this.selectedSymbol,
       backgroundTone: backgroundTone ?? this.backgroundTone,
       updatedAtMs: updatedAtMs ?? this.updatedAtMs,
@@ -1654,6 +1701,9 @@ class CompanionIdentityStatesCompanion
     if (sleepSound.present) {
       map['sleep_sound'] = Variable<String>(sleepSound.value);
     }
+    if (backgroundMusic.present) {
+      map['background_music'] = Variable<String>(backgroundMusic.value);
+    }
     if (selectedSymbol.present) {
       map['selected_symbol'] = Variable<String>(selectedSymbol.value);
     }
@@ -1673,6 +1723,7 @@ class CompanionIdentityStatesCompanion
           ..write('companionName: $companionName, ')
           ..write('userName: $userName, ')
           ..write('sleepSound: $sleepSound, ')
+          ..write('backgroundMusic: $backgroundMusic, ')
           ..write('selectedSymbol: $selectedSymbol, ')
           ..write('backgroundTone: $backgroundTone, ')
           ..write('updatedAtMs: $updatedAtMs')
@@ -3320,6 +3371,7 @@ typedef $$CompanionIdentityStatesTableCreateCompanionBuilder =
       Value<String?> companionName,
       Value<String?> userName,
       Value<String> sleepSound,
+      Value<String> backgroundMusic,
       Value<String> selectedSymbol,
       Value<String> backgroundTone,
       Value<int> updatedAtMs,
@@ -3330,6 +3382,7 @@ typedef $$CompanionIdentityStatesTableUpdateCompanionBuilder =
       Value<String?> companionName,
       Value<String?> userName,
       Value<String> sleepSound,
+      Value<String> backgroundMusic,
       Value<String> selectedSymbol,
       Value<String> backgroundTone,
       Value<int> updatedAtMs,
@@ -3361,6 +3414,11 @@ class $$CompanionIdentityStatesTableFilterComposer
 
   ColumnFilters<String> get sleepSound => $composableBuilder(
     column: $table.sleepSound,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backgroundMusic => $composableBuilder(
+    column: $table.backgroundMusic,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3409,6 +3467,11 @@ class $$CompanionIdentityStatesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get backgroundMusic => $composableBuilder(
+    column: $table.backgroundMusic,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get selectedSymbol => $composableBuilder(
     column: $table.selectedSymbol,
     builder: (column) => ColumnOrderings(column),
@@ -3447,6 +3510,11 @@ class $$CompanionIdentityStatesTableAnnotationComposer
 
   GeneratedColumn<String> get sleepSound => $composableBuilder(
     column: $table.sleepSound,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get backgroundMusic => $composableBuilder(
+    column: $table.backgroundMusic,
     builder: (column) => column,
   );
 
@@ -3516,6 +3584,7 @@ class $$CompanionIdentityStatesTableTableManager
                 Value<String?> companionName = const Value.absent(),
                 Value<String?> userName = const Value.absent(),
                 Value<String> sleepSound = const Value.absent(),
+                Value<String> backgroundMusic = const Value.absent(),
                 Value<String> selectedSymbol = const Value.absent(),
                 Value<String> backgroundTone = const Value.absent(),
                 Value<int> updatedAtMs = const Value.absent(),
@@ -3524,6 +3593,7 @@ class $$CompanionIdentityStatesTableTableManager
                 companionName: companionName,
                 userName: userName,
                 sleepSound: sleepSound,
+                backgroundMusic: backgroundMusic,
                 selectedSymbol: selectedSymbol,
                 backgroundTone: backgroundTone,
                 updatedAtMs: updatedAtMs,
@@ -3534,6 +3604,7 @@ class $$CompanionIdentityStatesTableTableManager
                 Value<String?> companionName = const Value.absent(),
                 Value<String?> userName = const Value.absent(),
                 Value<String> sleepSound = const Value.absent(),
+                Value<String> backgroundMusic = const Value.absent(),
                 Value<String> selectedSymbol = const Value.absent(),
                 Value<String> backgroundTone = const Value.absent(),
                 Value<int> updatedAtMs = const Value.absent(),
@@ -3542,6 +3613,7 @@ class $$CompanionIdentityStatesTableTableManager
                 companionName: companionName,
                 userName: userName,
                 sleepSound: sleepSound,
+                backgroundMusic: backgroundMusic,
                 selectedSymbol: selectedSymbol,
                 backgroundTone: backgroundTone,
                 updatedAtMs: updatedAtMs,

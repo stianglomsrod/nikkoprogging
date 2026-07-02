@@ -8,7 +8,7 @@ class CompanionEventDefinitions {
   static const symbolId = 'event_symbol';
   static const backgroundColorId = 'event_background_color';
 
-  static const deferredAudioEventIds = <String>{backgroundMusicId};
+  static const deferredAudioEventIds = <String>{};
 
   static const orderedUnlocks = <CompanionEvent>[
     CompanionEvent(

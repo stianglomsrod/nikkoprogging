@@ -5,6 +5,7 @@ class CompanionIdentityStateSnapshot {
     required this.companionName,
     required this.userName,
     required this.sleepSound,
+    required this.backgroundMusic,
     required this.symbol,
     required this.backgroundTone,
   });
@@ -12,6 +13,7 @@ class CompanionIdentityStateSnapshot {
   final String? companionName;
   final String? userName;
   final CompanionSleepSoundOption sleepSound;
+  final CompanionBackgroundMusicOption backgroundMusic;
   final CompanionSymbolOption symbol;
   final CompanionBackgroundTone backgroundTone;
 }

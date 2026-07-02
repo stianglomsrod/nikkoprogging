@@ -1,5 +1,6 @@
 import 'package:companion_app/core/events/companion_identity.dart';
 import 'package:companion_app/core/models/focus_area.dart';
+import 'package:companion_app/features/home/widgets/background_music_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/background_tone_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/companion_name_settings_panel.dart';
 import 'package:companion_app/features/home/widgets/focus_area_circle_selector.dart';
@@ -17,6 +18,7 @@ class SettingsResult {
     required this.companionName,
     required this.userName,
     required this.sleepSound,
+    required this.backgroundMusic,
     required this.symbol,
     required this.backgroundTone,
   });
@@ -27,6 +29,7 @@ class SettingsResult {
   final String? companionName;
   final String? userName;
   final CompanionSleepSoundOption sleepSound;
+  final CompanionBackgroundMusicOption backgroundMusic;
   final CompanionSymbolOption symbol;
   final CompanionBackgroundTone backgroundTone;
 }
@@ -41,6 +44,10 @@ class SettingsPage extends StatefulWidget {
     required this.allowCompanionNameEditing,
     required this.allowUserNameEditing,
     required this.initialSleepSound,
+    required this.allowBackgroundMusicEditing,
+    required this.initialBackgroundMusic,
+    required this.onPreviewBackgroundMusic,
+    required this.onStopPreviewBackgroundMusic,
     required this.allowSymbolEditing,
     required this.allowBackgroundToneEditing,
     required this.initialSymbol,
@@ -56,6 +63,10 @@ class SettingsPage extends StatefulWidget {
   final bool allowCompanionNameEditing;
   final bool allowUserNameEditing;
   final CompanionSleepSoundOption initialSleepSound;
+  final bool allowBackgroundMusicEditing;
+  final CompanionBackgroundMusicOption initialBackgroundMusic;
+  final ValueChanged<CompanionBackgroundMusicOption> onPreviewBackgroundMusic;
+  final VoidCallback onStopPreviewBackgroundMusic;
   final bool allowSymbolEditing;
   final bool allowBackgroundToneEditing;
   final String? initialCompanionName;
@@ -74,6 +85,7 @@ class _SettingsPageState extends State<SettingsPage> {
   late String _localCompanionName;
   late String _localUserName;
   late CompanionSleepSoundOption _localSleepSound;
+  late CompanionBackgroundMusicOption _localBackgroundMusic;
   late CompanionSymbolOption _localSymbol;
   late CompanionBackgroundTone _localBackgroundTone;
 
@@ -101,6 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
     _localCompanionName = widget.initialCompanionName ?? '';
     _localUserName = widget.initialUserName ?? '';
     _localSleepSound = widget.initialSleepSound;
+    _localBackgroundMusic = widget.initialBackgroundMusic;
     _localSymbol = widget.initialSymbol;
     _localBackgroundTone = widget.initialBackgroundTone;
   }
@@ -121,6 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
             : normalizedCompanionName,
         userName: normalizedUserName.isEmpty ? null : normalizedUserName,
         sleepSound: _localSleepSound,
+        backgroundMusic: _localBackgroundMusic,
         symbol: _localSymbol,
         backgroundTone: _localBackgroundTone,
       ),
@@ -234,6 +248,19 @@ class _SettingsPageState extends State<SettingsPage> {
                   _localSymbol = value;
                 });
               },
+            ),
+          ],
+          if (widget.allowBackgroundMusicEditing) ...[
+            const SizedBox(height: 20),
+            BackgroundMusicSettingsPanel(
+              selected: _localBackgroundMusic,
+              onChanged: (value) {
+                setState(() {
+                  _localBackgroundMusic = value;
+                });
+              },
+              onPreview: widget.onPreviewBackgroundMusic,
+              onStopPreview: widget.onStopPreviewBackgroundMusic,
             ),
           ],
           if (widget.allowBackgroundToneEditing) ...[

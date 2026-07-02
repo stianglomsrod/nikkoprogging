@@ -19,6 +19,7 @@ void main() {
           companionName: 'Luna',
           userName: 'Eli',
           sleepSound: CompanionSleepSoundOption.waves,
+          backgroundMusic: CompanionBackgroundMusicOption.space,
           symbol: CompanionSymbolOption.moon,
           backgroundTone: CompanionBackgroundTone.deepGreen,
         ),
@@ -29,6 +30,7 @@ void main() {
       expect(after!.companionName, 'Luna');
       expect(after.userName, 'Eli');
       expect(after.sleepSound, CompanionSleepSoundOption.waves);
+      expect(after.backgroundMusic, CompanionBackgroundMusicOption.space);
       expect(after.symbol, CompanionSymbolOption.moon);
       expect(after.backgroundTone, CompanionBackgroundTone.deepGreen);
 
@@ -44,6 +46,7 @@ void main() {
           companionName: null,
           userName: null,
           sleepSound: CompanionSleepSoundOption.none,
+          backgroundMusic: CompanionBackgroundMusicOption.none,
           symbol: CompanionSymbolOption.none,
           backgroundTone: CompanionBackgroundTone.defaultDark,
         ),
@@ -54,6 +57,7 @@ void main() {
       expect(after!.companionName, isNull);
       expect(after.userName, isNull);
       expect(after.sleepSound, CompanionSleepSoundOption.none);
+      expect(after.backgroundMusic, CompanionBackgroundMusicOption.none);
       expect(after.symbol, CompanionSymbolOption.none);
       expect(after.backgroundTone, CompanionBackgroundTone.defaultDark);
 

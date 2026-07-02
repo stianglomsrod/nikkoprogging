@@ -35,17 +35,57 @@ extension CompanionSleepSoundOptionX on CompanionSleepSoundOption {
       case CompanionSleepSoundOption.none:
         return null;
       case CompanionSleepSoundOption.waves:
-        return 'sounds/Bølger.mp3';
+        return 'sounds/sleep/Bølger.mp3';
       case CompanionSleepSoundOption.birds:
-        return 'sounds/Fugler.mp3';
+        return 'sounds/sleep/Fugler.mp3';
       case CompanionSleepSoundOption.whiteNoise:
-        return 'sounds/Hvitstøy.mp3';
+        return 'sounds/sleep/Hvitstøy.mp3';
       case CompanionSleepSoundOption.rain:
-        return 'sounds/Rein.mp3';
+        return 'sounds/sleep/Rein.mp3';
       case CompanionSleepSoundOption.pinkNoise:
-        return 'sounds/Rosa støy.mp3';
+        return 'sounds/sleep/Rosa støy.mp3';
       case CompanionSleepSoundOption.campfire:
-        return 'sounds/Bål.mp3';
+        return 'sounds/sleep/Bål.mp3';
+    }
+  }
+}
+
+enum CompanionBackgroundMusicOption {
+  none,
+  paradiset,
+  space,
+  avslappet,
+  jazz,
+}
+
+extension CompanionBackgroundMusicOptionX on CompanionBackgroundMusicOption {
+  String get label {
+    switch (this) {
+      case CompanionBackgroundMusicOption.none:
+        return 'ingen';
+      case CompanionBackgroundMusicOption.paradiset:
+        return 'paradis';
+      case CompanionBackgroundMusicOption.space:
+        return 'space';
+      case CompanionBackgroundMusicOption.avslappet:
+        return 'avslappet';
+      case CompanionBackgroundMusicOption.jazz:
+        return 'jazz';
+    }
+  }
+
+  String? get assetPath {
+    switch (this) {
+      case CompanionBackgroundMusicOption.none:
+        return null;
+      case CompanionBackgroundMusicOption.paradiset:
+        return 'sounds/background_music/Idle paradis.mp3';
+      case CompanionBackgroundMusicOption.space:
+        return 'sounds/background_music/Idle space.mp3';
+      case CompanionBackgroundMusicOption.avslappet:
+        return 'sounds/background_music/Idle avslappet.mp3';
+      case CompanionBackgroundMusicOption.jazz:
+        return 'sounds/background_music/Idle Jazz.mp3';
     }
   }
 }

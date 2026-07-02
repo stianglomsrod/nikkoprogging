@@ -41,7 +41,9 @@ class _SleepSoundFeatureSheetState extends State<SleepSoundFeatureSheet> {
 
   @override
   void dispose() {
-    widget.onStopPreview();
+    if (_isPreviewPlaying) {
+      widget.onStopPreview();
+    }
     super.dispose();
   }
 
@@ -76,13 +78,19 @@ class _SleepSoundFeatureSheetState extends State<SleepSoundFeatureSheet> {
   }
 
   void _saveAndClose() {
-    widget.onStopPreview();
+    if (_isPreviewPlaying) {
+      widget.onStopPreview();
+      _isPreviewPlaying = false;
+    }
     widget.onSave(_selectedSound, _selectedDurationMinutes);
     Navigator.of(context).pop();
   }
 
   void _close() {
-    widget.onStopPreview();
+    if (_isPreviewPlaying) {
+      widget.onStopPreview();
+      _isPreviewPlaying = false;
+    }
     Navigator.of(context).pop();
   }
 

@@ -65,15 +65,9 @@ flutter:
 
   assets:
     - assets/figures/companion_figur.png
-    - assets/B1 - Breath.png
-    - assets/B2 - Breath.png
-    - assets/C1 - Blink.png
-    - assets/C2 - Blink.png
-    - assets/C3 - Blink.png
-    - assets/D1 - Smile.png
-    - assets/D2 - Smile.png
-    - assets/D3 - Smile.png
-    - assets/sounds/
+    - assets/figures/companion/
+    - assets/sounds/sleep/
+    - assets/sounds/background_music/
     - assets/animations/companion/idle/
     - assets/animations/companion/happy/
     - assets/animations/companion/sleep/

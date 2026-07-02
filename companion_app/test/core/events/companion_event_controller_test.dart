@@ -153,7 +153,7 @@ void main() {
       );
     });
 
-    test('consumeDeferredAudioPendingEvents skips only background music', () {
+    test('background music event remains pending until explicitly handled', () {
       final controller = CompanionEventController();
 
       for (int i = 0; i < 18; i++) {
@@ -177,24 +177,19 @@ void main() {
       controller.consumeDeferredAudioPendingEvents();
 
       expect(
-        controller.isEventSkipped(CompanionEventDefinitions.backgroundMusicId),
-        isTrue,
+        controller.pendingEvent?.id,
+        CompanionEventDefinitions.backgroundMusicId,
       );
-
-      expect(controller.pendingEvent?.id, CompanionEventDefinitions.symbolId);
 
       controller.markPendingEventHandled(skipped: false);
+      expect(controller.pendingEvent?.id, CompanionEventDefinitions.symbolId);
       expect(
-        controller.pendingEvent?.id,
-        CompanionEventDefinitions.backgroundColorId,
-      );
-      expect(
-        controller.isEventHandled(CompanionEventDefinitions.symbolId),
+        controller.isEventHandled(CompanionEventDefinitions.backgroundMusicId),
         isTrue,
       );
     });
 
-    test('deferred-audio consumption unblocks later symbol event', () {
+    test('background music skip still unblocks later symbol event', () {
       final controller = CompanionEventController();
 
       for (int i = 0; i < 15; i++) {
@@ -213,7 +208,8 @@ void main() {
         controller.pendingEvent?.id,
         CompanionEventDefinitions.backgroundMusicId,
       );
-      controller.consumeDeferredAudioPendingEvents();
+
+      controller.markPendingEventHandled(skipped: true);
       expect(controller.pendingEvent?.id, CompanionEventDefinitions.symbolId);
     });
 

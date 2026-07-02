@@ -27,6 +27,7 @@ import 'package:companion_app/core/settings/focus_area_settings_state_snapshot.d
 import 'package:companion_app/features/history/history_screen.dart';
 import 'package:companion_app/features/feedback/feedback_sheet.dart';
 import 'package:companion_app/features/home/settings_page.dart';
+import 'package:companion_app/features/home/widgets/background_music_event_view.dart';
 import 'package:companion_app/features/home/widgets/background_color_event_view.dart';
 import 'package:companion_app/features/home/widgets/bottom_action_area.dart';
 import 'package:companion_app/features/home/widgets/companion_figure.dart';
@@ -52,6 +53,7 @@ enum PromptStage {
   companionNameEvent,
   userNameEvent,
   sleepSoundEvent,
+  backgroundMusicEvent,
   symbolEvent,
   backgroundColorEvent,
 }
@@ -92,6 +94,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final TaskSelector _selector = TaskSelector();
   final CompanionEventController _companionEvents = CompanionEventController();
   final AudioPlayer _sleepSoundPlayer = AudioPlayer();
+  final AudioPlayer _backgroundMusicPlayer = AudioPlayer();
   final EnergiskChainController _energiskChain = EnergiskChainController();
   final Random _random = Random();
 
@@ -112,6 +115,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String? _companionName;
   String? _userName;
   CompanionSleepSoundOption _sleepSound = CompanionSleepSoundOption.none;
+  CompanionBackgroundMusicOption _backgroundMusic =
+      CompanionBackgroundMusicOption.none;
   int _sleepSoundDurationMinutes = 15;
   CompanionSymbolOption _companionSymbol = CompanionSymbolOption.none;
   CompanionBackgroundTone _backgroundTone = CompanionBackgroundTone.defaultDark;
@@ -122,7 +127,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Timer? _happyResetTimer;
   Timer? _autoPromptTimer;
   Timer? _sleepSoundStopTimer;
+  Timer? _sleepSoundProgressTicker;
   DateTime? _sleepSoundStopAt;
+  Duration _sleepSoundSessionDuration = Duration.zero;
+  bool _isBackgroundMusicPlaying = false;
+  bool _backgroundMusicSyncScheduled = false;
+  bool _isBackgroundMusicPreviewing = false;
 
   @override
   void initState() {
@@ -147,11 +157,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       _companionName = initialCompanionIdentityState.companionName;
       _userName = initialCompanionIdentityState.userName;
       _sleepSound = initialCompanionIdentityState.sleepSound;
+      _backgroundMusic = initialCompanionIdentityState.backgroundMusic;
       _companionSymbol = initialCompanionIdentityState.symbol;
       _backgroundTone = initialCompanionIdentityState.backgroundTone;
     }
 
     unawaited(_sleepSoundPlayer.setReleaseMode(ReleaseMode.loop));
+    unawaited(_backgroundMusicPlayer.setReleaseMode(ReleaseMode.loop));
 
     if (widget.appConfig.autoPromptWhenIdle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -227,6 +239,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _happyResetTimer?.cancel();
     _autoPromptTimer?.cancel();
     _sleepSoundStopTimer?.cancel();
+    _sleepSoundProgressTicker?.cancel();
+    unawaited(_backgroundMusicPlayer.dispose());
     unawaited(_sleepSoundPlayer.dispose());
     super.dispose();
   }
@@ -235,6 +249,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _resyncSleepSoundStopTimer();
+      unawaited(_syncBackgroundMusicPlayback());
     }
   }
 
@@ -527,6 +542,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         CompanionEventDefinitions.sleepSoundId;
   }
 
+  bool _hasPendingBackgroundMusicEvent() {
+    return _companionEvents.pendingEvent?.id ==
+        CompanionEventDefinitions.backgroundMusicId;
+  }
+
   bool _hasPendingSymbolEvent() {
     return _companionEvents.pendingEvent?.id ==
         CompanionEventDefinitions.symbolId;
@@ -649,6 +669,98 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
   }
 
+  bool _shouldPlayBackgroundMusic() {
+    return _stage == PromptStage.idle &&
+        _backgroundMusic != CompanionBackgroundMusicOption.none &&
+        _sleepSoundStopAt == null;
+  }
+
+  Future<void> _safePlayBackgroundMusicAsset(String assetPath) async {
+    try {
+      await _backgroundMusicPlayer.setReleaseMode(ReleaseMode.loop);
+      await _backgroundMusicPlayer.play(AssetSource(assetPath));
+    } on MissingPluginException {
+      // Audio plugins are not available in widget tests.
+    }
+  }
+
+  Future<void> _safeStopBackgroundMusicPlayer() async {
+    try {
+      await _backgroundMusicPlayer.stop();
+    } on MissingPluginException {
+      // Audio plugins are not available in widget tests.
+    }
+  }
+
+  Future<void> _syncBackgroundMusicPlayback() async {
+    if (_isBackgroundMusicPreviewing) {
+      return;
+    }
+
+    final shouldPlay = _shouldPlayBackgroundMusic();
+    if (shouldPlay) {
+      if (_isBackgroundMusicPlaying) {
+        return;
+      }
+
+      final assetPath = _backgroundMusic.assetPath;
+      if (assetPath == null) {
+        return;
+      }
+
+      await _safePlayBackgroundMusicAsset(assetPath);
+      _isBackgroundMusicPlaying = true;
+      return;
+    }
+
+    if (!_isBackgroundMusicPlaying) {
+      return;
+    }
+
+    await _safeStopBackgroundMusicPlayer();
+    _isBackgroundMusicPlaying = false;
+  }
+
+  Future<void> _previewBackgroundMusic(
+    CompanionBackgroundMusicOption option,
+  ) async {
+    await _safeStopBackgroundMusicPlayer();
+    _isBackgroundMusicPlaying = false;
+
+    final assetPath = option.assetPath;
+    if (assetPath == null) {
+      _isBackgroundMusicPreviewing = false;
+      return;
+    }
+
+    await _safePlayBackgroundMusicAsset(assetPath);
+    _isBackgroundMusicPreviewing = true;
+  }
+
+  Future<void> _stopBackgroundMusicPreview() async {
+    if (!_isBackgroundMusicPreviewing) {
+      return;
+    }
+
+    await _safeStopBackgroundMusicPlayer();
+    _isBackgroundMusicPreviewing = false;
+    await _syncBackgroundMusicPlayback();
+  }
+
+  void _scheduleBackgroundMusicSync() {
+    if (_backgroundMusicSyncScheduled) {
+      return;
+    }
+    _backgroundMusicSyncScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _backgroundMusicSyncScheduled = false;
+      if (!mounted) {
+        return;
+      }
+      unawaited(_syncBackgroundMusicPlayback());
+    });
+  }
+
   void _applySleepFeatureSelection(
     CompanionSleepSoundOption sound,
     int durationMinutes,
@@ -673,7 +785,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }) async {
     _sleepSoundStopTimer?.cancel();
     _sleepSoundStopTimer = null;
-    _sleepSoundStopAt = null;
+    _sleepSoundProgressTicker?.cancel();
+    if (mounted) {
+      setState(() {
+        _sleepSoundStopAt = null;
+        _sleepSoundSessionDuration = Duration.zero;
+      });
+    } else {
+      _sleepSoundStopAt = null;
+      _sleepSoundSessionDuration = Duration.zero;
+    }
 
     await _safeStopSleepSoundPlayer();
 
@@ -682,20 +803,73 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return;
     }
 
-    await _safePlaySleepSoundAsset(assetPath);
-
     final stopAt = DateTime.now().add(duration);
-    _sleepSoundStopAt = stopAt;
+    if (mounted) {
+      setState(() {
+        _sleepSoundStopAt = stopAt;
+        _sleepSoundSessionDuration = duration;
+      });
+    } else {
+      _sleepSoundStopAt = stopAt;
+      _sleepSoundSessionDuration = duration;
+    }
+
+    _startSleepSoundProgressTicker();
+
     _sleepSoundStopTimer = Timer(duration, () {
       unawaited(_stopTimedSleepSoundSession());
     });
+
+    await _safeStopBackgroundMusicPlayer();
+    _isBackgroundMusicPlaying = false;
+
+    await _safePlaySleepSoundAsset(assetPath);
   }
 
   Future<void> _stopTimedSleepSoundSession() async {
     _sleepSoundStopTimer?.cancel();
     _sleepSoundStopTimer = null;
-    _sleepSoundStopAt = null;
+    _sleepSoundProgressTicker?.cancel();
+    _sleepSoundProgressTicker = null;
+    if (mounted) {
+      setState(() {
+        _sleepSoundStopAt = null;
+        _sleepSoundSessionDuration = Duration.zero;
+      });
+    } else {
+      _sleepSoundStopAt = null;
+      _sleepSoundSessionDuration = Duration.zero;
+    }
     await _safeStopSleepSoundPlayer();
+    await _syncBackgroundMusicPlayback();
+  }
+
+  void _startSleepSoundProgressTicker() {
+    _sleepSoundProgressTicker?.cancel();
+    if (_sleepSoundStopAt == null) {
+      return;
+    }
+
+    _sleepSoundProgressTicker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) {
+        return;
+      }
+
+      final stopAt = _sleepSoundStopAt;
+      if (stopAt == null) {
+        _sleepSoundProgressTicker?.cancel();
+        _sleepSoundProgressTicker = null;
+        return;
+      }
+
+      final remaining = stopAt.difference(DateTime.now());
+      if (remaining <= Duration.zero) {
+        unawaited(_stopTimedSleepSoundSession());
+        return;
+      }
+
+      setState(() {});
+    });
   }
 
   void _resyncSleepSoundStopTimer() {
@@ -714,6 +888,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     _sleepSoundStopTimer = Timer(remaining, () {
       unawaited(_stopTimedSleepSoundSession());
     });
+
+    _startSleepSoundProgressTicker();
   }
 
   bool _isSleepFeatureUnlocked() {
@@ -742,8 +918,97 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         );
       },
     );
+  }
 
-    unawaited(_stopSleepSoundPreview());
+  Duration? _remainingSleepSoundDuration() {
+    final stopAt = _sleepSoundStopAt;
+    if (stopAt == null) {
+      return null;
+    }
+
+    final remaining = stopAt.difference(DateTime.now());
+    if (remaining <= Duration.zero) {
+      return Duration.zero;
+    }
+    return remaining;
+  }
+
+  double _sleepSoundProgress() {
+    if (_sleepSoundSessionDuration <= Duration.zero) {
+      return 0;
+    }
+
+    final remaining = _remainingSleepSoundDuration() ?? Duration.zero;
+    final totalMs = _sleepSoundSessionDuration.inMilliseconds;
+    if (totalMs <= 0) {
+      return 0;
+    }
+
+    final remainingMs = remaining.inMilliseconds.clamp(0, totalMs);
+    return ((totalMs - remainingMs) / totalMs).clamp(0, 1);
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    final secondsPadded = seconds.toString().padLeft(2, '0');
+    return '$minutes:$secondsPadded';
+  }
+
+  Widget _buildSleepPlaybackPanel() {
+    final remaining = _remainingSleepSoundDuration();
+    if (remaining == null || _sleepSound == CompanionSleepSoundOption.none) {
+      return const SizedBox.shrink();
+    }
+
+    final progress = _sleepSoundProgress();
+    return Card(
+      key: const ValueKey('sleep-player-panel'),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Søvnlyd aktiv (${_sleepSound.label})',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 6),
+            Text('Gjenstår ${_formatDuration(remaining)}'),
+            const SizedBox(height: 10),
+            LinearProgressIndicator(
+              key: const ValueKey('sleep-player-progress'),
+              value: progress,
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton(
+              key: const ValueKey('sleep-player-stop-button'),
+              onPressed: () {
+                unawaited(_stopTimedSleepSoundSession());
+              },
+              child: const Text('Skru av'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _wrapBottomActionWithSleepPlayer(Widget child) {
+    final playerPanel = _buildSleepPlaybackPanel();
+    if (playerPanel is SizedBox) {
+      return child;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        playerPanel,
+        const SizedBox(height: 8),
+        child,
+      ],
+    );
   }
 
   Future<void> _openSleepFeatureFromEvent() async {
@@ -765,6 +1030,44 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (!mounted) {
       return;
     }
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
+  }
+
+  Future<void> _openBackgroundMusicSettingsFromEvent() async {
+    setState(() {
+      _recordPendingEventAction(HistoryEventAction.saved);
+      _companionEvents.markPendingEventHandled(skipped: false);
+      _persistCompanionEventState();
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+
+    await _openSettings();
+    if (!mounted) {
+      return;
+    }
+    _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
+  }
+
+  void _checkBackgroundMusicLater() {
+    setState(() {
+      _recordPendingEventAction(HistoryEventAction.skipped);
+      _companionEvents.markPendingEventHandled(skipped: true);
+      _persistCompanionEventState();
+      _stage = PromptStage.idle;
+      _activeFocusArea = null;
+      _currentMood = null;
+      _currentTask = null;
+      _statusMessage = null;
+      _resultMessage = null;
+      _setCompanionToDefaultAnimation();
+    });
+
     _scheduleAutomaticPromptEvaluation(forceStatusRefresh: true);
   }
 
@@ -921,6 +1224,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           companionName: _companionName,
           userName: _userName,
           sleepSound: _sleepSound,
+          backgroundMusic: _backgroundMusic,
           symbol: _companionSymbol,
           backgroundTone: _backgroundTone,
         ),
@@ -947,6 +1251,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (_stage == PromptStage.result && _hasPendingSleepSoundEvent()) {
       setState(() {
         _stage = PromptStage.sleepSoundEvent;
+        _activeFocusArea = null;
+        _currentMood = null;
+        _currentTask = null;
+        _statusMessage = null;
+        _resultMessage = null;
+        _setCompanionToDefaultAnimation();
+      });
+      return;
+    }
+
+    if (_stage == PromptStage.result && _hasPendingBackgroundMusicEvent()) {
+      setState(() {
+        _stage = PromptStage.backgroundMusicEvent;
         _activeFocusArea = null;
         _currentMood = null;
         _currentTask = null;
@@ -1030,6 +1347,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 CompanionEventDefinitions.userNameId,
               ),
           initialSleepSound: _sleepSound,
+          allowBackgroundMusicEditing:
+              _companionEvents.isEventHandled(
+                CompanionEventDefinitions.backgroundMusicId,
+              ) ||
+              _companionEvents.isEventAutoTriggered(
+                CompanionEventDefinitions.backgroundMusicId,
+              ),
+          initialBackgroundMusic: _backgroundMusic,
+          onPreviewBackgroundMusic: (option) {
+            unawaited(_previewBackgroundMusic(option));
+          },
+          onStopPreviewBackgroundMusic: () {
+            unawaited(_stopBackgroundMusicPreview());
+          },
           allowSymbolEditing:
               _companionEvents.isEventHandled(
                 CompanionEventDefinitions.symbolId,
@@ -1052,6 +1383,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       ),
     );
 
+    await _stopBackgroundMusicPreview();
+
     if (result == null) {
       return;
     }
@@ -1066,6 +1399,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       _companionName = result.companionName;
       _userName = result.userName;
       _sleepSound = result.sleepSound;
+      _backgroundMusic = result.backgroundMusic;
       _companionSymbol = result.symbol;
       _backgroundTone = result.backgroundTone;
       _persistCompanionIdentityState();
@@ -1117,6 +1451,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    _scheduleBackgroundMusicSync();
+
     return Scaffold(
       appBar: AppBar(
         leading: _isSleepFeatureUnlocked()
@@ -1203,6 +1539,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       return ['Du har fått en ny funksjon'];
     }
 
+    if (_stage == PromptStage.backgroundMusicEvent) {
+      return ['Du har fått en ny funksjon'];
+    }
+
     if (_stage == PromptStage.symbolEvent) {
       return ['Vil du velge et lite symbol som kan være en del av meg?'];
     }
@@ -1215,63 +1555,61 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _buildBottomActionState() {
+    final Widget child;
+
     if (_stage == PromptStage.idle) {
       if (!widget.appConfig.showPrototypeControls) {
-        return const SizedBox.shrink();
+        child = const SizedBox.shrink();
+      } else {
+        child = IdleStateView(
+          onSimulate: _simulateNextPrompt,
+          actionLabel: 'Simuler neste prompt',
+        );
       }
-      return IdleStateView(
-        onSimulate: _simulateNextPrompt,
-        actionLabel: 'Simuler neste prompt',
-      );
-    }
-
-    if (_stage == PromptStage.mood) {
-      return MoodStateView(onSelectMood: _selectMood, labelBuilder: _moodLabel);
-    }
-
-    if (_stage == PromptStage.task) {
-      return TaskStateView(
+    } else if (_stage == PromptStage.mood) {
+      child = MoodStateView(onSelectMood: _selectMood, labelBuilder: _moodLabel);
+    } else if (_stage == PromptStage.task) {
+      child = TaskStateView(
         hasTask: _currentTask != null,
         onDone: () => _submitResult(true),
         onSkipped: () => _submitResult(false),
         onBack: _resetToIdle,
       );
-    }
-
-    if (_stage == PromptStage.companionNameEvent) {
-      return CompanionNameEventView(
+    } else if (_stage == PromptStage.companionNameEvent) {
+      child = CompanionNameEventView(
         onSave: _saveCompanionName,
         onSkip: _skipCompanionNameEvent,
       );
-    }
-
-    if (_stage == PromptStage.userNameEvent) {
-      return UserNameEventView(
+    } else if (_stage == PromptStage.userNameEvent) {
+      child = UserNameEventView(
         onSave: _saveUserName,
         onSkip: _skipUserNameEvent,
       );
-    }
-
-    if (_stage == PromptStage.sleepSoundEvent) {
-      return SleepSoundEventView(
+    } else if (_stage == PromptStage.sleepSoundEvent) {
+      child = SleepSoundEventView(
         onCheckNow: () {
           unawaited(_openSleepFeatureFromEvent());
         },
         onLater: _checkSleepFeatureLater,
       );
-    }
-
-    if (_stage == PromptStage.symbolEvent) {
-      return SymbolEventView(onSave: _saveSymbol, onSkip: _skipSymbolEvent);
-    }
-
-    if (_stage == PromptStage.backgroundColorEvent) {
-      return BackgroundColorEventView(
+    } else if (_stage == PromptStage.backgroundMusicEvent) {
+      child = BackgroundMusicEventView(
+        onCheckNow: () {
+          unawaited(_openBackgroundMusicSettingsFromEvent());
+        },
+        onLater: _checkBackgroundMusicLater,
+      );
+    } else if (_stage == PromptStage.symbolEvent) {
+      child = SymbolEventView(onSave: _saveSymbol, onSkip: _skipSymbolEvent);
+    } else if (_stage == PromptStage.backgroundColorEvent) {
+      child = BackgroundColorEventView(
         onSave: _saveBackgroundTone,
         onSkip: _skipBackgroundColorEvent,
       );
+    } else {
+      child = ResultStateView(onBack: _resetToIdle);
     }
 
-    return ResultStateView(onBack: _resetToIdle);
+    return _wrapBottomActionWithSleepPlayer(child);
   }
 }

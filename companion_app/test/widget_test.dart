@@ -474,7 +474,7 @@ void main() {
     expect(provider, isA<AssetImage>());
     expect(
       (provider as AssetImage).assetName,
-      equals('assets/B1 - Breath.png'),
+      equals('assets/figures/companion/B1 - Breath.png'),
     );
     expect(
       _currentCompanionAnimationState(tester),
@@ -786,6 +786,7 @@ void main() {
         done: true,
         autoHandleCompanionNameEvent: true,
         autoHandleUserNameEvent: true,
+        autoHandleBackgroundMusicEvent: true,
         autoHandleSymbolEvent: false,
       );
     }
@@ -830,6 +831,7 @@ void main() {
         done: true,
         autoHandleCompanionNameEvent: true,
         autoHandleUserNameEvent: true,
+        autoHandleBackgroundMusicEvent: true,
         autoHandleSymbolEvent: true,
         autoHandleBackgroundColorEvent: false,
       );
@@ -868,6 +870,7 @@ void main() {
           done: true,
           autoHandleCompanionNameEvent: true,
           autoHandleUserNameEvent: true,
+          autoHandleBackgroundMusicEvent: true,
           autoHandleSymbolEvent: true,
           autoHandleBackgroundColorEvent: false,
         );
@@ -1125,6 +1128,7 @@ Future<void> _runSinglePromptAndFinish(
   bool autoHandleCompanionNameEvent = true,
   bool autoHandleUserNameEvent = true,
   bool autoHandleSleepSoundEvent = true,
+  bool autoHandleBackgroundMusicEvent = true,
   bool autoHandleSymbolEvent = true,
   bool autoHandleBackgroundColorEvent = true,
 }) async {
@@ -1168,6 +1172,17 @@ Future<void> _runSinglePromptAndFinish(
     await tester.pumpAndSettle();
   }
 
+  if (autoHandleBackgroundMusicEvent &&
+      find
+          .byKey(const ValueKey('background-music-later-button'))
+          .evaluate()
+          .isNotEmpty) {
+    await tester.tap(
+      find.byKey(const ValueKey('background-music-later-button')),
+    );
+    await tester.pumpAndSettle();
+  }
+
   if (autoHandleSymbolEvent &&
       find.byKey(const ValueKey('symbol-skip-button')).evaluate().isNotEmpty) {
     await tester.tap(find.byKey(const ValueKey('symbol-skip-button')));
@@ -1208,6 +1223,16 @@ Future<void> _dismissPendingIdentityEvents(WidgetTester tester) async {
       .evaluate()
       .isNotEmpty) {
     await tester.tap(find.byKey(const ValueKey('sleep-feature-later-button')));
+    await tester.pumpAndSettle();
+  }
+
+  if (find
+      .byKey(const ValueKey('background-music-later-button'))
+      .evaluate()
+      .isNotEmpty) {
+    await tester.tap(
+      find.byKey(const ValueKey('background-music-later-button')),
+    );
     await tester.pumpAndSettle();
   }
 
