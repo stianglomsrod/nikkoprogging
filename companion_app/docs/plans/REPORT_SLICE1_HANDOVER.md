@@ -6,6 +6,7 @@ Scope: Slice 1 Global Feedback + Screenshot Capture
 ## 1) What Was Implemented
 
 ### Data model and persistence
+
 - Added screenshotPath to feedback domain model.
 - Added screenshot_path nullable column in feedback_items table.
 - Bumped Drift schema version from 8 to 9.
@@ -14,6 +15,7 @@ Scope: Slice 1 Global Feedback + Screenshot Capture
 - Regenerated Drift code in app_database.g.dart.
 
 ### Feedback submission flow
+
 - FeedbackSheet now accepts optional screenshotPath and stores it with submitted feedback.
 - A shared feedback action component was added for reuse across screens.
 - Screenshot capture is best-effort and local only.
@@ -21,7 +23,9 @@ Scope: Slice 1 Global Feedback + Screenshot Capture
 - If capture fails, feedback still submits without screenshotPath.
 
 ### Global availability across central views
+
 Feedback trigger is now available in these central screens:
+
 - Home
 - History
 - Settings
@@ -29,10 +33,12 @@ Feedback trigger is now available in these central screens:
 - Feedback history detail
 
 Implementation pattern:
+
 - Each of these views now has a feedback action in app bar actions.
 - Each has a local RepaintBoundary capture scope for screenshot capture.
 
 ### Feedback detail UI
+
 - Feedback detail now includes screenshot section.
 - If screenshotPath is missing: calm fallback text is shown.
 - If screenshotPath points to non-existing file: calm fallback text is shown.
@@ -41,9 +47,11 @@ Implementation pattern:
 ## 2) Files Changed
 
 ### Added
+
 - lib/features/feedback/feedback_action_button.dart
 
 ### Updated
+
 - lib/app/companion_app.dart
 - lib/core/database/app_database.dart
 - lib/core/database/app_database.g.dart
@@ -61,19 +69,23 @@ Implementation pattern:
 - test/widget_test.dart
 
 ### Removed
+
 - lib/app/global_feedback_overlay.dart
 
 ## 3) Validation Status
 
 ### Tests
+
 - runTests on test/widget_test.dart: passed 9, failed 0.
 - runTests on test/core/feedback/drift_feedback_repository_test.dart: passed 3, failed 0.
 
 Important note:
+
 - Earlier terminal runs of flutter test test/widget_test.dart had historical failures and one long timeout in feedback detail flow before fixes.
 - Latest runTests results are green for the current edited state.
 
 ### Analyze
+
 - flutter analyze currently exits with code 1 due one info-level lint:
   - lib/features/feedback/feedback_action_button.dart line 93
   - use_build_context_synchronously
@@ -83,9 +95,11 @@ No compile errors are currently reported in edited files via Problems check.
 ## 4) What Is Still Failing or Risky
 
 ### Current blocker for fully green analyze
+
 - One analyzer lint remains in feedback_action_button async context flow.
 
 ### Potential test stability risk
+
 - Feedback history/detail tests previously showed timeout behavior with broad pumpAndSettle usage.
 - One deterministic wait was already changed to short pump calls in one test.
 - Remaining feedback tests may still be sensitive to timing in some environments.
