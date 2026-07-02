@@ -40,14 +40,23 @@ companion_app/
 |  |  |  |  |- frame_04.png
 |  |  |  |  |- frame_05.png
 |  |  |  |  |- frame_06.png
-|  |  |  |- sleep/
-|  |  |     |- frame_01.png
-|  |  |     |- frame_02.png
-|  |  |     |- frame_03.png
-|  |  |     |- frame_04.png
-|  |  |     |- frame_05.png
 |  |- figures/
 |  |  |- companion_figur.png
+|  |  |- companion/
+|  |  |  |- B1 - Breath.png
+|  |  |  |- B2 - Breath.png
+|  |  |  |- C1 - Blink.png
+|  |  |  |- C2 - Blink.png
+|  |  |  |- C3 - Blink.png
+|  |  |  |- D1 - Smile.png
+|  |  |  |- D2 - Smile.png
+|  |  |  |- D3 - Smile.png
+|  |  |  |- E1 - Sleep.png
+|  |  |  |- E2 - Sleep.png
+|  |  |  |- E3 - Sleep.png
+|  |- sounds/
+|  |  |- sleep/
+|  |  |- background_music/
 |- lib/
 |  |- main.dart
 |  |- app/

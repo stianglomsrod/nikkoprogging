@@ -111,10 +111,12 @@ CompanionApp _buildApp({
   );
 }
 
-Future<String> _createTestScreenshotFile() async {
-  final directory = await Directory.systemTemp.createTemp('feedback_test_');
+String _createTestScreenshotFile() {
+  // Uses synchronous IO on purpose: real async file IO never completes inside
+  // the FakeAsync zone used by testWidgets, which hangs the test.
+  final directory = Directory.systemTemp.createTempSync('feedback_test_');
   final file = File(p.join(directory.path, 'screenshot.png'));
-  await file.writeAsBytes(const <int>[
+  file.writeAsBytesSync(const <int>[
     137,
     80,
     78,
@@ -457,7 +459,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final feedbackRepository = _InMemoryFeedbackRepository();
-    final screenshotPath = await _createTestScreenshotFile();
+    final screenshotPath = _createTestScreenshotFile();
     await feedbackRepository.append(
       const FeedbackItem(
         id: 'fb_a',
@@ -495,7 +497,11 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('feedback-history-item-fb_b')));
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 200));
+    // Bounded pumps past the 300ms route transition plus one flush frame so
+    // the list route goes fully offstage (unbounded pumpAndSettle is avoided
+    // on purpose here).
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('Tilbakemelding'), findsOneWidget);
     expect(

@@ -75,23 +75,25 @@ class FeedbackActionButton extends StatelessWidget {
       var boundaryContext = key.currentContext;
       var boundary =
           boundaryContext?.findRenderObject() as RenderRepaintBoundary?;
-      if (boundaryContext == null || boundary == null) {
+      if (boundaryContext == null || !boundaryContext.mounted || boundary == null) {
         return null;
       }
+      var pixelRatio = View.of(boundaryContext).devicePixelRatio;
 
       if (boundary.debugNeedsPaint) {
         await WidgetsBinding.instance.endOfFrame;
         boundaryContext = key.currentContext;
         boundary =
             boundaryContext?.findRenderObject() as RenderRepaintBoundary?;
-        if (boundaryContext == null || boundary == null) {
+        if (boundaryContext == null ||
+            !boundaryContext.mounted ||
+            boundary == null) {
           return null;
         }
+        pixelRatio = View.of(boundaryContext).devicePixelRatio;
       }
 
-      final image = await boundary.toImage(
-        pixelRatio: View.of(boundaryContext).devicePixelRatio,
-      );
+      final image = await boundary.toImage(pixelRatio: pixelRatio);
       final data = await image.toByteData(format: ui.ImageByteFormat.png);
       image.dispose();
       if (data == null) {

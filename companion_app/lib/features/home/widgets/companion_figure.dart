@@ -42,10 +42,12 @@ class _CompanionFigureState extends State<CompanionFigure> {
       'assets/figures/companion/C1 - Blink.png',
     ],
     CompanionAnimationState.sleep: [
-      'assets/figures/companion/B1 - Breath.png',
-      'assets/figures/companion/B2 - Breath.png',
-      'assets/figures/companion/B1 - Breath.png',
-      'assets/figures/companion/B2 - Breath.png',
+      'assets/figures/companion/E1 - Sleep.png',
+      'assets/figures/companion/E2 - Sleep.png',
+      'assets/figures/companion/E3 - Sleep.png',
+      'assets/figures/companion/E3 - Sleep.png',
+      'assets/figures/companion/E3 - Sleep.png',
+      'assets/figures/companion/E2 - Sleep.png',
     ],
   };
 

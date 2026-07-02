@@ -472,7 +472,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   bool _shouldShowSleepAnimation() {
-    return _stage == PromptStage.idle && _statusMessage != null;
+    final sleepSoundSessionActive = _sleepSoundStopAt != null;
+    return _stage == PromptStage.idle &&
+        (_statusMessage != null || sleepSoundSessionActive);
   }
 
   CompanionAnimationState _defaultAnimationForState() {
@@ -811,6 +813,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       setState(() {
         _sleepSoundStopAt = stopAt;
         _sleepSoundSessionDuration = duration;
+        _setCompanionToDefaultAnimation();
       });
     } else {
       _sleepSoundStopAt = stopAt;
@@ -838,6 +841,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       setState(() {
         _sleepSoundStopAt = null;
         _sleepSoundSessionDuration = Duration.zero;
+        if (_companionAnimationState != CompanionAnimationState.happy) {
+          _setCompanionToDefaultAnimation();
+        }
       });
     } else {
       _sleepSoundStopAt = null;
